@@ -4,8 +4,8 @@ import { CirculationDesk } from "@/components/modules/circulation/circulation-de
 import { CirculationDeskSkeleton } from "@/components/modules/circulation/circulation-skeleton";
 
 export const metadata = {
-  title: "Circulation Desk | ShelfSync Assistant",
-  description: "Rapid in-person checkout, check-in, and hold fulfillment desk.",
+  title: "Circulation Desk Console | ShelfSync",
+  description: "Rapid sub-10s checkout and check-in desk for library assistants.",
 };
 
 async function DeskContent() {
@@ -21,7 +21,7 @@ async function DeskContent() {
   );
 }
 
-export default function AssistantDeskPage() {
+export default function AssistantDeskAliasPage() {
   return (
     <main className="container max-w-7xl mx-auto px-4 py-8">
       <Suspense fallback={<CirculationDeskSkeleton />}>

@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { getBookDetails } from "@/lib/services/book-service";
+import { getStudentReservationForBook } from "@/lib/services/reservation-service";
 import { BookDetailView } from "@/components/modules/books/book-detail-view";
 import { Navbar } from "@/components/shared/navbar";
 
@@ -8,9 +10,6 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-/**
- * Dynamic OpenGraph & SEO Metadata Generation
- */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const book = await getBookDetails(id);
@@ -51,7 +50,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BookDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const book = await getBookDetails(id);
+  const { userId } = await auth();
+
+  const [book, existingReservation] = await Promise.all([
+    getBookDetails(id),
+    userId ? getStudentReservationForBook(id, userId) : Promise.resolve(null),
+  ]);
 
   if (!book) {
     notFound();
@@ -105,7 +109,11 @@ export default async function BookDetailPage({ params }: PageProps) {
       <Navbar />
 
       <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <BookDetailView book={book} />
+        <BookDetailView
+          book={book}
+          isSignedIn={!!userId}
+          existingReservationId={existingReservation?.id}
+        />
       </main>
     </div>
   );

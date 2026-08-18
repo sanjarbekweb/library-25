@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
-import { BookOpen, Shield, ClipboardList, BookMarked } from "lucide-react";
+import { BookOpen, Shield, ClipboardList, BookMarked, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -49,6 +49,19 @@ export function Navbar() {
 
           {isLoaded && isSignedIn && (
             <>
+              <Link
+                href="/reservations"
+                className={cn(
+                  "px-3 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                  pathname.startsWith("/reservations")
+                    ? "bg-accent text-accent-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+                My Holds
+              </Link>
+
               <Link
                 href="/loans"
                 className={cn(

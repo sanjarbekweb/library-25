@@ -11,15 +11,22 @@ import {
   Clock,
 } from "lucide-react";
 import { BookDetails } from "@/lib/services/book-service";
+import { ReserveButton } from "./reserve-button";
 import { CopyAvailabilityBadge } from "@/components/modules/catalog/copy-availability-badge";
 import { ReviewsList } from "./reviews-list";
 import { Button } from "@/components/ui/button";
 
 interface BookDetailViewProps {
   book: BookDetails;
+  isSignedIn?: boolean;
+  existingReservationId?: string | null;
 }
 
-export function BookDetailView({ book }: BookDetailViewProps) {
+export function BookDetailView({
+  book,
+  isSignedIn = false,
+  existingReservationId,
+}: BookDetailViewProps) {
   const isAvailable = book.copyBreakdown.available > 0;
 
   return (
@@ -119,24 +126,12 @@ export function BookDetailView({ book }: BookDetailViewProps) {
 
             {/* Action Bar */}
             <div className="pt-4 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {isAvailable ? (
-                <Button
-                  size="lg"
-                  className="rounded-full font-semibold bg-brand-blue hover:bg-blue-600 text-white shadow-sm flex items-center gap-2"
-                >
-                  <BookmarkCheck className="h-5 w-5" />
-                  Request Online Reservation
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  disabled
-                  variant="outline"
-                  className="rounded-full font-semibold opacity-70"
-                >
-                  Currently Unavailable for Reservation
-                </Button>
-              )}
+              <ReserveButton
+                bookId={book.id}
+                availableCopiesCount={book.copyBreakdown.available}
+                existingReservationId={existingReservationId}
+                isSignedIn={isSignedIn}
+              />
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium px-3 py-2 rounded-xl bg-muted/50 border border-border/50">
                 <Building2 className="h-4 w-4 text-brand-blue shrink-0" />

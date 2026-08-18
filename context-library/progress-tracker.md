@@ -5,11 +5,11 @@ change.
 
 ## Current Phase
 
-- Complete (Unit 03)
+- Complete (Unit 06)
 
 ## Current Goal
 
-- Unit 03 complete. Ready for Unit 04: Meilisearch Integration & Search Sync Engine.
+- Unit 06 complete. Ready for Unit 07: BookHistory Audit Trail & Copy Traceability.
 
 ## Completed
 
@@ -40,16 +40,27 @@ change.
   - [x] Wrap root layout (`app/layout.tsx`) with `<ClerkProvider>`
   - [x] Build server layout guards in `app/(app)/assistant/layout.tsx` (ASSISTANT/ADMIN) and `app/(app)/admin/layout.tsx` (ADMIN)
   - [x] Build auth pages (`app/(auth)/sign-in` and `app/(auth)/sign-up`)
-- [x] Unit 04: Meilisearch Integration & Search Sync Engine
-  - [x] Install `meilisearch`, `@tanstack/react-query`, and `zod`
-  - [x] Build Meilisearch client wrapper in `lib/search/client.ts` with `books` index settings (`title`, `author`, `category`, `isbn`, `description`)
-  - [x] Implement `syncBookToSearchIndex` and `syncAllBooksToSearchIndex` in `lib/search/sync.ts` fetching live `BookCopy` availability counts from PostgreSQL
-  - [x] Create `lib/schemas/search-schema.ts` Zod validation schema for search requests
-  - [x] Build `/api/search` route handler with Meilisearch primary search and PostgreSQL fallback search
-  - [x] Create `QueryProvider` in `components/providers/query-provider.tsx` and wrap root layout
-  - [x] Build interactive `SearchHeader` component (`components/modules/search/search-header.tsx`) with debounced query input, TanStack Query integration, instant typo-tolerant preview dropdown, and availability badges
-  - [x] Integrate `SearchHeader` into catalog filter bar (`components/modules/catalog/catalog-filter-bar.tsx`)
-  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed with 0 errors
+
+- [x] Unit 05: Student Online Reservation Request Flow
+  - [x] Create Zod schemas (`CreateReservationSchema`, `CancelReservationSchema`) in `lib/schemas/reservation-schema.ts`
+  - [x] Implement business logic in `lib/services/reservation-service.ts` (`requestBookReservation`, `cancelReservation`, `getStudentReservations`, `getStudentReservationForBook`)
+  - [x] Enforce atomic `prisma.$transaction` creating `Reservation`, updating `BookCopy.status` (`AVAILABLE` <-> `RESERVED`), and appending `BookHistory` audit logs
+  - [x] Enforce post-commit search cache synchronization (`syncBookToSearchIndex`) on reservation state changes
+  - [x] Build Server Actions in `app/actions/reservation-actions.ts` with Clerk `auth()` session verification
+  - [x] Create student "My Reservations" dashboard page (`app/reservations/page.tsx`) with active hold status, 48h expiration timers, pickup instructions, and cancellation triggers
+  - [x] Build interactive `ReserveButton` component (`components/modules/books/reserve-button.tsx`) integrated into book detail page (`app/books/[id]/page.tsx`)
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors
+
+- [x] Unit 06: Circulation Desk Rapid Checkout/Check-in Flow
+  - [x] Create Zod schemas (`CheckoutSchema`, `CheckinSchema`, `CirculationSearchSchema`) in `lib/schemas/circulation-schema.ts`
+  - [x] Build core domain service `lib/services/circulation-service.ts` (`checkoutBookCopy`, `checkinBookCopy`, `lookupStudents`, `lookupBookCopies`, `getCirculationDeskData`)
+  - [x] Enforce atomic `prisma.$transaction` creating/closing `Loan`, updating `BookCopy` status/holder/condition, fulfilling `Reservation`, and appending immutable `BookHistory` audit records
+  - [x] Enforce post-commit search cache synchronization (`syncBookToSearchIndex`) on checkout and check-in transactions
+  - [x] Build Server Actions (`app/actions/circulation-actions.ts`) with Clerk `auth()` session verification and role enforcement (`ASSISTANT` / `ADMIN`)
+  - [x] Build zero-CLS shimmer skeleton `components/modules/circulation/circulation-skeleton.tsx`
+  - [x] Build sub-10s Circulation Desk console UI (`components/modules/circulation/circulation-desk.tsx`) featuring 4 tab views (Rapid Checkout, Rapid Check-in, Holds Queue, Active Loans Directory)
+  - [x] Integrate console into assistant route segments `app/(app)/assistant/page.tsx` and `/assistant/desk/page.tsx`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors
 
 ## In Progress
 
@@ -57,7 +68,7 @@ change.
 
 ## Next Up
 
-- Unit 05: Student Online Reservation Request Flow
+- Unit 07: BookHistory Audit Trail & Copy Traceability
 
 ## Open Questions
 
@@ -85,9 +96,12 @@ change.
 ## Session Notes
 
 - Session: 2026-08-18
-- Unit 04 completed: Meilisearch Integration & Search Sync Engine.
-- Built Meilisearch client singleton wrapper (`lib/search/client.ts`) and index sync handlers (`lib/search/sync.ts`).
-- Created `/api/search` route handler with Zod input validation (`lib/schemas/search-schema.ts`), typo tolerance via Meilisearch, and database fallback.
-- Added `@tanstack/react-query` `QueryProvider` and built debounced instant search UI (`components/modules/search/search-header.tsx`) integrated into `CatalogFilterBar`.
+- Unit 06 completed: Circulation Desk Rapid Checkout/Check-in Flow.
+- Created `lib/schemas/circulation-schema.ts` with Zod validation.
+- Created `lib/services/circulation-service.ts` with atomic Prisma transactions for `checkoutBookCopy` and `checkinBookCopy`.
+- Enforced immutable audit log creation (`BookHistory` action `CHECKOUT` and `CHECKIN`) within the same atomic transaction.
+- Enforced post-commit Meilisearch search index sync (`syncBookToSearchIndex`).
+- Built Server Actions `app/actions/circulation-actions.ts` with Clerk session and role verification.
+- Built sub-10s `CirculationDesk` console component and zero-CLS skeleton in `components/modules/circulation/`.
+- Updated `/assistant` and created `/assistant/desk` route segments.
 - Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero errors.
-
