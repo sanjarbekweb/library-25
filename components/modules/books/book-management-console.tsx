@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,6 +17,13 @@ import {
   Tag,
   Loader2,
   Calendar,
+  ChevronDown,
+  ChevronRight,
+  QrCode,
+  UserCheck,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
 } from "lucide-react";
 import type { ManageableBookItem } from "@/lib/services/book-management-service";
 import {
@@ -46,6 +53,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
   const [books, setBooks] = useState<ManageableBookItem[]>(initialBooks);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [expandedBookId, setExpandedBookId] = useState<string | null>(null);
 
   // Create Book Modal state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -282,61 +290,213 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
-                {filteredBooks.map((b) => (
-                  <tr key={b.id} className="hover:bg-accent/40 transition-colors">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-12 w-9 rounded-md bg-muted overflow-hidden shrink-0 border border-border">
-                          {b.coverImageUrl ? (
-                            <Image
-                              src={b.coverImageUrl}
-                              alt={b.title}
-                              fill
-                              sizes="36px"
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
-                              <BookOpen className="h-4 w-4" />
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <Link href={`/books/${b.id}`} className="font-bold text-foreground hover:text-brand-blue hover:underline">
-                            {b.title}
-                          </Link>
-                          <p className="text-[11px] text-muted-foreground">by {b.author}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 font-medium">{b.category}</td>
-                    <td className="p-4 font-mono text-[11px] text-muted-foreground">
-                      {b.isbn || "—"}
-                    </td>
-                    <td className="p-4 font-mono font-bold text-foreground">{b.totalCopies}</td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold font-mono text-[11px]">
-                        {b.availableCopies} free
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold font-mono text-[11px]">
-                        {b.borrowedCopies} out
-                      </span>
-                    </td>
-                    <td className="p-4 text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setSelectedBookForCopy(b)}
-                        className="rounded-full text-[11px] gap-1 hover:bg-accent"
+                {filteredBooks.map((b) => {
+                  const isExpanded = expandedBookId === b.id;
+                  return (
+                    <Fragment key={b.id}>
+                      <tr
+                        key={b.id}
+                        className={`hover:bg-accent/40 transition-colors cursor-pointer ${
+                          isExpanded ? "bg-accent/30" : ""
+                        }`}
+                        onClick={() => setExpandedBookId(isExpanded ? null : b.id)}
                       >
-                        <PlusCircle className="h-3.5 w-3.5 text-brand-blue" />
-                        Add Copy
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedBookId(isExpanded ? null : b.id);
+                              }}
+                              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                              title={isExpanded ? "Collapse Copies" : "View Physical Copies & Barcodes"}
+                            >
+                              {isExpanded ? (
+                                <ChevronDown className="h-4 w-4 text-brand-blue" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </button>
+
+                            <div className="relative h-12 w-9 rounded-md bg-muted overflow-hidden shrink-0 border border-border">
+                              {b.coverImageUrl ? (
+                                <Image
+                                  src={b.coverImageUrl}
+                                  alt={b.title}
+                                  fill
+                                  sizes="36px"
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                                  <BookOpen className="h-4 w-4" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <Link
+                                href={`/books/${b.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="font-bold text-foreground hover:text-brand-blue hover:underline"
+                              >
+                                {b.title}
+                              </Link>
+                              <p className="text-[11px] text-muted-foreground">by {b.author}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4 font-medium">{b.category}</td>
+                        <td className="p-4 font-mono text-[11px] text-muted-foreground">
+                          {b.isbn || "—"}
+                        </td>
+                        <td className="p-4 font-mono font-bold text-foreground">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBookId(isExpanded ? null : b.id);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted hover:bg-accent text-foreground transition-colors"
+                          >
+                            <span>{b.totalCopies} copies</span>
+                            {isExpanded ? (
+                              <ChevronDown className="h-3 w-3 text-brand-blue" />
+                            ) : (
+                              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                            )}
+                          </button>
+                        </td>
+                        <td className="p-4">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold font-mono text-[11px]">
+                            {b.availableCopies} free
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold font-mono text-[11px]">
+                            {b.borrowedCopies} out
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setExpandedBookId(isExpanded ? null : b.id)}
+                              className="rounded-full text-[11px] gap-1 text-muted-foreground hover:text-foreground"
+                            >
+                              <QrCode className="h-3.5 w-3.5 text-brand-blue" />
+                              {isExpanded ? "Hide Copies" : "View Barcodes"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedBookForCopy(b)}
+                              className="rounded-full text-[11px] gap-1 hover:bg-accent"
+                            >
+                              <PlusCircle className="h-3.5 w-3.5 text-brand-blue" />
+                              Add Copy
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Expanded Physical Copies & Barcodes Drawer */}
+                      {isExpanded && (
+                        <tr key={`${b.id}-drawer`} className="bg-muted/30 border-b border-border/80">
+                          <td colSpan={7} className="p-4 sm:p-6">
+                            <div className="space-y-4 bg-card p-5 rounded-2xl border border-border shadow-xs">
+                              <div className="flex items-center justify-between flex-wrap gap-2 border-b border-border pb-3">
+                                <div>
+                                  <h4 className="font-bold text-sm font-display text-foreground flex items-center gap-2">
+                                    <QrCode className="h-4 w-4 text-brand-blue" />
+                                    Registered Physical Copies & Barcodes for &ldquo;{b.title}&rdquo;
+                                  </h4>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    Physical book inventory items registered under this title catalog record.
+                                  </p>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  onClick={() => setSelectedBookForCopy(b)}
+                                  className="rounded-full text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue/90 gap-1.5 h-8"
+                                >
+                                  <PlusCircle className="h-3.5 w-3.5" />
+                                  Add Copy to Title
+                                </Button>
+                              </div>
+
+                              {b.copies.length === 0 ? (
+                                <div className="p-6 text-center text-muted-foreground text-xs italic">
+                                  No physical copies currently registered for this book title.
+                                </div>
+                              ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                  {b.copies.map((copy) => (
+                                    <div
+                                      key={copy.id}
+                                      className="p-3.5 rounded-xl border border-border bg-accent/30 hover:bg-accent/60 transition-colors space-y-2 flex flex-col justify-between"
+                                    >
+                                      <div className="space-y-1.5">
+                                        <div className="flex items-center justify-between gap-2">
+                                          <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-muted text-foreground border border-border flex items-center gap-1.5">
+                                            <Barcode className="h-3.5 w-3.5 text-brand-blue shrink-0" />
+                                            {copy.barcode}
+                                          </span>
+                                          <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-accent border text-muted-foreground">
+                                            {copy.condition}
+                                          </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between gap-2 pt-1">
+                                          <span className="text-xs text-muted-foreground font-medium">
+                                            Copy Status:
+                                          </span>
+                                          {copy.status === "AVAILABLE" && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                              Available on Shelf
+                                            </span>
+                                          )}
+                                          {copy.status === "BORROWED" && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                                              <UserCheck className="w-3 h-3 text-blue-500 shrink-0" />
+                                              Book In Hand
+                                            </span>
+                                          )}
+                                          {copy.status === "RESERVED" && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                              <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                                              Reserved Hold
+                                            </span>
+                                          )}
+                                        </div>
+
+                                        {copy.currentHolderName && (
+                                          <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 pt-1 flex items-center gap-1">
+                                            <UserCheck className="w-3.5 h-3.5 shrink-0" /> 👤 Holder: {copy.currentHolderName}
+                                          </p>
+                                        )}
+                                      </div>
+
+                                      <div className="pt-2 border-t border-border/60 flex justify-end">
+                                        <Link
+                                          href={`/assistant/circulation?tab=history&barcode=${encodeURIComponent(copy.barcode)}`}
+                                          className="text-[11px] font-bold text-brand-blue hover:underline inline-flex items-center gap-1"
+                                        >
+                                          Inspect Traceability <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -28,6 +28,7 @@ export interface ManageableBookItem {
     condition: string;
     status: CopyStatus;
     currentHolderId: string | null;
+    currentHolderName: string | null;
   }[];
 }
 
@@ -40,6 +41,15 @@ export async function getManageableBooks(): Promise<ManageableBookItem[]> {
     include: {
       copies: {
         orderBy: { barcode: "asc" },
+        include: {
+          currentHolder: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
       },
     },
   });
@@ -76,6 +86,9 @@ export async function getManageableBooks(): Promise<ManageableBookItem[]> {
         condition: c.condition,
         status: c.status,
         currentHolderId: c.currentHolderId,
+        currentHolderName: c.currentHolder
+          ? `${c.currentHolder.firstName} ${c.currentHolder.lastName}`
+          : null,
       })),
     };
   });
