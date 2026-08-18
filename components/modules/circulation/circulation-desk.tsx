@@ -16,7 +16,9 @@ import {
   ShieldCheck,
   XCircle,
   FileText,
+  History,
 } from "lucide-react";
+import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -54,7 +56,7 @@ export function CirculationDesk({
   initialReservations,
   initialActiveLoans,
 }: CirculationDeskProps) {
-  const [activeTab, setActiveTab] = useState<"checkout" | "checkin" | "holds" | "loans">("checkout");
+  const [activeTab, setActiveTab] = useState<"checkout" | "checkin" | "holds" | "loans" | "history">("checkout");
   const [isPending, startTransition] = useTransition();
 
   // Alert Feedback State
@@ -459,6 +461,18 @@ export function CirculationDesk({
         >
           <BookOpen className="w-4 h-4" />
           Active Loans ({activeLoans.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
+            activeTab === "history"
+              ? "bg-primary text-primary-foreground shadow-sm scale-105"
+              : "bg-muted/60 hover:bg-muted text-muted-foreground"
+          }`}
+        >
+          <History className="w-4 h-4" />
+          Copy Audit Trail & Traceability
         </button>
       </div>
 
@@ -985,6 +999,13 @@ export function CirculationDesk({
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* ========================================================= */}
+      {/* TAB 5: COPY TRACEABILITY & AUDIT HISTORY */}
+      {/* ========================================================= */}
+      {activeTab === "history" && (
+        <CopyTraceabilityView />
       )}
     </div>
   );
