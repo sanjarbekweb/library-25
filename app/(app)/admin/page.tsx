@@ -84,22 +84,25 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Analytics Card */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group opacity-80">
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group">
           <CardContent className="p-6 flex flex-col justify-between h-full space-y-6">
             <div className="space-y-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                 <BarChart3 className="h-6 w-6" />
               </div>
-              <h2 className="font-display font-bold text-xl text-foreground">
+              <h2 className="font-display font-bold text-xl text-foreground group-hover:text-brand-blue transition-colors">
                 Circulation &amp; Growth Analytics
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Analyze borrowing velocity, category trends, and overdue ratios across the library collection. (Unit 10)
+                Analyze borrowing velocity, category trends, overdue ratios, and reader cohorts across the library collection.
               </p>
             </div>
-            <Button variant="outline" disabled className="w-full rounded-full text-xs gap-2">
-              <span>Coming in Unit 10</span>
-            </Button>
+            <Link href="/admin/analytics">
+              <Button className="w-full rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2">
+                <span>View Analytics</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

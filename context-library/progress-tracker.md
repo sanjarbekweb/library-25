@@ -5,11 +5,11 @@ change.
 
 ### Current Phase
 
-- Complete (Unit 05.5)
+- Complete (Unit 10: Collection Growth & Circulation Analytics Panel)
 
 ## Current Goal
 
-- Unit 05.5 complete. Ready for Unit 10: Collection Growth & Circulation Analytics Panel.
+- Unit 10 complete. Ready for Unit 11: Zero-CLS Skeletons & Performance Optimization.
 
 ## Completed
 
@@ -110,13 +110,23 @@ change.
   - [x] Integrate `CalendarUsageLimitPicker` into `CirculationDesk` rapid checkout flow
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
 
+- [x] Unit 10: Collection Growth & Circulation Analytics Panel
+  - [x] Create Zod schema `AnalyticsQuerySchema` in `lib/schemas/analytics-schema.ts` supporting timeframe filters (`30d`, `90d`, `6m`, `1y`, `all`)
+  - [x] Build core domain service `lib/services/analytics-service.ts` (`getCollectionAnalytics`) executing optimized PostgreSQL aggregate and groupBy queries
+  - [x] Create Server Action `app/actions/analytics-actions.ts` (`getAnalyticsDataAction`) with Clerk `auth()` session validation and `ADMIN` role checks
+  - [x] Build UI components: `AnalyticsDashboard` interactive console with live telemetry header, timeframe switcher, 4 summary KPI cards, responsive monthly borrow/return volume bar chart, category distribution progress bars, overdue telemetry aging breakdown, physical copy condition breakdown, top borrowed books leaderboard, and active reader cohorts
+  - [x] Build zero-CLS shimmer skeleton `components/modules/analytics/analytics-skeleton.tsx`
+  - [x] Build Admin Analytics route `app/(app)/admin/analytics/page.tsx` and loading boundary `app/(app)/admin/analytics/loading.tsx`
+  - [x] Update Admin Control Hub (`app/(app)/admin/page.tsx`) enabling the "Circulation & Growth Analytics" card linking to `/admin/analytics`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
 ## In Progress
 
 - None.
 
 ## Next Up
 
-- Unit 10: Collection Growth & Circulation Analytics Panel
+- Unit 11: Zero-CLS Skeletons & Performance Optimization
 
 ## Open Questions
 
@@ -168,5 +178,15 @@ change.
   - `UserSkeleton`: Shimmer skeleton loading placeholder for zero CLS layout transitions.
   - `UserManagement`: Comprehensive admin user management console featuring search input, role filter pills (All, Student, Assistant, Admin), status filter pills (All, Active, Deactivated), summary stats metrics cards, paginated user table, role update dialog, and account deactivation modal.
 - Built route `app/(app)/admin/users/page.tsx` & `app/(app)/admin/users/loading.tsx` and updated `app/(app)/admin/page.tsx` navigation card linking to `/admin/users`.
+- Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero warnings or errors.
+
+- Unit 10 completed: Collection Growth & Circulation Analytics Panel.
+- Created Zod validation schema `lib/schemas/analytics-schema.ts` (`AnalyticsQuerySchema`, `AnalyticsTimeframeEnum`).
+- Built core domain service `lib/services/analytics-service.ts` (`getCollectionAnalytics`) executing optimized PostgreSQL aggregate and groupBy queries for collection size, copy availability, active/overdue loans, overdue ratio, inventory utilization rate, average catalog ratings, monthly borrow/return volume trends, category distribution, overdue severity telemetry, copy condition health, top borrowed books leaderboard, and active reader cohorts.
+- Created Server Action `app/actions/analytics-actions.ts` (`getAnalyticsDataAction`) with Clerk `auth()` session validation and `ADMIN` role protection.
+- Created zero-CLS shimmer loading skeleton `components/modules/analytics/analytics-skeleton.tsx`.
+- Created interactive UI console `components/modules/analytics/analytics-dashboard.tsx` with live telemetry header, timeframe switcher (`30d`, `90d`, `6m`, `1y`, `all`), 4 KPI summary cards, responsive monthly borrow/return volume bar chart, category distribution progress bars, overdue telemetry aging breakdown, copy condition health pills, top borrowed books leaderboard table, and active reader cohorts.
+- Built Admin Analytics route `app/(app)/admin/analytics/page.tsx` & `loading.tsx`.
+- Updated Admin Control Hub (`app/(app)/admin/page.tsx`) enabling the "Circulation & Growth Analytics" card linking to `/admin/analytics`.
 - Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero warnings or errors.
 

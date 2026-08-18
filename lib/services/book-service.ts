@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { meiliClient, BOOKS_INDEX, BookSearchDocument } from "@/lib/search/client";
@@ -431,13 +432,18 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
 
 /**
  * Service function to retrieve distinct catalog categories.
+ * Cached using Next.js unstable_cache with 300s TTL and 'catalog-categories' tag.
  */
-export async function getCategories(): Promise<string[]> {
-  const categories = await prisma.book.findMany({
-    select: { category: true },
-    distinct: ["category"],
-    orderBy: { category: "asc" },
-  });
+export const getCategories = unstable_cache(
+  async (): Promise<string[]> => {
+    const categories = await prisma.book.findMany({
+      select: { category: true },
+      distinct: ["category"],
+      orderBy: { category: "asc" },
+    });
 
-  return categories.map((c) => c.category);
-}
+    return categories.map((c) => c.category);
+  },
+  ["catalog-categories"],
+  { revalidate: 300, tags: ["catalog-categories"] }
+);

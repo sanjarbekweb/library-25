@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import {
   SyncUserSchema,
@@ -112,8 +113,9 @@ export async function getUserByClerkId(clerkId: string) {
 /**
  * Ensures the currently authenticated Clerk user is automatically synced to PostgreSQL.
  * Provides instant JIT sync for local development where cloud webhooks cannot reach localhost.
+ * Wrapped in React cache() to deduplicate execution per request lifecycle.
  */
-export async function syncCurrentAuthenticatedUser() {
+export const syncCurrentAuthenticatedUser = cache(async () => {
   const { currentUser } = await import("@clerk/nextjs/server");
   const user = await currentUser();
   if (!user) return null;
@@ -144,7 +146,7 @@ export async function syncCurrentAuthenticatedUser() {
       role,
     },
   });
-}
+});
 
 /**
  * Fetches user accounts with search, role/status filtering, pagination, and role distribution metrics.
