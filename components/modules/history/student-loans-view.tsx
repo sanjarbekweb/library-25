@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -176,13 +177,14 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
               >
                 <CardContent className="p-5 flex gap-4">
                   {/* Book Cover / Thumbnail Placeholder */}
-                  <div className="w-20 h-28 rounded-xl bg-muted shrink-0 overflow-hidden border border-border shadow-xs flex items-center justify-center text-muted-foreground">
+                  <div className="relative w-20 h-28 rounded-xl bg-muted shrink-0 overflow-hidden border border-border shadow-xs flex items-center justify-center text-muted-foreground">
                     {loan.coverImageUrl ? (
-                      /* eslint-disable-next-html-link */
-                      <img
+                      <Image
                         src={loan.coverImageUrl}
                         alt={loan.bookTitle}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="80px"
+                        className="object-cover"
                       />
                     ) : (
                       <BookOpen className="h-8 w-8 text-muted-foreground/40" />

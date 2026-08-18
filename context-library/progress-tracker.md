@@ -5,11 +5,11 @@ change.
 
 ### Current Phase
 
-- Complete (Unit 10: Collection Growth & Circulation Analytics Panel)
+- In Progress (Unit 11: Zero-CLS Skeletons & Performance Optimization)
 
 ## Current Goal
 
-- Unit 10 complete. Ready for Unit 11: Zero-CLS Skeletons & Performance Optimization.
+- Unit 11: Zero-CLS Skeletons, Suspense & Performance Optimization.
 
 ## Completed
 
@@ -120,13 +120,21 @@ change.
   - [x] Update Admin Control Hub (`app/(app)/admin/page.tsx`) enabling the "Circulation & Growth Analytics" card linking to `/admin/analytics`
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
 
+- [x] Unit 11: Zero-CLS Skeletons & Performance Optimization
+  - [x] Create root catalog loading state `app/loading.tsx` with matching zero-CLS `CatalogSkeleton` placeholder
+  - [x] Create student holds & reservations loading state `app/reservations/loading.tsx`
+  - [x] Create assistant circulation desk loading state `app/(app)/assistant/loading.tsx` with `CirculationDeskSkeleton`
+  - [x] Create admin hub loading state `app/(app)/admin/loading.tsx`
+  - [x] Replace raw `<img>` tag in `StudentLoansView` (`components/modules/history/student-loans-view.tsx`) with optimized Next.js `<Image />` component with `fill` and `sizes="80px"`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
 ## In Progress
 
 - None.
 
 ## Next Up
 
-- Unit 11: Zero-CLS Skeletons & Performance Optimization
+- Production Deployment & Operations Monitoring
 
 ## Open Questions
 
