@@ -4,11 +4,13 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import {
   submitBookFeedback,
+  submitDirectBookReview,
   toggleFeedbackModeration,
   deleteFeedback,
 } from "@/lib/services/feedback-service";
 import {
   SubmitFeedbackInput,
+  CreateDirectBookReviewInput,
   ModerateFeedbackInput,
   DeleteFeedbackInput,
 } from "@/lib/schemas/feedback-schema";
@@ -71,6 +73,57 @@ export async function submitBookFeedbackAction(
       error: {
         code: "INTERNAL_SERVER_ERROR",
         message: "An unexpected error occurred while submitting review.",
+      },
+    };
+  }
+}
+
+/**
+ * Server Action for authenticated students to submit direct star rating & review for any book.
+ */
+export async function submitDirectBookReviewAction(
+  input: CreateDirectBookReviewInput
+): Promise<ServerActionResponse<{ id: string; bookId: string }>> {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return {
+        ok: false,
+        error: {
+          code: "UNAUTHENTICATED",
+          message: "You must be signed in to rate and review books.",
+        },
+      };
+    }
+
+    const result = await submitDirectBookReview(input, userId);
+
+    revalidatePath(`/books/${input.bookId}`);
+    revalidatePath("/catalog");
+    revalidatePath("/admin/feedback");
+
+    return {
+      ok: true,
+      data: { id: result.id, bookId: result.bookId },
+    };
+  } catch (error) {
+    if (error instanceof ServiceError) {
+      return {
+        ok: false,
+        error: {
+          code: error.code,
+          message: error.message,
+        },
+      };
+    }
+
+    console.error("[Submit Direct Review Action Error]:", error);
+    return {
+      ok: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred while saving your review.",
       },
     };
   }

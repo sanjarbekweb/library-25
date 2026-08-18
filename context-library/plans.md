@@ -38,6 +38,9 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
 │ U-09   │ Admin User & Role Management Console            │ RBAC Elevation Dashboard  │
 │ U-10   │ Collection Growth & Circulation Analytics Panel │ PostgreSQL Aggregate Dash │
 │ U-11   │ Zero-CLS Skeletons & Performance Optimization   │ Lighthouse Audit (>90/95) │
+│ U-12   │ Public Landing Page & Distinct /catalog Route   │ Auth Redirect & Landing UI│
+│ U-13   │ Book Catalog Management (Add Titles & Copies)   │ Admin/Assistant Console   │
+│ U-14   │ Community 5-Star Ratings & Direct Book Reviews  │ Review Modal & Breakdown  │
 └────────┴─────────────────────────────────────────────────┴───────────────────────────┘
 
 ```
@@ -191,6 +194,37 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
   1. Build matching shimmer skeleton components (`.skeleton-shimmer`) for Catalog cards, Book detail views, Circulation Desk, and Analytics widgets[cite: 1, 3].
   2. Wrap asynchronous data-fetching components in React `<Suspense fallback={<SkeletonComponent />}>` boundaries[cite: 1].
   3. Run Google Lighthouse audits on Catalog and Detail routes to confirm Performance ≥ 90, SEO ≥ 95, and Cumulative Layout Shift (CLS) = 0[cite: 1, 3].
+
+---
+
+### Unit 12: Public Landing Page & Distinct `/catalog` Route with Auth Routing (`12-landing-and-catalog-route.md`)
+* **Goal:** Establish a distinct public landing page at `/` for unauthenticated visitors and automatically redirect authenticated users to the distinct `/catalog` route.
+* **Detailed Steps:**
+  1. Create a rich, high-converting public landing page component at `app/page.tsx` displaying school library overview, collection highlights, opening hours, membership perks, and sign-in/up CTAs.
+  2. Implement server-side session check in `app/page.tsx`: if user is authenticated (`auth().userId` is set), issue an immediate server redirect to `/catalog`.
+  3. Move the catalog exploration page to `app/catalog/page.tsx` and create `app/catalog/loading.tsx`.
+  4. Update application navigation headers (`Navbar`) so `/` links to the Landing page and `/catalog` links to the Book Catalog.
+
+---
+
+### Unit 13: Book Catalog Management Console (Add Titles & Physical Copies) (`13-add-books.md`)
+* **Goal:** Provide Assistants and Administrators with a dedicated console to add new book titles to the catalog, update book metadata, and add physical copies with barcodes/RFIDs.
+* **Detailed Steps:**
+  1. Create Zod schemas in `lib/schemas/book-management-schema.ts` (`CreateBookSchema`, `UpdateBookSchema`, `AddBookCopySchema`).
+  2. Implement domain functions in `lib/services/book-management-service.ts` (`createBook`, `updateBook`, `addBookCopy`, `deleteBookCopy`) with atomic `prisma.$transaction` logging `BookHistory` (`action: 'ADDED'`) and calling `syncBookToSearchIndex`.
+  3. Create Server Actions in `app/actions/book-management-actions.ts` with Clerk `auth()` session validation and role guards (`ASSISTANT` / `ADMIN`).
+  4. Build `/assistant/books` management console with search, category filtering, "Add New Book Title" modal dialog, barcode generator, and "Add Physical Copy" modal dialog.
+  5. Add "Catalog Management" link to Assistant and Admin navigation bars.
+
+---
+
+### Unit 14: Community 5-Star Ratings & Direct Book Reviews (`14-book-reviews.md`)
+* **Goal:** Allow all authenticated readers to submit 5-star ratings and written comments directly for any book title, and display dynamic rating breakdowns on detail pages.
+* **Detailed Steps:**
+  1. Update `lib/schemas/feedback-schema.ts` to accept `CreateBookReviewSchema` (bookId, rating 1–5, optional loanId, comment).
+  2. Update `lib/services/feedback-service.ts` with `submitBookReview` supporting direct book reviews by authenticated students (preventing duplicate reviews per book by the same user) while computing overall star rating distributions (5-star, 4-star, etc.).
+  3. Create Server Action `submitBookReviewAction` in `app/actions/feedback-actions.ts`.
+  4. Enhance `BookDetailView` (`components/modules/books/book-detail-view.tsx`) and `ReviewsList` (`components/modules/books/reviews-list.tsx`) with an interactive "Write a Review" modal trigger, 5-star picker, and percentage breakdown visualization bars.
 
 ---
 

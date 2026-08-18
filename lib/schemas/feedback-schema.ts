@@ -22,6 +22,26 @@ export const SubmitFeedbackSchema = z.object({
 export type SubmitFeedbackInput = z.infer<typeof SubmitFeedbackSchema>;
 
 /**
+ * Zod validation schema for submitting direct book reviews (without requiring a loan ID).
+ */
+export const CreateDirectBookReviewSchema = z.object({
+  bookId: z.string().min(1, "Book ID is required"),
+  rating: z
+    .number()
+    .int("Rating must be a whole number")
+    .min(1, "Rating must be at least 1 star")
+    .max(5, "Rating cannot exceed 5 stars"),
+  comment: z
+    .string()
+    .max(1000, "Review comment cannot exceed 1000 characters")
+    .optional()
+    .nullable()
+    .transform((val) => (val && val.trim().length > 0 ? val.trim() : null)),
+});
+
+export type CreateDirectBookReviewInput = z.infer<typeof CreateDirectBookReviewSchema>;
+
+/**
  * Zod validation schema for admin moderation actions (publishing or hiding feedback).
  */
 export const ModerateFeedbackSchema = z.object({

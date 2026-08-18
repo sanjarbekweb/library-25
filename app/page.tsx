@@ -1,205 +1,205 @@
 import Link from "next/link";
-import { Suspense } from "react";
-import { BookOpen, Sparkles, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { getCatalogBooks, getCategories } from "@/lib/services/book-service";
-import { syncCurrentAuthenticatedUser } from "@/lib/services/user-service";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import {
+  BookOpen,
+  Sparkles,
+  ShieldCheck,
+  Clock,
+  MapPin,
+  ArrowRight,
+  BookMarked,
+  BarChart3,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 import { Navbar } from "@/components/shared/navbar";
-import { BookCard } from "@/components/modules/catalog/book-card";
-import { CatalogFilterBar } from "@/components/modules/catalog/catalog-filter-bar";
-import { CatalogSkeleton } from "@/components/modules/catalog/catalog-skeleton";
 import { Button } from "@/components/ui/button";
 
-interface PageProps {
-  searchParams: Promise<{
-    category?: string;
-    search?: string;
-    sort?: string;
-    page?: string;
-  }>;
-}
-
 export const metadata = {
-  title: "School Library Catalog Exploration",
+  title: "Welcome to School Library Management | ShelfSync",
   description:
-    "Explore physical book titles, live copy inventory availability, categories, and verified student reviews in the ShelfSync catalog.",
+    "Explore physical book collections, opening hours, circulation rules, and student borrowing services at the School Library.",
 };
 
-export default async function HomePage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const page = Math.max(1, parseInt(params.page || "1", 10));
-  const category = params.category || "all";
-  const search = params.search || "";
-  const sort = (params.sort || "newest") as
-    | "title-asc"
-    | "title-desc"
-    | "newest"
-    | "rating";
+export default async function HomePage() {
+  const { userId } = await auth();
 
-  const [, categories, catalogData] = await Promise.all([
-    syncCurrentAuthenticatedUser(),
-    getCategories(),
-    getCatalogBooks({ category, search, sort, page, limit: 12 }),
-  ]);
-
-  const { books, total, totalPages } = catalogData;
+  // If user is already authenticated, redirect seamlessly to the interactive Catalog
+  if (userId) {
+    redirect("/catalog");
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      {/* Hero Header Canvas or Compact Search Banner */}
-      {search ? (
-        <section className="border-b border-border bg-canvas-warm dark:bg-canvas-dark py-6">
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
-            <div>
-              <h1 className="font-display font-bold text-xl sm:text-2xl text-foreground">
-                Search Results for &ldquo;<span className="text-brand-blue">{search}</span>&rdquo;
-              </h1>
-              <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                Found {total} title{total === 1 ? "" : "s"} in collection
-              </p>
-            </div>
-            <Link href="/">
-              <Button variant="outline" size="sm" className="rounded-full text-xs">
-                Clear Search
+      {/* Hero Section */}
+      <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-16 md:py-24 bg-grid-pattern overflow-hidden">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-yellow text-black text-xs font-bold tracking-tight shadow-sm">
+            <Sparkles className="h-4 w-4" />
+            <span>School Library Management System</span>
+          </div>
+
+          <h1 className="font-display font-extrabold text-4xl sm:text-6xl md:text-7xl tracking-tight text-foreground max-w-4xl mx-auto leading-tight">
+            Empowering Readers with <span className="underline decoration-brand-yellow decoration-4 underline-offset-4">Real-Time</span> Library Intelligence
+          </h1>
+
+          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            Welcome to ShelfSync. Browse physical books, track copy availability, reserve holds online, and experience sub-10s circulation desk checkouts.
+          </p>
+
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/sign-in">
+              <Button size="lg" className="w-full sm:w-auto rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-semibold px-8 gap-2">
+                <span>Sign In to Your Account</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+
+            <Link href="/catalog">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full font-semibold px-8 gap-2 border-border">
+                <BookOpen className="h-4 w-4 text-brand-yellow" />
+                <span>Explore Book Catalog</span>
               </Button>
             </Link>
           </div>
-        </section>
-      ) : (
-        <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-12 md:py-16 bg-grid-pattern">
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow text-black text-xs font-bold tracking-tight shadow-xs">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>School Library Catalog</span>
-            </div>
+        </div>
+      </section>
 
-            <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground max-w-3xl mx-auto">
-              Discover &amp; Reserve Physical Books with <span className="underline decoration-brand-yellow decoration-4 underline-offset-4">Real-Time Inventory</span>
-            </h1>
-
-            <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Browse our school library catalog, filter by subject categories, view live physical copy status, and hold books for in-person pickup.
+      {/* Key Library Features & Benefits */}
+      <section className="py-16 bg-card border-b border-border">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="text-center space-y-3 max-w-2xl mx-auto">
+            <h2 className="font-display font-bold text-2xl sm:text-4xl text-foreground">
+              Modern Library Services Designed for Students &amp; Staff
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Built for speed, accuracy, and absolute copy traceability.
             </p>
+          </div>
 
-            <div className="pt-2 flex items-center justify-center gap-4 text-xs font-mono text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                {total} Book{total === 1 ? "" : "s"} In Collection
-              </span>
-              <span>&bull;</span>
-              <span>{categories.length} Categories</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-6 rounded-2xl border border-border bg-background space-y-4 shadow-xs">
+              <div className="h-12 w-12 rounded-2xl bg-brand-yellow/20 text-yellow-600 dark:text-brand-yellow flex items-center justify-center font-bold">
+                <BookMarked className="h-6 w-6" />
+              </div>
+              <h3 className="font-display font-bold text-xl text-foreground">
+                Live Inventory Tracking
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Know instantly whether physical copies are Available, Reserved, or Borrowed with estimated return calendars.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-border bg-background space-y-4 shadow-xs">
+              <div className="h-12 w-12 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
+                <Clock className="h-6 w-6" />
+              </div>
+              <h3 className="font-display font-bold text-xl text-foreground">
+                Rapid Circulation Desk
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Assistants execute physical checkouts and returns in under 10 seconds with automatic audit trail logging.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-border bg-background space-y-4 shadow-xs">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-display font-bold text-xl text-foreground">
+                Verified Reviews &amp; Ratings
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Read authentic reader comments and star ratings to find your next great book recommendation.
+              </p>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Main Catalog View */}
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        <h2 className="sr-only">Catalog Filters & Book Listings</h2>
+      {/* Library Hours & Information Callout */}
+      <section className="py-16 bg-canvas-warm dark:bg-canvas-dark border-b border-border">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-border">
+              <Clock className="h-3.5 w-3.5 text-brand-blue" />
+              <span>Library Hours &amp; Access</span>
+            </div>
 
-        {/* Interactive Filter & Sort Bar */}
-        <CatalogFilterBar
-          categories={categories}
-          currentCategory={category}
-          currentSearch={search}
-          currentSort={sort}
-        />
+            <h2 className="font-display font-bold text-3xl sm:text-4xl text-foreground">
+              Visit the Circulation Desk &amp; Reading Rooms
+            </h2>
 
-        {/* Books Grid with Suspense */}
-        <Suspense fallback={<CatalogSkeleton count={12} />}>
-          {books.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border p-12 text-center bg-card space-y-4 max-w-lg mx-auto my-8">
-              <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center">
-                <AlertCircle className="h-6 w-6" />
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-foreground">Regular Hours:</strong> Monday – Friday, 8:00 AM – 5:00 PM
+                </div>
               </div>
-              <div className="space-y-1">
-                <h3 className="font-display font-bold text-lg text-foreground">
-                  No Matching Titles Found
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  We couldn&apos;t find any books matching your selected filters or search terms.
-                </p>
+
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-foreground">Standard Loan Limits:</strong> Up to 3 books per student for 14 days (extendable up to 30 days).
+                </div>
               </div>
-              <Link href="/">
-                <Button variant="outline" size="sm" className="rounded-full mt-2">
-                  Clear All Filters
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
-            </div>
-          )}
-        </Suspense>
 
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border pt-6">
-            <div className="text-xs text-muted-foreground font-mono">
-              Page {page} of {totalPages} ({total} total titles)
-            </div>
-
-            <div className="flex items-center gap-2">
-              {page > 1 ? (
-                <Link
-                  href={{
-                    pathname: "/",
-                    query: {
-                      ...(category !== "all" ? { category } : {}),
-                      ...(search ? { search } : {}),
-                      ...(sort !== "newest" ? { sort } : {}),
-                      page: (page - 1).toString(),
-                    },
-                  }}
-                >
-                  <Button variant="outline" size="sm" className="rounded-full gap-1">
-                    <ChevronLeft className="h-4 w-4" /> Previous
-                  </Button>
-                </Link>
-              ) : (
-                <Button variant="outline" size="sm" disabled className="rounded-full gap-1">
-                  <ChevronLeft className="h-4 w-4" /> Previous
-                </Button>
-              )}
-
-              {page < totalPages ? (
-                <Link
-                  href={{
-                    pathname: "/",
-                    query: {
-                      ...(category !== "all" ? { category } : {}),
-                      ...(search ? { search } : {}),
-                      ...(sort !== "newest" ? { sort } : {}),
-                      page: (page + 1).toString(),
-                    },
-                  }}
-                >
-                  <Button variant="outline" size="sm" className="rounded-full gap-1">
-                    Next <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              ) : (
-                <Button variant="outline" size="sm" disabled className="rounded-full gap-1">
-                  Next <ChevronRight className="h-4 w-4" />
-                </Button>
-              )}
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-foreground">Online Holds:</strong> Holds reserved online are kept at the circulation desk for 48 hours.
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </main>
+
+          <div className="rounded-3xl border border-border bg-card p-8 space-y-6 shadow-sm">
+            <div className="flex items-center gap-3 border-b border-border pb-4">
+              <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-lg text-foreground">Main Campus Library</h3>
+                <p className="text-xs text-muted-foreground">Building B, 2nd Floor &bull; Central Desk</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs text-muted-foreground font-mono">
+              <div className="flex justify-between py-1 border-b border-border/50">
+                <span>Weekdays (Mon-Fri)</span>
+                <span className="font-semibold text-foreground">8:00 AM – 5:00 PM</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-border/50">
+                <span>Saturday</span>
+                <span className="font-semibold text-foreground">9:00 AM – 1:00 PM</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span>Sunday &amp; Holidays</span>
+                <span className="font-semibold text-rose-500">Closed</span>
+              </div>
+            </div>
+
+            <Link href="/sign-up" className="block pt-2">
+              <Button className="w-full rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs">
+                Create Student Account &rarr;
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
+      <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground mt-auto">
         <div className="container max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-brand-yellow" />
-            <span className="font-bold text-foreground">ShelfSync Platform</span>
+            <span className="font-bold text-foreground">ShelfSync School Library</span>
           </div>
-          <span>&copy; {new Date().getFullYear()} School Library System. Spec-Driven Architecture.</span>
+          <span>&copy; {new Date().getFullYear()} School Library System. All rights reserved.</span>
         </div>
       </footer>
     </div>

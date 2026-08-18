@@ -226,8 +226,10 @@ export function BookDetailView({
         totalReviews={book.totalReviews}
         ratingDistribution={book.ratingDistribution}
         eligibleLoanId={eligibleLoanIdForFeedback}
+        bookId={book.id}
         bookTitle={book.title}
         bookAuthor={book.author}
+        isSignedIn={isSignedIn}
       />
     </div>
   );

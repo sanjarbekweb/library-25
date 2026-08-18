@@ -3,6 +3,8 @@ import { ServiceError } from "@/lib/errors";
 import {
   SubmitFeedbackSchema,
   SubmitFeedbackInput,
+  CreateDirectBookReviewSchema,
+  CreateDirectBookReviewInput,
   ModerateFeedbackSchema,
   ModerateFeedbackInput,
   DeleteFeedbackSchema,
@@ -10,6 +12,7 @@ import {
   AdminFeedbackQuerySchema,
   AdminFeedbackQueryInput,
 } from "@/lib/schemas/feedback-schema";
+import { syncBookToSearchIndex } from "@/lib/search/sync";
 import { Prisma } from "@prisma/client";
 
 export interface AdminFeedbackItem {
@@ -22,12 +25,12 @@ export interface AdminFeedbackItem {
   studentId: string;
   studentName: string;
   studentEmail: string;
-  loanId: string;
+  loanId: string | null;
   rating: number;
   comment: string | null;
   isModerated: boolean;
   createdAt: Date;
-  borrowedAt: Date;
+  borrowedAt: Date | null;
   returnedAt: Date | null;
 }
 
@@ -242,8 +245,8 @@ export async function getAdminFeedbacks(
     comment: f.comment,
     isModerated: f.isModerated,
     createdAt: f.createdAt,
-    borrowedAt: f.loan.borrowedAt,
-    returnedAt: f.loan.returnedAt,
+    borrowedAt: f.loan?.borrowedAt ?? null,
+    returnedAt: f.loan?.returnedAt ?? null,
   }));
 
   return {
@@ -339,5 +342,68 @@ export async function getEligibleLoanForBookFeedback(
   });
 
   return eligibleLoan ? { loanId: eligibleLoan.id } : null;
+}
+
+/**
+ * Submit or update a direct 5-star rating and written review for any catalog book title.
+ */
+export async function submitDirectBookReview(
+  rawInput: CreateDirectBookReviewInput,
+  clerkUserId: string
+) {
+  const input = CreateDirectBookReviewSchema.parse(rawInput);
+
+  const user = await prisma.user.findUnique({
+    where: { clerkId: clerkUserId },
+    select: { id: true, firstName: true, lastName: true },
+  });
+
+  if (!user) {
+    throw new ServiceError("USER_NOT_FOUND", "User profile not found", 404);
+  }
+
+  const book = await prisma.book.findUnique({
+    where: { id: input.bookId },
+    select: { id: true, title: true },
+  });
+
+  if (!book) {
+    throw new ServiceError("BOOK_NOT_FOUND", "Book title not found", 404);
+  }
+
+  // Check if student already left a review for this book
+  const existingFeedback = await prisma.feedback.findFirst({
+    where: {
+      bookId: input.bookId,
+      studentId: user.id,
+    },
+  });
+
+  let feedbackRecord;
+  if (existingFeedback) {
+    feedbackRecord = await prisma.feedback.update({
+      where: { id: existingFeedback.id },
+      data: {
+        rating: input.rating,
+        comment: input.comment,
+        isModerated: false,
+      },
+    });
+  } else {
+    feedbackRecord = await prisma.feedback.create({
+      data: {
+        bookId: input.bookId,
+        studentId: user.id,
+        rating: input.rating,
+        comment: input.comment,
+        isModerated: false,
+      },
+    });
+  }
+
+  // Post-commit search index sync
+  await syncBookToSearchIndex(input.bookId);
+
+  return feedbackRecord;
 }
 

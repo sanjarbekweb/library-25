@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Star, MessageSquareQuote, CheckCircle2 } from "lucide-react";
+import { Star, MessageSquareQuote, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { BookFeedbackItem } from "@/lib/services/book-service";
 import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
+import { submitDirectBookReviewAction } from "@/app/actions/feedback-actions";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 
@@ -13,8 +14,10 @@ interface ReviewsListProps {
   totalReviews: number;
   ratingDistribution: Record<number, number>;
   eligibleLoanId?: string | null;
+  bookId?: string;
   bookTitle?: string;
   bookAuthor?: string;
+  isSignedIn?: boolean;
 }
 
 export function ReviewsList({
@@ -23,10 +26,18 @@ export function ReviewsList({
   totalReviews,
   ratingDistribution,
   eligibleLoanId,
+  bookId = "",
   bookTitle = "this book",
   bookAuthor = "",
+  isSignedIn = false,
 }: ReviewsListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDirectModalOpen, setIsDirectModalOpen] = useState(false);
+  const [directRating, setDirectRating] = useState(5);
+  const [directComment, setDirectComment] = useState("");
+  const [isSubmittingDirect, setIsSubmittingDirect] = useState(false);
+  const [directError, setDirectError] = useState<string | null>(null);
+  const [directSuccess, setDirectSuccess] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
@@ -72,7 +83,7 @@ export function ReviewsList({
             ))}
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            Based on {totalReviews} verified student loan{totalReviews === 1 ? "" : "s"}
+            Based on {totalReviews} student review{totalReviews === 1 ? "" : "s"}
           </span>
         </div>
 
@@ -103,20 +114,34 @@ export function ReviewsList({
         </div>
       </div>
 
-      {/* Verified Reviews Stream */}
+      {/* Community Reviews Stream Section */}
       <div className="space-y-4">
-        <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-          <MessageSquareQuote className="h-5 w-5 text-brand-blue" />
-          Verified Student Reviews ({totalReviews})
-        </h3>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+            <MessageSquareQuote className="h-5 w-5 text-brand-blue" />
+            Community Reviews &amp; Ratings ({totalReviews})
+          </h3>
+
+          {isSignedIn && !eligibleLoanId && (
+            <Button
+              onClick={() => setIsDirectModalOpen(true)}
+              size="sm"
+              variant="outline"
+              className="rounded-full text-xs font-semibold gap-1.5 border-border hover:bg-accent"
+            >
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <span>Write a Review</span>
+            </Button>
+          )}
+        </div>
 
         {feedbacks.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-card/50">
             <p className="text-sm text-muted-foreground">
-              No verified student reviews submitted for this book yet.
+              No student reviews submitted for this book yet.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Reviews can be left after completing a physical loan checkout.
+              Be the first student to rate and leave a written review for this title.
             </p>
           </div>
         ) : (
@@ -133,7 +158,7 @@ export function ReviewsList({
                     </span>
                     <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                       <CheckCircle2 className="h-3 w-3" />
-                      Verified Loan
+                      Student Reader
                     </span>
                   </div>
                   <span className="text-[11px] text-muted-foreground font-mono">
@@ -169,7 +194,7 @@ export function ReviewsList({
         )}
       </div>
 
-      {/* Review Modal Dialog */}
+      {/* Review Modal Dialog for Verified Loan */}
       {eligibleLoanId && (
         <SubmitFeedbackModal
           isOpen={isModalOpen}
@@ -178,6 +203,143 @@ export function ReviewsList({
           bookTitle={bookTitle}
           bookAuthor={bookAuthor}
         />
+      )}
+
+      {/* DIRECT BOOK REVIEW MODAL */}
+      {isDirectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-card border border-border rounded-3xl p-6 max-w-md w-full space-y-6 shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-start justify-between border-b border-border pb-3">
+              <div>
+                <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                  <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                  Rate &amp; Review Book
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Share your 5-star rating for <strong className="text-foreground">{bookTitle}</strong>
+                </p>
+              </div>
+              <button
+                onClick={() => setIsDirectModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-sm font-bold p-1 rounded-full"
+              >
+                ✕
+              </button>
+            </div>
+
+            {directError && (
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{directError}</span>
+              </div>
+            )}
+
+            {directSuccess && (
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>{directSuccess}</span>
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setIsSubmittingDirect(true);
+                setDirectError(null);
+
+                const res = await submitDirectBookReviewAction({
+                  bookId,
+                  rating: directRating,
+                  comment: directComment ? directComment : null,
+                });
+
+                setIsSubmittingDirect(false);
+
+                if (!res.ok) {
+                  setDirectError(res.error?.message || "Failed to submit review.");
+                  return;
+                }
+
+                setDirectSuccess("Your review and rating have been posted!");
+                setTimeout(() => {
+                  setIsDirectModalOpen(false);
+                  setDirectSuccess(null);
+                  window.location.reload();
+                }, 1000);
+              }}
+              className="space-y-4"
+            >
+              {/* Star Rating Picker */}
+              <div className="space-y-2 text-center">
+                <label className="text-xs font-semibold text-foreground">
+                  Select Rating (1 to 5 Stars)
+                </label>
+                <div className="flex items-center justify-center gap-2 pt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setDirectRating(star)}
+                      className="p-1 hover:scale-110 transition-transform"
+                    >
+                      <Star
+                        className={`h-8 w-8 ${
+                          star <= directRating
+                            ? "fill-amber-400 text-amber-400"
+                            : "fill-muted text-muted-foreground/30"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <span className="text-xs font-mono text-amber-600 dark:text-amber-400 font-bold block pt-1">
+                  {directRating} out of 5 Stars
+                </span>
+              </div>
+
+              {/* Review Comment */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-foreground">
+                  Written Comment (Optional)
+                </label>
+                <textarea
+                  rows={4}
+                  maxLength={1000}
+                  placeholder="Tell other readers what you thought about the plot, themes, or writing style..."
+                  value={directComment}
+                  onChange={(e) => setDirectComment(e.target.value)}
+                  className="w-full rounded-2xl border border-input bg-background p-3 text-xs focus:ring-1 focus:ring-ring"
+                />
+                <div className="text-right text-[10px] text-muted-foreground font-mono">
+                  {directComment.length}/1000
+                </div>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-3 border-t border-border">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDirectModalOpen(false)}
+                  className="rounded-full text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingDirect}
+                  className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 text-xs font-semibold gap-2"
+                >
+                  {isSubmittingDirect ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Star className="h-4 w-4 fill-current" />
+                  )}
+                  <span>Post Review &amp; Rating</span>
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

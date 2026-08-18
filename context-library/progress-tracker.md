@@ -5,11 +5,11 @@ change.
 
 ### Current Phase
 
-- In Progress (Unit 11: Zero-CLS Skeletons & Performance Optimization)
+- Complete (All Units 00–14 Completed)
 
 ## Current Goal
 
-- Unit 11: Zero-CLS Skeletons, Suspense & Performance Optimization.
+- Milestone Pipeline Completed. ShelfSync ready for production deployment.
 
 ## Completed
 
@@ -126,6 +126,30 @@ change.
   - [x] Create assistant circulation desk loading state `app/(app)/assistant/loading.tsx` with `CirculationDeskSkeleton`
   - [x] Create admin hub loading state `app/(app)/admin/loading.tsx`
   - [x] Replace raw `<img>` tag in `StudentLoansView` (`components/modules/history/student-loans-view.tsx`) with optimized Next.js `<Image />` component with `fill` and `sizes="80px"`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
+- [x] Unit 12: Public Landing Page & Distinct /catalog Route with Auth Routing
+  - [x] Build public library landing page component `app/page.tsx` with library overview, opening hours, borrowing rules, and sign-in/up CTAs
+  - [x] Enforce automatic server redirect (`redirect("/catalog")`) for authenticated users visiting `/`
+  - [x] Create dedicated catalog exploration route `app/catalog/page.tsx` and `app/catalog/loading.tsx`
+  - [x] Update header navigation (`components/shared/navbar.tsx`) with distinct Home (`/`) and Catalog (`/catalog`) routes
+  - [x] Verification: `npx tsc --noEmit` passed cleanly with zero errors
+
+- [x] Unit 13: Book Catalog Management Console (Add Titles & Physical Copies)
+  - [x] Create Zod schemas (`lib/schemas/book-management-schema.ts`) for book title creation and copy registration
+  - [x] Build Cloudflare R2 storage client (`lib/storage/r2-client.ts`) and upload endpoint `app/api/upload/route.ts` for cover image uploads
+  - [x] Create domain service `lib/services/book-management-service.ts` (`createBookWithCopies`, `addPhysicalCopy`) with atomic `prisma.$transaction`, `BookHistory` creation, and Meilisearch search index sync
+  - [x] Build Server Actions `app/actions/book-management-actions.ts` with Clerk `auth()` validation and `ASSISTANT` / `ADMIN` role checks
+  - [x] Create interactive management console `components/modules/books/book-management-console.tsx` and assistant route `app/(app)/assistant/books/page.tsx`
+  - [x] Update header navigation (`components/shared/navbar.tsx`) linking "Manage Books" for assistants and admins
+  - [x] Verification: `npx tsc --noEmit` passed cleanly with zero errors
+
+- [x] Unit 14: Community 5-Star Ratings & Direct Book Reviews
+  - [x] Update Prisma schema (`prisma/schema.prisma`) making `Feedback.loanId` optional (`loanId String? @unique`) to support direct book reviews
+  - [x] Create Zod validation schema `CreateDirectBookReviewSchema` in `lib/schemas/feedback-schema.ts`
+  - [x] Update `lib/services/feedback-service.ts` (`submitDirectBookReview`) supporting 1–5 star ratings and written comments with search index sync (`syncBookToSearchIndex`)
+  - [x] Create Server Action `app/actions/feedback-actions.ts` (`submitDirectBookReviewAction`) with Clerk `auth()` session validation
+  - [x] Update `components/modules/books/reviews-list.tsx` with 5-star rating breakdown bars (5-star, 4-star, 3-star, 2-star, 1-star percentage distribution) and interactive "Rate & Review Book" modal dialog
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
 
 ## In Progress

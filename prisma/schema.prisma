@@ -219,7 +219,7 @@ model Feedback {
   id          String   @id @default(cuid())
   bookId      String
   studentId   String
-  loanId      String   @unique
+  loanId      String?  @unique
   rating      Int
   comment     String?  @db.Text
   isModerated Boolean  @default(false)
@@ -227,9 +227,9 @@ model Feedback {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  book    Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  loan    Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  book    Book  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  loan    Loan? @relation(fields: [loanId], references: [id], onDelete: Cascade)
 
   @@index([bookId])
   @@index([studentId])
