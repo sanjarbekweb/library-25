@@ -5,11 +5,11 @@ change.
 
 ## Current Phase
 
-- Complete (Unit 02)
+- Complete (Unit 03)
 
 ## Current Goal
 
-- Unit 02 complete. Ready for Unit 03: Public Catalog & SEO Book Detail Pages.
+- Unit 03 complete. Ready for Unit 04: Meilisearch Integration & Search Sync Engine.
 
 ## Completed
 
@@ -40,6 +40,13 @@ change.
   - [x] Wrap root layout (`app/layout.tsx`) with `<ClerkProvider>`
   - [x] Build server layout guards in `app/(app)/assistant/layout.tsx` (ASSISTANT/ADMIN) and `app/(app)/admin/layout.tsx` (ADMIN)
   - [x] Build auth pages (`app/(auth)/sign-in` and `app/(auth)/sign-up`)
+- [x] Unit 03: Public Catalog & SEO Book Detail Pages
+  - [x] Implement `lib/services/book-service.ts` for server-side catalog queries (`getCatalogBooks`), detailed book retrieval (`getBookDetails`), and distinct categories (`getCategories`)
+  - [x] Build sticky navigation header (`components/shared/navbar.tsx`) with Clerk auth controls and role badges
+  - [x] Build Server Component public catalog (`app/page.tsx`) with category filtering, search, sorting, and pagination
+  - [x] Create zero-CLS skeleton component (`components/modules/catalog/catalog-skeleton.tsx`) matching card layout
+  - [x] Build `/books/[id]` detail view (`app/books/[id]/page.tsx`) with physical copy telemetry, rating distribution, and verified student reviews stream
+  - [x] Implement dynamic OpenGraph metadata and Schema.org `Book` JSON-LD structured data on detail pages
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly
 
 ## In Progress
@@ -48,7 +55,7 @@ change.
 
 ## Next Up
 
-- Unit 03: Public Catalog & SEO Book Detail Pages
+- Unit 04: Meilisearch Integration & Search Sync Engine
 
 ## Open Questions
 
