@@ -40,14 +40,16 @@ change.
   - [x] Wrap root layout (`app/layout.tsx`) with `<ClerkProvider>`
   - [x] Build server layout guards in `app/(app)/assistant/layout.tsx` (ASSISTANT/ADMIN) and `app/(app)/admin/layout.tsx` (ADMIN)
   - [x] Build auth pages (`app/(auth)/sign-in` and `app/(auth)/sign-up`)
-- [x] Unit 03: Public Catalog & SEO Book Detail Pages
-  - [x] Implement `lib/services/book-service.ts` for server-side catalog queries (`getCatalogBooks`), detailed book retrieval (`getBookDetails`), and distinct categories (`getCategories`)
-  - [x] Build sticky navigation header (`components/shared/navbar.tsx`) with Clerk auth controls and role badges
-  - [x] Build Server Component public catalog (`app/page.tsx`) with category filtering, search, sorting, and pagination
-  - [x] Create zero-CLS skeleton component (`components/modules/catalog/catalog-skeleton.tsx`) matching card layout
-  - [x] Build `/books/[id]` detail view (`app/books/[id]/page.tsx`) with physical copy telemetry, rating distribution, and verified student reviews stream
-  - [x] Implement dynamic OpenGraph metadata and Schema.org `Book` JSON-LD structured data on detail pages
-  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly
+- [x] Unit 04: Meilisearch Integration & Search Sync Engine
+  - [x] Install `meilisearch`, `@tanstack/react-query`, and `zod`
+  - [x] Build Meilisearch client wrapper in `lib/search/client.ts` with `books` index settings (`title`, `author`, `category`, `isbn`, `description`)
+  - [x] Implement `syncBookToSearchIndex` and `syncAllBooksToSearchIndex` in `lib/search/sync.ts` fetching live `BookCopy` availability counts from PostgreSQL
+  - [x] Create `lib/schemas/search-schema.ts` Zod validation schema for search requests
+  - [x] Build `/api/search` route handler with Meilisearch primary search and PostgreSQL fallback search
+  - [x] Create `QueryProvider` in `components/providers/query-provider.tsx` and wrap root layout
+  - [x] Build interactive `SearchHeader` component (`components/modules/search/search-header.tsx`) with debounced query input, TanStack Query integration, instant typo-tolerant preview dropdown, and availability badges
+  - [x] Integrate `SearchHeader` into catalog filter bar (`components/modules/catalog/catalog-filter-bar.tsx`)
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed with 0 errors
 
 ## In Progress
 
@@ -55,7 +57,7 @@ change.
 
 ## Next Up
 
-- Unit 04: Meilisearch Integration & Search Sync Engine
+- Unit 05: Student Online Reservation Request Flow
 
 ## Open Questions
 
@@ -83,6 +85,9 @@ change.
 ## Session Notes
 
 - Session: 2026-08-18
-- Unit 02 completed. All 4 detailed steps implemented and verified.
-- Routes built and verified: `/`, `/admin`, `/assistant`, `/api/webhooks/clerk`, `/sign-in/[[...sign-in]]`, `/sign-up/[[...sign-up]]`.
-- Both `npx tsc --noEmit` and `npm run build` passed cleanly.
+- Unit 04 completed: Meilisearch Integration & Search Sync Engine.
+- Built Meilisearch client singleton wrapper (`lib/search/client.ts`) and index sync handlers (`lib/search/sync.ts`).
+- Created `/api/search` route handler with Zod input validation (`lib/schemas/search-schema.ts`), typo tolerance via Meilisearch, and database fallback.
+- Added `@tanstack/react-query` `QueryProvider` and built debounced instant search UI (`components/modules/search/search-header.tsx`) integrated into `CatalogFilterBar`.
+- Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero errors.
+

@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { Search, X, SlidersHorizontal, ArrowUpDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { SearchHeader } from "@/components/modules/search/search-header";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +24,6 @@ export function CatalogFilterBar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-
-  const [searchVal, setSearchVal] = useState(currentSearch);
 
   const createQueryString = useCallback(
     (paramsToUpdate: Record<string, string | null>) => {
@@ -55,45 +53,17 @@ export function CatalogFilterBar({
     });
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateFilters({ search: searchVal });
-  };
-
-  const handleClearSearch = () => {
-    setSearchVal("");
-    updateFilters({ search: null });
-  };
-
   return (
     <div className="space-y-4">
       {/* Top Controls: Search Input & Sort Dropdown */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        {/* Search Input Form */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="relative flex-1 max-w-md"
-        >
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search by title, author, or ISBN..."
-            aria-label="Search catalog by title, author, or ISBN"
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            className="pl-10 pr-9 h-11 rounded-full border-border bg-card shadow-2xs focus-visible:ring-brand-blue"
-          />
-          {searchVal && (
-            <button
-              type="button"
-              onClick={handleClearSearch}
-              aria-label="Clear search query"
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </form>
+        {/* Typo-Tolerant Search Header with Instant Dropdown */}
+        <SearchHeader
+          initialValue={currentSearch}
+          onSearchSubmit={(val) => updateFilters({ search: val || null })}
+          placeholder="Search by title, author, or ISBN (typo-tolerant)..."
+          className="flex-1 max-w-md"
+        />
 
         {/* Sort Select Dropdown */}
         <div className="flex items-center gap-2 shrink-0">

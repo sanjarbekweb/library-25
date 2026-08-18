@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Rubik, JetBrains_Mono } from "next/font/google";
+import { QueryProvider } from "@/components/providers/query-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["latin"],
   display: "swap",
 });
@@ -42,15 +37,15 @@ export default function RootLayout({
         lang="en"
         className={cn(
           "h-full antialiased font-sans",
-          inter.variable,
-          plusJakartaSans.variable,
+          rubik.variable,
           jetbrainsMono.variable
         )}
       >
         <body className="min-h-full flex flex-col bg-background text-foreground">
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </body>
       </html>
     </ClerkProvider>
   );
 }
+

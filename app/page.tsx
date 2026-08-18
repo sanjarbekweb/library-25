@@ -47,32 +47,52 @@ export default async function HomePage({ searchParams }: PageProps) {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      {/* Hero Header Canvas with Tech Grid Pattern */}
-      <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-12 md:py-16 bg-grid-pattern">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow text-black text-xs font-bold tracking-tight shadow-xs">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>School Library Catalog</span>
+      {/* Hero Header Canvas or Compact Search Banner */}
+      {search ? (
+        <section className="border-b border-border bg-canvas-warm dark:bg-canvas-dark py-6">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
+            <div>
+              <h1 className="font-display font-bold text-xl sm:text-2xl text-foreground">
+                Search Results for &ldquo;<span className="text-brand-blue">{search}</span>&rdquo;
+              </h1>
+              <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                Found {total} title{total === 1 ? "" : "s"} in collection
+              </p>
+            </div>
+            <Link href="/">
+              <Button variant="outline" size="sm" className="rounded-full text-xs">
+                Clear Search
+              </Button>
+            </Link>
           </div>
+        </section>
+      ) : (
+        <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-12 md:py-16 bg-grid-pattern">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow text-black text-xs font-bold tracking-tight shadow-xs">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>School Library Catalog</span>
+            </div>
 
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground max-w-3xl mx-auto">
-            Discover & Reserve Physical Books with <span className="underline decoration-brand-yellow decoration-4 underline-offset-4">Real-Time Inventory</span>
-          </h1>
+            <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground max-w-3xl mx-auto">
+              Discover &amp; Reserve Physical Books with <span className="underline decoration-brand-yellow decoration-4 underline-offset-4">Real-Time Inventory</span>
+            </h1>
 
-          <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Browse our school library catalog, filter by subject categories, view live physical copy status, and hold books for in-person pickup.
-          </p>
+            <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+              Browse our school library catalog, filter by subject categories, view live physical copy status, and hold books for in-person pickup.
+            </p>
 
-          <div className="pt-2 flex items-center justify-center gap-4 text-xs font-mono text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              {total} Book{total === 1 ? "" : "s"} In Collection
-            </span>
-            <span>&bull;</span>
-            <span>{categories.length} Categories</span>
+            <div className="pt-2 flex items-center justify-center gap-4 text-xs font-mono text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                {total} Book{total === 1 ? "" : "s"} In Collection
+              </span>
+              <span>&bull;</span>
+              <span>{categories.length} Categories</span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Main Catalog View */}
       <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">

@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { meiliClient, BOOKS_INDEX, BookSearchDocument } from "@/lib/search/client";
+import { performFuzzySearch } from "@/lib/search/fuzzy";
 import {
   GetCatalogBooksSchema,
   BookIdParamSchema,
@@ -68,6 +70,7 @@ export interface BookDetails {
  * Service function to retrieve catalog books with pagination, sorting, and availability metrics.
  * Upholds Prisma Isolation invariant (lib/services/* only).
  * Validates inputs via Zod schema and enforces strict Prisma types.
+ * Leverages Meilisearch primary search index when available.
  */
 export async function getCatalogBooks(
   rawParams: GetCatalogBooksParams = {}
@@ -83,11 +86,48 @@ export async function getCatalogBooks(
 
   if (search && search.trim() !== "") {
     const query = search.trim();
-    where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { author: { contains: query, mode: "insensitive" } },
-      { isbn: { contains: query, mode: "insensitive" } },
-    ];
+    let meiliMatchedIds: string[] | null = null;
+
+    try {
+      const index = meiliClient.index<BookSearchDocument>(BOOKS_INDEX);
+      const filterArray: string[] = [];
+      if (category && category.toLowerCase() !== "all") {
+        filterArray.push(`category = "${category}"`);
+      }
+      const meiliRes = await index.search(query, {
+        filter: filterArray.length > 0 ? filterArray.join(" AND ") : undefined,
+        limit: 100,
+      });
+
+      if (meiliRes.hits.length > 0) {
+        meiliMatchedIds = meiliRes.hits.map((h) => h.id);
+      }
+    } catch {
+      // Meilisearch offline, fall back to Postgres
+    }
+
+    if (meiliMatchedIds && meiliMatchedIds.length > 0) {
+      where.id = { in: meiliMatchedIds };
+    } else {
+      try {
+        const fuzzy = await performFuzzySearch(query, category, 100, 0);
+        if (fuzzy.hits.length > 0) {
+          where.id = { in: fuzzy.hits.map((h) => h.id) };
+        } else {
+          where.OR = [
+            { title: { contains: query, mode: "insensitive" } },
+            { author: { contains: query, mode: "insensitive" } },
+            { isbn: { contains: query, mode: "insensitive" } },
+          ];
+        }
+      } catch {
+        where.OR = [
+          { title: { contains: query, mode: "insensitive" } },
+          { author: { contains: query, mode: "insensitive" } },
+          { isbn: { contains: query, mode: "insensitive" } },
+        ];
+      }
+    }
   }
 
   let orderBy: Prisma.BookOrderByWithRelationInput = { createdAt: "desc" };
