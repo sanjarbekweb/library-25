@@ -79,7 +79,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
   return (
     <div className="space-y-6">
       {/* Header / Search Console */}
-      <Card className="border-border bg-card shadow-sm rounded-2xl relative">
+      <Card className="border-border bg-card shadow-sm rounded-2xl relative z-40 overflow-visible">
         <CardHeader className="bg-muted/40 pb-4 border-b border-border rounded-t-2xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -93,9 +93,9 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 relative z-40 overflow-visible">
           <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
+            <div className="relative flex-1 z-50">
               <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -107,7 +107,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
 
               {/* Live Search Autocomplete Dropdown */}
               {searchResults.length > 0 && (
-                <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
+                <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
                   {searchResults.map((c) => (
                     <button
                       key={c.id}
@@ -202,7 +202,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
 
       {/* Copy Traceability Result Details */}
       {detail ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
           {/* Left Column: Physical Copy & Book Metadata */}
           <div className="space-y-6">
             <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">

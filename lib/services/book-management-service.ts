@@ -114,60 +114,68 @@ export async function createBookWithCopies(
     initialCopyCondition,
   } = validated;
 
-  const result = await prisma.$transaction(async (tx) => {
-    // 1. Create Book record
-    const book = await tx.book.create({
-      data: {
-        title,
-        author,
-        isbn: isbn || null,
-        category,
-        description: description || null,
-        coverImageUrl: coverImageUrl || null,
-        publicationYear: publicationYear || null,
-      },
-    });
-
-    // 2. Generate initial physical copies
-    const timestamp = Date.now().toString().slice(-6);
-    const copyData = Array.from({ length: initialCopyCount }).map((_, idx) => {
-      const barcode = `BC-${timestamp}-${idx + 1}`;
-      return {
-        bookId: book.id,
-        barcode,
-        condition: initialCopyCondition,
-        status: CopyStatus.AVAILABLE,
-      };
-    });
-
-    const createdCopies = [];
-    for (const copyInput of copyData) {
-      const copy = await tx.bookCopy.create({
-        data: copyInput,
-      });
-
-      // Write immutable audit trail entry
-      await tx.bookHistory.create({
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Create Book record
+      const book = await tx.book.create({
         data: {
-          bookCopyId: copy.id,
-          action: "CREATED",
-          actorId: actor.id,
-          previousState: null,
-          newState: CopyStatus.AVAILABLE,
-          notes: `Registered initial physical copy (${copy.barcode}) for new title: ${book.title}`,
+          title,
+          author,
+          isbn: isbn || null,
+          category,
+          description: description || null,
+          coverImageUrl: coverImageUrl || null,
+          publicationYear: publicationYear || null,
         },
       });
 
-      createdCopies.push(copy);
+      // 2. Generate initial physical copies with clean human-readable barcodes
+      const prefix = title.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase() || "BOOK";
+      const timestamp = Date.now().toString().slice(-4);
+      const copyData = Array.from({ length: initialCopyCount }).map((_, idx) => {
+        const barcode = `BC-${prefix}-${timestamp}-${(idx + 1).toString().padStart(2, "0")}`;
+        return {
+          bookId: book.id,
+          barcode,
+          condition: initialCopyCondition,
+          status: CopyStatus.AVAILABLE,
+        };
+      });
+
+      const createdCopies = [];
+      for (const copyInput of copyData) {
+        const copy = await tx.bookCopy.create({
+          data: copyInput,
+        });
+
+        // Write immutable audit trail entry
+        await tx.bookHistory.create({
+          data: {
+            bookCopyId: copy.id,
+            action: "CREATED",
+            actorId: actor.id,
+            previousState: null,
+            newState: CopyStatus.AVAILABLE,
+            notes: `Registered initial physical copy (${copy.barcode}) for new title: ${book.title}`,
+          },
+        });
+
+        createdCopies.push(copy);
+      }
+
+      return { book, copiesCount: createdCopies.length };
+    });
+
+    // 3. Post-commit search index sync
+    await syncBookToSearchIndex(result.book.id);
+
+    return result;
+  } catch (error: any) {
+    if (error?.code === "P2002") {
+      throw new Error(`A book record or barcode with that ISBN/Code already exists in library catalog.`);
     }
-
-    return { book, copiesCount: createdCopies.length };
-  });
-
-  // 3. Post-commit search index sync
-  await syncBookToSearchIndex(result.book.id);
-
-  return result;
+    throw error;
+  }
 }
 
 /**
@@ -191,43 +199,60 @@ export async function addPhysicalCopy(
     throw new Error("Actor user record not found in database.");
   }
 
-  const result = await prisma.$transaction(async (tx) => {
-    const book = await tx.book.findUnique({
-      where: { id: bookId },
-      include: { copies: true },
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const book = await tx.book.findUnique({
+        where: { id: bookId },
+        include: { copies: true },
+      });
+
+      if (!book) {
+        throw new Error("Target book title not found.");
+      }
+
+      const prefix = book.title.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase() || "BOOK";
+      const generatedBarcode =
+        barcode?.trim() || `BC-${prefix}-${Date.now().toString().slice(-4)}-${(book.copies.length + 1).toString().padStart(2, "0")}`;
+
+      // Check unique barcode collision
+      const existingCopy = await tx.bookCopy.findUnique({
+        where: { barcode: generatedBarcode },
+      });
+
+      if (existingCopy) {
+        throw new Error(`Physical book copy with barcode "${generatedBarcode}" already exists in library inventory. Please enter a unique barcode.`);
+      }
+
+      const copy = await tx.bookCopy.create({
+        data: {
+          bookId,
+          barcode: generatedBarcode,
+          condition,
+          status: CopyStatus.AVAILABLE,
+        },
+      });
+
+      await tx.bookHistory.create({
+        data: {
+          bookCopyId: copy.id,
+          action: "CREATED",
+          actorId: actor.id,
+          previousState: null,
+          newState: CopyStatus.AVAILABLE,
+          notes: `Added physical copy (${copy.barcode}, ${condition}) to book: ${book.title}`,
+        },
+      });
+
+      return { copy, bookTitle: book.title };
     });
 
-    if (!book) {
-      throw new Error("Target book title not found.");
+    await syncBookToSearchIndex(bookId);
+
+    return result;
+  } catch (error: any) {
+    if (error?.code === "P2002") {
+      throw new Error(`A physical book copy with that barcode already exists in library inventory.`);
     }
-
-    const generatedBarcode =
-      barcode || `BC-${Date.now().toString().slice(-6)}-${book.copies.length + 1}`;
-
-    const copy = await tx.bookCopy.create({
-      data: {
-        bookId,
-        barcode: generatedBarcode,
-        condition,
-        status: CopyStatus.AVAILABLE,
-      },
-    });
-
-    await tx.bookHistory.create({
-      data: {
-        bookCopyId: copy.id,
-        action: "CREATED",
-        actorId: actor.id,
-        previousState: null,
-        newState: CopyStatus.AVAILABLE,
-        notes: `Added physical copy (${copy.barcode}, ${condition}) to book: ${book.title}`,
-      },
-    });
-
-    return { copy, bookTitle: book.title };
-  });
-
-  await syncBookToSearchIndex(bookId);
-
-  return result;
+    throw error;
+  }
 }

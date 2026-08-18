@@ -710,7 +710,7 @@ export function CirculationDesk({
       {/* TAB 2: RAPID CHECK-IN & EARLY RETURN */}
       {/* ========================================================= */}
       {activeTab === "checkin" && (
-        <Card className="rounded-2xl border border-border bg-card shadow-sm">
+        <Card className="rounded-2xl border border-border bg-card shadow-sm relative z-40 overflow-visible">
           <CardHeader className="border-b border-border/60 pb-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -726,7 +726,7 @@ export function CirculationDesk({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-6 space-y-6 relative z-40 overflow-visible">
             {/* Early Return Notice Banner */}
             <div className="p-3.5 rounded-2xl bg-accent/60 border border-border text-xs flex items-start gap-2.5">
               <Sparkles className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
@@ -738,13 +738,13 @@ export function CirculationDesk({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-40 overflow-visible">
               {/* Copy / Book Title Search */}
-              <div className="space-y-3">
+              <div className="space-y-3 relative z-50">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Search className="w-3.5 h-3.5" /> 1. Search Book Title or Scan Barcode
                 </label>
-                <div className="relative">
+                <div className="relative z-50">
                   <Search className="w-4 h-4 absolute left-3 top-3.5 text-muted-foreground" />
                   <Input
                     placeholder="Search by book name (e.g. 1984, Gatsby) or scan barcode..."
@@ -760,7 +760,7 @@ export function CirculationDesk({
 
                   {/* Search Autocomplete Dropdown */}
                   {checkinCopyResults.length > 0 && !selectedCheckinCopy && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
+                    <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
                       {checkinCopyResults.map((c) => (
                         <button
                           key={c.id}
