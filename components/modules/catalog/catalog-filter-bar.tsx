@@ -78,6 +78,7 @@ export function CatalogFilterBar({
           <Input
             type="text"
             placeholder="Search by title, author, or ISBN..."
+            aria-label="Search catalog by title, author, or ISBN"
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
             className="pl-10 pr-9 h-11 rounded-full border-border bg-card shadow-2xs focus-visible:ring-brand-blue"
@@ -86,6 +87,7 @@ export function CatalogFilterBar({
             <button
               type="button"
               onClick={handleClearSearch}
+              aria-label="Clear search query"
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full"
             >
               <X className="h-3.5 w-3.5" />
@@ -95,8 +97,13 @@ export function CatalogFilterBar({
 
         {/* Sort Select Dropdown */}
         <div className="flex items-center gap-2 shrink-0">
+          <label htmlFor="catalog-sort-select" className="sr-only">
+            Sort by
+          </label>
           <ArrowUpDown className="h-4 w-4 text-muted-foreground hidden sm:inline" />
           <select
+            id="catalog-sort-select"
+            aria-label="Sort catalog titles"
             value={currentSort}
             onChange={(e) => updateFilters({ sort: e.target.value })}
             className="h-11 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue"

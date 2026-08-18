@@ -76,6 +76,8 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       {/* Main Catalog View */}
       <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+        <h2 className="sr-only">Catalog Filters & Book Listings</h2>
+
         {/* Interactive Filter & Sort Bar */}
         <CatalogFilterBar
           categories={categories}
