@@ -41,6 +41,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { updateUserRoleAction, toggleUserStatusAction } from "@/app/actions/user-actions";
+import { toast } from "react-toastify";
 
 export interface UserItem {
   id: string;
@@ -170,19 +171,23 @@ export function UserManagement({
     });
 
     if (res.ok) {
+      const msg = `Successfully updated ${roleModalUser.firstName} ${roleModalUser.lastName}'s role to ${targetRole}.`;
       setActionAlert({
         type: "success",
-        message: `Successfully updated ${roleModalUser.firstName} ${roleModalUser.lastName}'s role to ${targetRole}.`,
+        message: msg,
       });
+      toast.success(msg);
       setRoleModalUser(null);
       startTransition(() => {
         router.refresh();
       });
     } else {
+      const errMsg = res.error?.message || "Failed to update user role.";
       setActionAlert({
         type: "error",
-        message: res.error?.message || "Failed to update user role.",
+        message: errMsg,
       });
+      toast.error(errMsg);
     }
   };
 
@@ -197,19 +202,27 @@ export function UserManagement({
     });
 
     if (res.ok) {
+      const msg = `Account for ${statusModalUser.firstName} ${statusModalUser.lastName} has been ${newActiveState ? "activated" : "deactivated"}.`;
       setActionAlert({
         type: "success",
-        message: `Account for ${statusModalUser.firstName} ${statusModalUser.lastName} has been ${newActiveState ? "activated" : "deactivated"}.`,
+        message: msg,
       });
+      if (newActiveState) {
+        toast.success(msg);
+      } else {
+        toast.info(msg);
+      }
       setStatusModalUser(null);
       startTransition(() => {
         router.refresh();
       });
     } else {
+      const errMsg = res.error?.message || "Failed to update account status.";
       setActionAlert({
         type: "error",
-        message: res.error?.message || "Failed to update account status.",
+        message: errMsg,
       });
+      toast.error(errMsg);
     }
   };
 

@@ -36,6 +36,8 @@ import { AdminFeedbackResult, AdminFeedbackItem } from "@/lib/services/feedback-
 import { moderateFeedbackAction, deleteFeedbackAction } from "@/app/actions/feedback-actions";
 import { cn } from "@/lib/utils";
 
+import { toast } from "react-toastify";
+
 interface AdminFeedbackModerationProps {
   initialData: AdminFeedbackResult;
   currentStatus: "all" | "published" | "moderated";
@@ -79,15 +81,23 @@ export function AdminFeedbackModeration({
 
   const handleToggleModeration = (item: AdminFeedbackItem) => {
     setActionError(null);
+    const willBeModerated = !item.isModerated;
     startTransition(async () => {
       const res = await moderateFeedbackAction({
         feedbackId: item.id,
-        isModerated: !item.isModerated,
+        isModerated: willBeModerated,
       });
 
       if (!res.ok) {
-        setActionError(res.error?.message || "Failed to update review moderation status.");
+        const errMsg = res.error?.message || "Failed to update review moderation status.";
+        setActionError(errMsg);
+        toast.error(errMsg);
       } else {
+        toast.success(
+          willBeModerated
+            ? `Review hidden from public catalog`
+            : `Review published to public catalog`
+        );
         router.refresh();
       }
     });
@@ -105,8 +115,11 @@ export function AdminFeedbackModeration({
     setIsDeleting(false);
 
     if (!res.ok) {
-      setActionError(res.error?.message || "Failed to delete review.");
+      const errMsg = res.error?.message || "Failed to delete review.";
+      setActionError(errMsg);
+      toast.error(errMsg);
     } else {
+      toast.info("Review deleted permanently");
       setFeedbackToDelete(null);
       router.refresh();
     }

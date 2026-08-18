@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 import { SignInButton } from "@clerk/nextjs";
 import { Bookmark, Clock, CheckCircle2, AlertCircle, Loader2, X } from "lucide-react";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { requestReservationAction, cancelReservationAction } from "@/app/actions/reservation-actions";
 
@@ -42,15 +43,13 @@ export function ReserveButton({
       const res = await requestReservationAction(bookId, holdDays, holdUntilDate);
       if (res.ok && res.data) {
         setActiveReservationId(res.data.reservationId);
-        setFeedback({
-          type: "success",
-          message: "Hold placed successfully! Pick up your book copy at the circulation desk before expiration.",
-        });
+        const msg = "Hold placed successfully! Pick up your book copy at the circulation desk before expiration.";
+        setFeedback({ type: "success", message: msg });
+        toast.success(msg);
       } else {
-        setFeedback({
-          type: "error",
-          message: res.error?.message || "Failed to place reservation hold.",
-        });
+        const errMsg = res.error?.message || "Failed to place reservation hold.";
+        setFeedback({ type: "error", message: errMsg });
+        toast.error(errMsg);
       }
     });
   };
@@ -62,15 +61,13 @@ export function ReserveButton({
       const res = await cancelReservationAction(activeReservationId, bookId);
       if (res.ok) {
         setActiveReservationId(null);
-        setFeedback({
-          type: "success",
-          message: "Reservation hold cancelled successfully.",
-        });
+        const msg = "Reservation hold cancelled successfully.";
+        setFeedback({ type: "success", message: msg });
+        toast.info(msg);
       } else {
-        setFeedback({
-          type: "error",
-          message: res.error?.message || "Failed to cancel reservation.",
-        });
+        const errMsg = res.error?.message || "Failed to cancel reservation.";
+        setFeedback({ type: "error", message: errMsg });
+        toast.error(errMsg);
       }
     });
   };

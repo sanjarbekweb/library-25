@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { submitBookFeedbackAction } from "@/app/actions/feedback-actions";
 
+import { toast } from "react-toastify";
+
 interface SubmitFeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -54,6 +56,7 @@ export function SubmitFeedbackModal({
 
     if (res.ok) {
       setIsSuccess(true);
+      toast.success("Review submitted! Thank you for sharing your feedback.");
       if (onSuccess) onSuccess();
       setTimeout(() => {
         setIsSuccess(false);
@@ -62,7 +65,9 @@ export function SubmitFeedbackModal({
         onClose();
       }, 1400);
     } else {
-      setErrorMessage(res.error?.message || "Failed to submit review. Please try again.");
+      const errMsg = res.error?.message || "Failed to submit review. Please try again.";
+      setErrorMessage(errMsg);
+      toast.error(errMsg);
     }
   };
 

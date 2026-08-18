@@ -21,6 +21,7 @@ import {
   History,
   LogOut,
 } from "lucide-react";
+import { toast } from "react-toastify";
 import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
 import { CalendarUsageLimitPicker } from "@/components/modules/books/calendar-usage-limit-picker";
 import { Button } from "@/components/ui/button";
@@ -162,22 +163,26 @@ export function CirculationDesk({
       });
 
       if (res.ok && res.data) {
+        const msg = `Physical copy ${res.data.copyBarcode} checked out to ${res.data.studentName}. Due: ${format(new Date(res.data.dueDate), "MMM dd, yyyy")}`;
         setAlert({
           type: "success",
           title: "Checkout Completed Successfully",
-          message: `Physical copy ${res.data.copyBarcode} checked out to ${res.data.studentName}. Due: ${format(new Date(res.data.dueDate), "MMM dd, yyyy")}`,
+          message: msg,
         });
+        toast.success(`Checkout Success: ${res.data.copyBarcode} assigned to ${res.data.studentName}`);
         // Reset form
         setSelectedStudent(null);
         setSelectedCopy(null);
         setStudentQuery("");
         setCopyQuery("");
       } else {
+        const errMsg = res.error?.message || "An error occurred during checkout.";
         setAlert({
           type: "error",
           title: "Checkout Failed",
-          message: res.error?.message || "An error occurred during checkout.",
+          message: errMsg,
         });
+        toast.error(errMsg);
       }
     });
   };
@@ -212,11 +217,13 @@ export function CirculationDesk({
   const handleCheckin = () => {
     const targetIdentifier = selectedCheckinCopy ? selectedCheckinCopy.barcode : checkinBarcode.trim();
     if (!targetIdentifier) {
+      const errMsg = "Please enter or scan a book copy barcode to check in.";
       setAlert({
         type: "error",
         title: "Barcode Required",
-        message: "Please enter or scan a book copy barcode to check in.",
+        message: errMsg,
       });
+      toast.warn(errMsg);
       return;
     }
 
@@ -230,11 +237,13 @@ export function CirculationDesk({
       });
 
       if (res.ok && res.data) {
+        const msg = `Physical copy ${res.data.copyBarcode} (${res.data.bookTitle}) returned by ${res.data.studentName}. Status set to ${res.data.newStatus}.`;
         setAlert({
           type: "success",
           title: "Check-in Completed Successfully",
-          message: `Physical copy ${res.data.copyBarcode} (${res.data.bookTitle}) returned by ${res.data.studentName}. Status set to ${res.data.newStatus}.`,
+          message: msg,
         });
+        toast.success(`Check-in Success: ${res.data.copyBarcode} returned by ${res.data.studentName}`);
         // Reset check-in form
         setCheckinBarcode("");
         setSelectedCheckinCopy(null);
@@ -242,11 +251,13 @@ export function CirculationDesk({
         setCondition("GOOD");
         setTargetStatus("AVAILABLE");
       } else {
+        const errMsg = res.error?.message || "An error occurred during check-in.";
         setAlert({
           type: "error",
           title: "Check-in Failed",
-          message: res.error?.message || "An error occurred during check-in.",
+          message: errMsg,
         });
+        toast.error(errMsg);
       }
     });
   };

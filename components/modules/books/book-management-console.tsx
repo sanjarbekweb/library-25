@@ -25,6 +25,7 @@ import {
 } from "@/app/actions/book-management-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
 
 interface BookManagementConsoleProps {
   initialBooks: ManageableBookItem[];
@@ -98,15 +99,15 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
       });
 
       const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || "Upload failed");
-      }
+      if (!response.ok) throw new Error(data.error || "Upload failed");
 
       setCoverImageUrl(data.url);
       setModalSuccess("Cover image uploaded successfully to Cloudflare R2!");
+      toast.success("Cover image uploaded successfully!");
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : "Failed to upload cover image.");
+      const errMsg = err instanceof Error ? err.message : "Failed to upload cover image.";
+      setModalError(errMsg);
+      toast.error(errMsg);
     } finally {
       setIsUploading(false);
     }
@@ -134,11 +135,15 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
     setIsSubmitting(false);
 
     if (!res.success) {
-      setModalError(res.error || "Failed to create book title.");
+      const errMsg = res.error || "Failed to create book title.";
+      setModalError(errMsg);
+      toast.error(errMsg);
       return;
     }
 
-    setModalSuccess(res.message || "Book created successfully!");
+    const msg = res.message || "Book created successfully!";
+    setModalSuccess(msg);
+    toast.success(msg);
     
     // Reset form after short delay
     setTimeout(() => {
@@ -170,11 +175,15 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
     setIsAddingCopy(false);
 
     if (!res.success) {
-      setModalError(res.error || "Failed to add copy.");
+      const errMsg = res.error || "Failed to add copy.";
+      setModalError(errMsg);
+      toast.error(errMsg);
       return;
     }
 
-    setModalSuccess(res.message || "Copy added successfully!");
+    const msg = res.message || "Copy added successfully!";
+    setModalSuccess(msg);
+    toast.success(msg);
 
     setTimeout(() => {
       setSelectedBookForCopy(null);

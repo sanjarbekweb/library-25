@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     "ShelfSync is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
 };
 
+import { ToastProvider } from "@/components/providers/toast-provider";
+
 export default function RootLayout({
   children,
 }: {
@@ -42,7 +44,10 @@ export default function RootLayout({
         )}
       >
         <body className="min-h-full flex flex-col bg-background text-foreground">
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            {children}
+            <ToastProvider />
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
