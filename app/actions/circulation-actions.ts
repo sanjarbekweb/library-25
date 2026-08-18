@@ -14,6 +14,7 @@ import {
   CheckoutInput,
   CheckinInput,
 } from "@/lib/schemas/circulation-schema";
+import { getUserByClerkId } from "@/lib/services/user-service";
 import { ServiceError } from "@/lib/errors";
 
 export interface ServerActionResponse<T = unknown> {
@@ -39,7 +40,12 @@ async function assertAssistantAuth() {
     );
   }
 
-  const role = sessionClaims?.metadata?.role;
+  let role = sessionClaims?.metadata?.role;
+  if (!role) {
+    const dbUser = await getUserByClerkId(userId);
+    role = dbUser?.role;
+  }
+
   if (role !== "ASSISTANT" && role !== "ADMIN") {
     throw new ServiceError(
       "UNAUTHORIZED",

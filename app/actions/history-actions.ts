@@ -1,4 +1,3 @@
-"use me";
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
@@ -11,12 +10,22 @@ import {
   CopyTraceabilityDetail,
   BookHistoryItem,
 } from "@/lib/services/history-service";
+import { getUserByClerkId } from "@/lib/services/user-service";
 import { ServiceError } from "@/lib/errors";
 import { AuditLogFilterInput } from "@/lib/schemas/history-schema";
 
 export type ActionResponse<T> =
   | { ok: true; data: T }
   | { ok: false; error: { code: string; message: string } };
+
+async function verifyAssistantOrAdminRole(userId: string, sessionClaims: any): Promise<boolean> {
+  let role = (sessionClaims?.metadata as { role?: string })?.role;
+  if (!role) {
+    const dbUser = await getUserByClerkId(userId);
+    role = dbUser?.role;
+  }
+  return role === "ASSISTANT" || role === "ADMIN";
+}
 
 /**
  * Fetch authenticated student's loans, active checkouts, and historical returns.
@@ -72,8 +81,8 @@ export async function getCopyTraceabilityByBarcodeAction(
       };
     }
 
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (role !== "ASSISTANT" && role !== "ADMIN") {
+    const isAuthorized = await verifyAssistantOrAdminRole(userId, sessionClaims);
+    if (!isAuthorized) {
       return {
         ok: false,
         error: {
@@ -119,8 +128,8 @@ export async function getCopyHistoryAction(
       };
     }
 
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (role !== "ASSISTANT" && role !== "ADMIN") {
+    const isAuthorized = await verifyAssistantOrAdminRole(userId, sessionClaims);
+    if (!isAuthorized) {
       return {
         ok: false,
         error: {
@@ -166,8 +175,8 @@ export async function getAllAuditLogsAction(
       };
     }
 
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    if (role !== "ASSISTANT" && role !== "ADMIN") {
+    const isAuthorized = await verifyAssistantOrAdminRole(userId, sessionClaims);
+    if (!isAuthorized) {
       return {
         ok: false,
         error: {

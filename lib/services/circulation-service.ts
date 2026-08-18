@@ -37,6 +37,7 @@ export interface CopySearchResult {
   currentHolderId: string | null;
   activeLoanId: string | null;
   dueDate: Date | null;
+  borrowedAt: Date | null;
 }
 
 export interface CirculationDeskSummary {
@@ -131,17 +132,29 @@ export async function checkoutBookCopy(
   }
 
   // 3. Resolve BookCopy by ID or Barcode
+  const copyIdTrimmed = parsed.copyId.trim();
+  const cleanCopyId = copyIdTrimmed.replace(/[- ]/g, "");
+
   const copy = await prisma.bookCopy.findFirst({
     where: {
-      OR: [{ id: parsed.copyId }, { barcode: parsed.copyId }],
+      OR: [
+        { id: copyIdTrimmed },
+        { barcode: { equals: copyIdTrimmed, mode: "insensitive" } },
+        { barcode: { equals: cleanCopyId, mode: "insensitive" } },
+        { barcode: { contains: copyIdTrimmed, mode: "insensitive" } },
+        { book: { isbn: { equals: copyIdTrimmed, mode: "insensitive" } } },
+        { book: { isbn: { equals: cleanCopyId, mode: "insensitive" } } },
+      ],
     },
     include: {
       book: true,
+      currentHolder: true,
       reservations: {
         where: {
           status: "PENDING",
           expiresAt: { gt: new Date() },
         },
+        include: { student: true },
       },
     },
   });
@@ -171,16 +184,21 @@ export async function checkoutBookCopy(
     );
   }
 
-  // Check active reservations on copy
+  // Check active reservations on copy and holder position
   const activeCopyReservation = copy.reservations[0];
+  const reservingHolderName = copy.currentHolder
+    ? `${copy.currentHolder.firstName} ${copy.currentHolder.lastName}`
+    : activeCopyReservation?.student
+    ? `${activeCopyReservation.student.firstName} ${activeCopyReservation.student.lastName}`
+    : "another student";
+
   if (
     copy.status === "RESERVED" &&
-    activeCopyReservation &&
-    activeCopyReservation.studentId !== student.id
+    (copy.currentHolderId ? copy.currentHolderId !== student.id : (activeCopyReservation && activeCopyReservation.studentId !== student.id))
   ) {
     throw new ServiceError(
       "COPY_RESERVED_OTHER",
-      "This copy is currently reserved by another student",
+      `Physical copy ${copy.barcode} is currently reserved on hold for student ${reservingHolderName}`,
       409
     );
   }
@@ -290,10 +308,19 @@ export async function checkinBookCopy(
     );
   }
 
-  // 2. Resolve BookCopy with active loan
+  const copyIdTrimmed = parsed.copyId.trim();
+  const cleanCopyId = copyIdTrimmed.replace(/[- ]/g, "");
+
   const copy = await prisma.bookCopy.findFirst({
     where: {
-      OR: [{ id: parsed.copyId }, { barcode: parsed.copyId }],
+      OR: [
+        { id: copyIdTrimmed },
+        { barcode: { equals: copyIdTrimmed, mode: "insensitive" } },
+        { barcode: { equals: cleanCopyId, mode: "insensitive" } },
+        { barcode: { contains: copyIdTrimmed, mode: "insensitive" } },
+        { book: { isbn: { equals: copyIdTrimmed, mode: "insensitive" } } },
+        { book: { isbn: { equals: cleanCopyId, mode: "insensitive" } } },
+      ],
     },
     include: {
       book: true,
@@ -477,13 +504,17 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
       currentHolderId: c.currentHolderId,
       activeLoanId: c.loans[0]?.id || null,
       dueDate: c.loans[0]?.dueDate || null,
+      borrowedAt: c.loans[0]?.borrowedAt || null,
     }));
   }
+
+  const cleanQuery = trimmed.replace(/[- ]/g, "");
 
   const copies = await prisma.bookCopy.findMany({
     where: {
       OR: [
         { barcode: { contains: trimmed, mode: "insensitive" } },
+        { barcode: { contains: cleanQuery, mode: "insensitive" } },
         { id: trimmed },
         {
           book: {
@@ -491,6 +522,7 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
               { title: { contains: trimmed, mode: "insensitive" } },
               { author: { contains: trimmed, mode: "insensitive" } },
               { isbn: { contains: trimmed, mode: "insensitive" } },
+              { isbn: { contains: cleanQuery, mode: "insensitive" } },
             ],
           },
         },
@@ -521,6 +553,7 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
     currentHolderId: c.currentHolderId,
     activeLoanId: c.loans[0]?.id || null,
     dueDate: c.loans[0]?.dueDate || null,
+    borrowedAt: c.loans[0]?.borrowedAt || null,
   }));
 }
 

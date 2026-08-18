@@ -2,7 +2,8 @@
 
 import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
-import { format, addDays } from "date-fns";
+import Image from "next/image";
+import { format, addDays, differenceInCalendarDays } from "date-fns";
 import {
   Search,
   BookOpen,
@@ -200,7 +201,7 @@ export function CirculationDesk({
     const timer = setTimeout(async () => {
       const res = await searchCopiesAction(checkinBarcode);
       if (res.ok && res.data) {
-        setCheckinCopyResults(res.data.filter((c) => c.status === "BORROWED" || c.activeLoanId));
+        setCheckinCopyResults(res.data);
       }
     }, 250);
 
@@ -290,6 +291,7 @@ export function CirculationDesk({
       currentHolderId: loanItem.studentId,
       activeLoanId: loanItem.loanId,
       dueDate: loanItem.dueDate,
+      borrowedAt: loanItem.borrowedAt,
     });
   };
 
@@ -694,83 +696,264 @@ export function CirculationDesk({
       )}
 
       {/* ========================================================= */}
-      {/* TAB 2: RAPID CHECK-IN */}
+      {/* TAB 2: RAPID CHECK-IN & EARLY RETURN */}
       {/* ========================================================= */}
       {activeTab === "checkin" && (
         <Card className="rounded-2xl border border-border bg-card shadow-sm">
           <CardHeader className="border-b border-border/60 pb-4">
-            <CardTitle className="text-lg font-bold font-display flex items-center gap-2">
-              <RefreshCw className="w-5 h-5 text-primary" /> Sub-10s Check-in Console
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Scan returned physical book barcode, verify physical condition, and return to inventory.
-            </CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <CardTitle className="text-lg font-bold font-display flex items-center gap-2">
+                  <RefreshCw className="w-5 h-5 text-emerald-500" /> Sub-10s Check-in Console
+                </CardTitle>
+                <CardDescription className="text-xs mt-1">
+                  Search by book title or scan barcode. Books can be checked in early before their due date at any time.
+                </CardDescription>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold border border-emerald-500/20 shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Early Return Allowed
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
+            {/* Early Return Notice Banner */}
+            <div className="p-3.5 rounded-2xl bg-accent/60 border border-border text-xs flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <span className="font-bold text-foreground block">Early Return {"&"} Instant Re-stocking</span>
+                <span className="text-muted-foreground">
+                  Students may return physical books prior to or past their due date. Processing a return immediately releases the copy back to Available inventory.
+                </span>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Copy Barcode Scan */}
+              {/* Copy / Book Title Search */}
               <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Returned Copy Barcode / ID
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Search className="w-3.5 h-3.5" /> 1. Search Book Title or Scan Barcode
                 </label>
                 <div className="relative">
-                  <QrCode className="w-4 h-4 absolute left-3 top-3.5 text-muted-foreground" />
+                  <Search className="w-4 h-4 absolute left-3 top-3.5 text-muted-foreground" />
                   <Input
-                    placeholder="Scan barcode (e.g., BC-GATSBY-01)..."
+                    placeholder="Search by book name (e.g. 1984, Gatsby) or scan barcode..."
                     value={checkinBarcode}
-                    onChange={(e) => setCheckinBarcode(e.target.value)}
-                    className="pl-9 rounded-xl border-border font-mono text-base"
+                    onChange={(e) => {
+                      setCheckinBarcode(e.target.value);
+                      if (selectedCheckinCopy && e.target.value !== selectedCheckinCopy.barcode) {
+                        setSelectedCheckinCopy(null);
+                      }
+                    }}
+                    className="pl-9 rounded-xl border-border font-medium text-sm min-h-[44px]"
                   />
 
-                  {/* Autocomplete Dropdown */}
+                  {/* Search Autocomplete Dropdown */}
                   {checkinCopyResults.length > 0 && !selectedCheckinCopy && (
-                    <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-border">
+                    <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-2xl shadow-xl max-h-72 overflow-y-auto divide-y divide-border/60">
                       {checkinCopyResults.map((c) => (
                         <button
                           key={c.id}
+                          type="button"
                           onClick={() => {
                             setSelectedCheckinCopy(c);
                             setCheckinBarcode(c.barcode);
                             setCheckinCopyResults([]);
                           }}
-                          className="w-full p-3 text-left hover:bg-muted/80 transition-colors flex items-center justify-between group"
+                          className="w-full p-3.5 text-left hover:bg-accent/70 transition-colors flex items-center justify-between gap-3 group"
                         >
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold px-1.5 py-0.5 bg-muted rounded">
-                                {c.barcode}
-                              </span>
-                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600">
-                                {c.currentHolderName || "Borrowed"}
-                              </span>
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Book Cover Thumbnail */}
+                            <div className="relative h-12 w-9 rounded bg-muted overflow-hidden shrink-0 border border-border shadow-2xs">
+                              {c.coverImageUrl ? (
+                                <Image
+                                  src={c.coverImageUrl}
+                                  alt={c.bookTitle}
+                                  fill
+                                  sizes="36px"
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                                  <BookOpen className="h-4 w-4" />
+                                </div>
+                              )}
                             </div>
-                            <div className="font-medium text-sm text-foreground mt-1">
-                              {c.bookTitle}
+
+                            <div className="min-w-0 space-y-0.5">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 bg-muted text-foreground rounded border border-border">
+                                  {c.barcode}
+                                </span>
+                                {c.currentHolderName ? (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                                    <UserCheck className="w-3 h-3 text-blue-500 shrink-0" />
+                                    Holder: {c.currentHolderName}
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                    No Active Borrower
+                                  </span>
+                                )}
+                              </div>
+                              <h4 className="font-bold text-sm text-foreground truncate group-hover:text-brand-blue transition-colors">
+                                {c.bookTitle}
+                              </h4>
+                              <p className="text-xs text-muted-foreground truncate">by {c.bookAuthor}</p>
                             </div>
                           </div>
-                          <span className="text-xs text-muted-foreground group-hover:text-primary font-medium">
-                            Select →
-                          </span>
+
+                          <div className="flex flex-col items-end shrink-0 gap-1">
+                            <span className="text-xs text-brand-blue font-bold group-hover:translate-x-0.5 transition-transform">
+                              Select {"→"}
+                            </span>
+                            {c.dueDate && (
+                              <span className="text-[10px] text-muted-foreground font-mono">
+                                Due {format(new Date(c.dueDate), "MMM dd")}
+                              </span>
+                            )}
+                          </div>
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
 
+                {!selectedCheckinCopy && (
+                  <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-brand-yellow" />
+                    Type a book title or barcode above, then click on the matching book from the search list to select it for check-in.
+                  </p>
+                )}
+
+                {/* Selected Book Rich Return Preview Card */}
                 {selectedCheckinCopy && (
-                  <div className="p-3 rounded-xl border border-border bg-muted/30 text-xs space-y-1">
-                    <p className="font-bold text-foreground">{selectedCheckinCopy.bookTitle}</p>
-                    <p className="text-muted-foreground">
-                      Borrower: {selectedCheckinCopy.currentHolderName}
-                    </p>
+                  <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 space-y-3 animate-in fade-in zoom-in-95">
+                    <div className="flex items-start justify-between gap-3 border-b border-emerald-500/20 pb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative h-14 w-10 rounded-lg bg-muted overflow-hidden shrink-0 border border-border shadow-xs">
+                          {selectedCheckinCopy.coverImageUrl ? (
+                            <Image
+                              src={selectedCheckinCopy.coverImageUrl}
+                              alt={selectedCheckinCopy.bookTitle}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                              <BookOpen className="h-5 w-5" />
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-card border border-border text-foreground">
+                            {selectedCheckinCopy.barcode}
+                          </span>
+                          <h4 className="font-bold text-base text-foreground mt-1 leading-tight">
+                            {selectedCheckinCopy.bookTitle}
+                          </h4>
+                          <p className="text-xs text-muted-foreground font-medium">by {selectedCheckinCopy.bookAuthor}</p>
+                        </div>
+                      </div>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedCheckinCopy(null)}
+                        className="text-xs text-muted-foreground hover:text-foreground shrink-0"
+                      >
+                        Change
+                      </Button>
+                    </div>
+
+                    {/* Borrower & Due Date Info or Unborrowed Warning */}
+                    {selectedCheckinCopy.status === "BORROWED" || selectedCheckinCopy.activeLoanId ? (
+                      <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                          <div className="p-2.5 rounded-xl bg-card border border-border/60 space-y-0.5">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Borrower Student</span>
+                            <span className="font-bold text-foreground block truncate">
+                              {selectedCheckinCopy.currentHolderName || "Assigned Student"}
+                            </span>
+                          </div>
+
+                          <div className="p-2.5 rounded-xl bg-card border border-border/60 space-y-0.5">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Due Date</span>
+                            <span className="font-mono font-bold text-foreground block">
+                              {selectedCheckinCopy.dueDate
+                                ? format(new Date(selectedCheckinCopy.dueDate), "MMM dd, yyyy")
+                                : "N/A"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Early Return / Overdue Calculation Indicator */}
+                        {selectedCheckinCopy.dueDate && (() => {
+                          const now = new Date();
+                          const dueDate = new Date(selectedCheckinCopy.dueDate);
+                          const daysDiff = differenceInCalendarDays(dueDate, now);
+
+                          if (daysDiff > 0) {
+                            return (
+                              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                  Early Return ({daysDiff} Day{daysDiff === 1 ? "" : "s"} Before Due Date)
+                                </span>
+                                <span className="font-mono text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded-full font-bold">
+                                  On Schedule
+                                </span>
+                              </div>
+                            );
+                          } else if (daysDiff === 0) {
+                            return (
+                              <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-300 text-xs font-semibold flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                                Returned On Due Date
+                              </div>
+                            );
+                          } else {
+                            const overdueDays = Math.abs(daysDiff);
+                            return (
+                              <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-1.5">
+                                <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
+                                Returned Overdue ({overdueDays} Day{overdueDays === 1 ? "" : "s"} Past Due)
+                              </div>
+                            );
+                          }
+                        })()}
+                      </>
+                    ) : (
+                      <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs space-y-2">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                          <div>
+                            <strong className="block font-bold">Copy is Currently {selectedCheckinCopy.status}</strong>
+                            <span>Physical copy {selectedCheckinCopy.barcode} is currently in the library inventory and does not have an active borrowing record to check in.</span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setActiveTab("checkout");
+                            setCopyQuery(selectedCheckinCopy.barcode);
+                          }}
+                          className="rounded-full text-xs font-semibold gap-1 bg-card hover:bg-accent"
+                        >
+                          Switch to Checkout Tab {"→"}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* Physical Condition Selector */}
               <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Returned Physical Condition
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  2. Returned Physical Condition
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {(["MINT", "GOOD", "FAIR", "DAMAGED"] as CopyCondition[]).map((cond) => (
@@ -785,17 +968,23 @@ export function CirculationDesk({
                           setTargetStatus("AVAILABLE");
                         }
                       }}
-                      className={`p-3 rounded-xl text-xs font-semibold border transition-all text-center ${condition === cond
+                      className={`p-3.5 rounded-xl text-xs font-semibold border transition-all text-center min-h-[44px] ${
+                        condition === cond
                           ? cond === "DAMAGED"
                             ? "bg-destructive text-destructive-foreground border-destructive shadow-sm"
                             : "bg-primary text-primary-foreground border-primary shadow-sm"
                           : "bg-card border-border hover:bg-muted text-muted-foreground"
-                        }`}
+                      }`}
                     >
                       {cond}
+                      {cond === "DAMAGED" && <span className="block text-[9px] opacity-80 mt-0.5">(Maintenance)</span>}
                     </button>
                   ))}
                 </div>
+
+                <p className="text-[11px] text-muted-foreground">
+                  Selecting <strong className="text-foreground">DAMAGED</strong> automatically routes the physical copy to maintenance status.
+                </p>
               </div>
             </div>
 
@@ -805,20 +994,36 @@ export function CirculationDesk({
                 <FileText className="w-3.5 h-3.5" /> Inspection / Check-in Notes (Optional)
               </label>
               <Input
-                placeholder="Add condition notes (e.g. Spine wear, minor page crease)..."
+                placeholder="Add condition notes (e.g. Returned early by student, spine in good condition)..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="rounded-xl border-border"
+                className="rounded-xl border-border min-h-[44px] text-xs"
               />
             </div>
 
             {/* Action Submit Button */}
-            <div className="border-t border-border/60 pt-4 flex justify-end">
+            <div className="border-t border-border/60 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <span className="text-xs text-muted-foreground font-mono">
+                {selectedCheckinCopy ? (
+                  selectedCheckinCopy.status === "BORROWED" || selectedCheckinCopy.activeLoanId ? (
+                    <>Ready to check in <strong className="text-foreground">{selectedCheckinCopy.barcode}</strong> ({selectedCheckinCopy.bookTitle})</>
+                  ) : (
+                    <span className="text-amber-600 dark:text-amber-400">Copy {selectedCheckinCopy.barcode} is currently {selectedCheckinCopy.status} (no active borrowing record).</span>
+                  )
+                ) : (
+                  <>Please select a target book from search results above to enable check-in.</>
+                )}
+              </span>
+
               <Button
                 onClick={handleCheckin}
-                disabled={isPending || (!checkinBarcode.trim() && !selectedCheckinCopy)}
+                disabled={
+                  isPending ||
+                  !selectedCheckinCopy ||
+                  (selectedCheckinCopy.status !== "BORROWED" && !selectedCheckinCopy.activeLoanId)
+                }
                 size="lg"
-                className="rounded-full px-8 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg transition-all"
+                className="w-full sm:w-auto rounded-full px-8 font-semibold bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white shadow-md hover:shadow-lg transition-all min-h-[44px]"
               >
                 {isPending ? (
                   <>
@@ -826,7 +1031,7 @@ export function CirculationDesk({
                   </>
                 ) : (
                   <>
-                    Confirm & Check-in Copy <CheckCircle2 className="w-4 h-4 ml-2" />
+                    Confirm {"&"} Check-in Copy <CheckCircle2 className="w-4 h-4 ml-2" />
                   </>
                 )}
               </Button>
