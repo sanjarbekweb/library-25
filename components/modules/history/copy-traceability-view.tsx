@@ -244,7 +244,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
               <CardHeader className="bg-muted/30 pb-3 border-b border-border flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-base font-bold font-display flex items-center gap-2">
-                    <History className="h-4 w-4 text-purple-600" />
+                    <History className="h-4 w-4 text-brand-blue" />
                     Immutable BookHistory Audit Log ({detail.history.length})
                   </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground mt-0.5">

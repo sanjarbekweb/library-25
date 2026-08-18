@@ -6,6 +6,13 @@ The design language unites two complementary visual systems: B2B Technical Preci
 - **Light Theme:** Built upon warm bone/cream surfaces (`#FBF9F5`) and coordinate-grid tech canvases (`#F9F9F8`), paired with high-contrast jet-black typography, crisp hairline borders, and vivid canary-yellow and cobalt-blue accents[cite: 1].
 - **Dark Theme:** Deep obsidian canvas (`#0D0F12`) with elevated charcoal cards (`#16191E`), subtle white hairline borders, and glowing neon accents[cite: 1].
 
+## Color Palette Discipline & Minimalist Palette
+
+Stick strictly to a restrained, disciplined color palette. Rather than using an overwhelming array of arbitrary accent colors or rainbow tints:
+- Rely on core brand tokens (`brand-yellow`, `brand-blue`, neutral monochromatic tones).
+- Use semantic state indicators sparingly (emerald for active/returned success, rose for overdue/deletion errors, amber for holds/ratings).
+- Create visual hierarchy using font weights, crisp hairline borders, and subtle background opacity (`bg-accent`, `bg-muted/50`).
+
 ## Colors
 
 All UI components must use these CSS custom property tokens—hardcoded arbitrary hex values are prohibited in component code[cite: 1, 3].

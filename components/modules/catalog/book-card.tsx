@@ -37,33 +37,34 @@ export function BookCard({ book }: BookCardProps) {
         )}
 
         {/* Category Pill Tag Overlay */}
-        <div className="absolute top-3 left-3">
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-background/90 backdrop-blur text-foreground border border-border shadow-xs">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+          <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-background/90 backdrop-blur text-foreground border border-border shadow-xs">
             {book.category}
           </span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4">
+      <div className="flex flex-col flex-1 p-3 sm:p-4">
         {/* Availability Badge */}
         <div className="mb-2">
           <CopyAvailabilityBadge
             availableCount={book.availableCopiesCount}
             totalCount={book.totalCopiesCount}
+            className="text-[10px] sm:text-xs px-2 py-0.5"
           />
         </div>
 
         {/* Title */}
-        <h3 className="font-display font-bold text-base text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
+        <h3 className="font-display font-bold text-xs sm:text-base text-foreground line-clamp-2 sm:line-clamp-1 group-hover:text-brand-blue transition-colors">
           {book.title}
         </h3>
 
         {/* Author & Year */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
+        <div className="flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground mt-1 gap-1">
           <span className="line-clamp-1">{book.author}</span>
           {book.publicationYear && (
-            <span className="flex items-center gap-1 font-mono text-[11px] shrink-0">
+            <span className="hidden sm:flex items-center gap-1 font-mono text-[11px] shrink-0">
               <Calendar className="h-3 w-3" />
               {book.publicationYear}
             </span>
@@ -72,27 +73,27 @@ export function BookCard({ book }: BookCardProps) {
 
         {/* Description snippet */}
         {book.description && (
-          <p className="text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
+          <p className="hidden sm:block text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
             {book.description}
           </p>
         )}
 
         {/* Footer Rating */}
-        <div className="mt-auto pt-3 flex items-center justify-between border-t border-border/60 text-xs">
+        <div className="mt-auto pt-2.5 sm:pt-3 flex items-center justify-between border-t border-border/60 text-[10px] sm:text-xs">
           <div className="flex items-center gap-1">
-            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-400 text-amber-400 shrink-0" />
             <span className="font-semibold text-foreground">
               {book.averageRating ? book.averageRating.toFixed(1) : "New"}
             </span>
             {book.reviewsCount > 0 && (
-              <span className="text-muted-foreground font-mono text-[11px]">
+              <span className="text-muted-foreground font-mono text-[10px] sm:text-[11px]">
                 ({book.reviewsCount})
               </span>
             )}
           </div>
 
-          <span className="text-[11px] font-medium text-brand-blue group-hover:underline">
-            View Details &rarr;
+          <span className="text-[10px] sm:text-[11px] font-medium text-brand-blue group-hover:underline shrink-0">
+            Details &rarr;
           </span>
         </div>
       </div>

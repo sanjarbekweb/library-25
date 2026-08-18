@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import {
@@ -14,6 +15,7 @@ import {
   ArrowRight,
   ShieldAlert,
   Bookmark,
+  Star,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StudentLoansOverview, StudentLoanItem } from "@/lib/services/history-service";
+import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
 import { cn } from "@/lib/utils";
 
 interface StudentLoansViewProps {
@@ -34,6 +37,7 @@ interface StudentLoansViewProps {
 
 export function StudentLoansView({ overview }: StudentLoansViewProps) {
   const { stats, activeLoans, historicalLoans, user } = overview;
+  const [selectedLoanForFeedback, setSelectedLoanForFeedback] = useState<StudentLoanItem | null>(null);
 
   return (
     <div className="space-y-8">
@@ -125,7 +129,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
             <span className="text-xs font-mono uppercase text-muted-foreground">
               Total Borrowed
             </span>
-            <BookOpen className="h-4 w-4 text-purple-500" />
+            <BookOpen className="h-4 w-4 text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.totalLoansCount}
@@ -280,7 +284,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                   <TableHead className="font-mono text-xs uppercase">Borrowed On</TableHead>
                   <TableHead className="font-mono text-xs uppercase">Returned On</TableHead>
                   <TableHead className="font-mono text-xs uppercase">Condition</TableHead>
-                  <TableHead className="font-mono text-xs uppercase text-right">Desk Staff</TableHead>
+                  <TableHead className="font-mono text-xs uppercase text-right">Review / Feedback</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -312,8 +316,23 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                         {loan.condition}
                       </span>
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground text-right font-medium">
-                      {loan.assistantName}
+                    <TableCell className="text-right">
+                      {loan.feedback ? (
+                        <div className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <span>{loan.feedback.rating} / 5 Stars</span>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSelectedLoanForFeedback(loan)}
+                          className="rounded-full text-xs font-medium gap-1.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-400/30 hover:bg-amber-500/20"
+                        >
+                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <span>Write Review</span>
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -328,6 +347,17 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
           </Card>
         )}
       </div>
+
+      {/* Submit Feedback Modal Dialog */}
+      {selectedLoanForFeedback && (
+        <SubmitFeedbackModal
+          isOpen={selectedLoanForFeedback !== null}
+          onClose={() => setSelectedLoanForFeedback(null)}
+          loanId={selectedLoanForFeedback.loanId}
+          bookTitle={selectedLoanForFeedback.bookTitle}
+          bookAuthor={selectedLoanForFeedback.bookAuthor}
+        />
+      )}
     </div>
   );
 }

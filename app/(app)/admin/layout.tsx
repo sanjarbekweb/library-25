@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { getUserByClerkId } from "@/lib/services/user-service";
 
 export default async function AdminLayout({
   children,
@@ -12,7 +13,12 @@ export default async function AdminLayout({
     redirect("/sign-in");
   }
 
-  const role = sessionClaims?.metadata?.role;
+  let role = sessionClaims?.metadata?.role;
+
+  if (!role) {
+    const dbUser = await getUserByClerkId(userId);
+    role = dbUser?.role;
+  }
 
   if (role !== "ADMIN") {
     redirect("/");

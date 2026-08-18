@@ -154,6 +154,7 @@ export async function getCatalogBooks(
             },
           },
           feedbacks: {
+            where: { isModerated: false },
             select: {
               rating: true,
             },
@@ -220,6 +221,7 @@ export async function getCatalogBooks(
           },
         },
         feedbacks: {
+          where: { isModerated: false },
           select: {
             rating: true,
           },
@@ -289,6 +291,7 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
         },
       },
       feedbacks: {
+        where: { isModerated: false },
         orderBy: { createdAt: "desc" },
         include: {
           student: {

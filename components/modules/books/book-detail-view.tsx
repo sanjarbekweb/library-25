@@ -20,12 +20,14 @@ interface BookDetailViewProps {
   book: BookDetails;
   isSignedIn?: boolean;
   existingReservationId?: string | null;
+  eligibleLoanIdForFeedback?: string | null;
 }
 
 export function BookDetailView({
   book,
   isSignedIn = false,
   existingReservationId,
+  eligibleLoanIdForFeedback,
 }: BookDetailViewProps) {
   const isAvailable = book.copyBreakdown.available > 0;
 
@@ -85,7 +87,7 @@ export function BookDetailView({
             <div className="space-y-4">
               {/* Category Badge & ISBN */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
                   {book.category}
                 </span>
                 {book.isbn && (
@@ -188,11 +190,11 @@ export function BookDetailView({
             </span>
           </div>
 
-          <div className="rounded-2xl border border-purple-500/30 bg-purple-500/5 p-4 flex flex-col items-center text-center col-span-2 sm:col-span-1">
-            <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col items-center text-center col-span-2 sm:col-span-1">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Maintenance
             </span>
-            <span className="font-mono text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
+            <span className="font-mono text-2xl font-bold text-foreground mt-1">
               {book.copyBreakdown.maintenance}
             </span>
           </div>
@@ -205,6 +207,9 @@ export function BookDetailView({
         averageRating={book.averageRating}
         totalReviews={book.totalReviews}
         ratingDistribution={book.ratingDistribution}
+        eligibleLoanId={eligibleLoanIdForFeedback}
+        bookTitle={book.title}
+        bookAuthor={book.author}
       />
     </div>
   );

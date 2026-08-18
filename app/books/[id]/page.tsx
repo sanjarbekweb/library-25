@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getBookDetails } from "@/lib/services/book-service";
 import { getStudentReservationForBook } from "@/lib/services/reservation-service";
+import { getEligibleLoanForBookFeedback } from "@/lib/services/feedback-service";
 import { BookDetailView } from "@/components/modules/books/book-detail-view";
 import { Navbar } from "@/components/shared/navbar";
 
@@ -52,9 +53,10 @@ export default async function BookDetailPage({ params }: PageProps) {
   const { id } = await params;
   const { userId } = await auth();
 
-  const [book, existingReservation] = await Promise.all([
+  const [book, existingReservation, eligibleLoan] = await Promise.all([
     getBookDetails(id),
     userId ? getStudentReservationForBook(id, userId) : Promise.resolve(null),
+    userId ? getEligibleLoanForBookFeedback(id, userId) : Promise.resolve(null),
   ]);
 
   if (!book) {
@@ -113,6 +115,7 @@ export default async function BookDetailPage({ params }: PageProps) {
           book={book}
           isSignedIn={!!userId}
           existingReservationId={existingReservation?.id}
+          eligibleLoanIdForFeedback={eligibleLoan?.loanId}
         />
       </main>
     </div>

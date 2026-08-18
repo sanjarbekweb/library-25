@@ -30,11 +30,15 @@ export function CopyAvailabilityBadge({
         )}
       />
       {isAvailable ? (
-        <span>
-          {availableCount} of {totalCount} Available
+        <span className="truncate">
+          <span className="hidden sm:inline">{availableCount} of {totalCount} Available</span>
+          <span className="sm:hidden">{availableCount}/{totalCount} Avail</span>
         </span>
       ) : (
-        <span>All {totalCount} Checked Out</span>
+        <span className="truncate">
+          <span className="hidden sm:inline">All {totalCount} Checked Out</span>
+          <span className="sm:hidden">{totalCount}/{totalCount} Out</span>
+        </span>
       )}
     </span>
   );

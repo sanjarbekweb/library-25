@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import { Star, MessageSquareQuote, CheckCircle2 } from "lucide-react";
 import { BookFeedbackItem } from "@/lib/services/book-service";
+import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
+import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 
 interface ReviewsListProps {
@@ -7,6 +12,9 @@ interface ReviewsListProps {
   averageRating: number | null;
   totalReviews: number;
   ratingDistribution: Record<number, number>;
+  eligibleLoanId?: string | null;
+  bookTitle?: string;
+  bookAuthor?: string;
 }
 
 export function ReviewsList({
@@ -14,9 +22,36 @@ export function ReviewsList({
   averageRating,
   totalReviews,
   ratingDistribution,
+  eligibleLoanId,
+  bookTitle = "this book",
+  bookAuthor = "",
 }: ReviewsListProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
+      {/* Verified Student Review Prompt Banner */}
+      {eligibleLoanId && (
+        <div className="rounded-2xl border border-amber-300 bg-amber-50/60 dark:bg-amber-950/40 dark:border-amber-800 p-5 text-amber-900 dark:text-amber-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h4 className="font-display font-bold text-base flex items-center gap-2">
+              <Star className="h-5 w-5 fill-amber-400 text-amber-500" />
+              You completed a loan for this title!
+            </h4>
+            <p className="text-xs text-amber-800 dark:text-amber-300">
+              Share your reading experience and help other students discover great books.
+            </p>
+          </div>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="rounded-full bg-amber-500 text-white hover:bg-amber-600 font-semibold text-xs gap-1.5 shrink-0"
+          >
+            <Star className="h-4 w-4 fill-current" />
+            Write Verified Review
+          </Button>
+        </div>
+      )}
+
       {/* Overview & Distribution Header */}
       <div className="rounded-2xl border border-border bg-card p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
         {/* Rating Score */}
@@ -133,6 +168,17 @@ export function ReviewsList({
           </div>
         )}
       </div>
+
+      {/* Review Modal Dialog */}
+      {eligibleLoanId && (
+        <SubmitFeedbackModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          loanId={eligibleLoanId}
+          bookTitle={bookTitle}
+          bookAuthor={bookAuthor}
+        />
+      )}
     </div>
   );
 }

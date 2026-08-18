@@ -28,7 +28,7 @@ export function CatalogShell({
   books,
 }: CatalogShellProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F4F6F9] dark:bg-canvas-dark text-foreground">
+    <div className="min-h-screen flex flex-col bg-canvas-warm dark:bg-canvas-dark text-foreground">
       {/* Top Header Bar */}
       <header className="sticky top-0 z-30 h-16 border-b border-border bg-card/90 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ export function CatalogShell({
       </header>
 
       {/* Catalog Body Container */}
-      <main className="flex-1 p-4 sm:p-8 space-y-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-2.5 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto w-full">
         {/* Active Search Header Banner */}
         {currentSearch ? (
           <div className="rounded-3xl border border-border bg-card p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
@@ -92,7 +92,7 @@ export function CatalogShell({
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 min-[390px]:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4 md:gap-6">
             {books.map((book) => (
               <BookCard key={book.id} book={book} />
             ))}

@@ -3,13 +3,13 @@
 Update this file after every meaningful implementation
 change.
 
-## Current Phase
+### Current Phase
 
-- Complete (Unit 07)
+- Complete (Unit 08)
 
 ## Current Goal
 
-- Unit 07 complete. Ready for Unit 08: Verified Post-Loan Feedback & Reviews.
+- Unit 08 complete. Ready for Unit 09: Admin User & Role Management Console.
 
 ## Completed
 
@@ -75,13 +75,24 @@ change.
   - [x] Integrate "Copy Audit Trail & Traceability" 5th tab into Circulation Desk console (`components/modules/circulation/circulation-desk.tsx`)
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero warnings/errors
 
+- [x] Unit 08: Verified Post-Loan Feedback & Reviews
+  - [x] Create Zod validation schemas in `lib/schemas/feedback-schema.ts` (`SubmitFeedbackSchema`, `ModerateFeedbackSchema`, `DeleteFeedbackSchema`, `AdminFeedbackQuerySchema`)
+  - [x] Build core domain service `lib/services/feedback-service.ts` (`submitBookFeedback`, `getAdminFeedbacks`, `toggleFeedbackModeration`, `deleteFeedback`, `getEligibleLoanForBookFeedback`)
+  - [x] Update `lib/services/book-service.ts` and `lib/services/history-service.ts` to enforce `isModerated: false` public visibility and feedback association
+  - [x] Build Server Actions (`app/actions/feedback-actions.ts`) with Clerk `auth()` session validation and `ADMIN` role checks
+  - [x] Build UI components: `SubmitFeedbackModal` (1–5 star rating picker with comment textarea), `AdminFeedbackModeration` console, and zero-CLS `FeedbackSkeleton`
+  - [x] Integrate feedback triggers into student loan dashboard (`components/modules/history/student-loans-view.tsx`) and book detail view (`components/modules/books/reviews-list.tsx`)
+  - [x] Build Admin moderation route `app/(app)/admin/feedback/page.tsx` & `app/(app)/admin/feedback/loading.tsx`
+  - [x] Upgrade Admin Dashboard (`app/(app)/admin/page.tsx`) with navigation cards linking to review moderation
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
 ## In Progress
 
 - None.
 
 ## Next Up
 
-- Unit 08: Verified Post-Loan Feedback & Reviews
+- Unit 09: Admin User & Role Management Console
 
 ## Open Questions
 
@@ -109,18 +120,18 @@ change.
 ## Session Notes
 
 - Session: 2026-08-18
-- Unit 07 completed: Immutable BookHistory Audit Trail & Copy Traceability.
-- Created `lib/schemas/history-schema.ts` with Zod validation.
-- Created `lib/services/history-service.ts` for time-sequenced audit logs (`getCopyHistory`, `getCopyTraceabilityByBarcode`), student loan tracking (`getUserLoansAndHistory`), and system audit filtering (`getAllAuditLogs`).
-- Created Server Actions `app/actions/history-actions.ts` with Clerk session validation and RBAC guards for assistants/admins.
-- Built UI components in `components/modules/history/`:
-  - `CopyHistoryTimeline`: Visual time-sequenced timeline showing action badges, actor info, state transitions (`previousState` -> `newState`), and condition notes.
-  - `CopyTraceabilityView`: Physical copy barcode lookup console with metadata inspector, current holder info, and embedded audit log.
-  - `StudentLoansView`: Student dashboard featuring active checkouts, overdue alert banner with calculated days overdue, and historical returns table.
-  - `HistorySkeleton`: Matching zero-CLS shimmer skeleton placeholders.
-- Created route segments:
-  - `app/loans/page.tsx` & `app/loans/loading.tsx`: Student personal "My Loans" page.
-  - `app/(app)/assistant/history/page.tsx` & `app/(app)/assistant/history/loading.tsx`: Assistant copy traceability console.
-- Integrated "Copy Audit Trail & Traceability" 5th tab into `CirculationDesk` console.
+- Unit 08 completed: Verified Post-Loan Feedback & Reviews.
+- Created `lib/schemas/feedback-schema.ts` with Zod validation.
+- Created `lib/services/feedback-service.ts` for feedback submission (`submitBookFeedback`), admin feedback moderation (`getAdminFeedbacks`, `toggleFeedbackModeration`), review deletion (`deleteFeedback`), and eligibility lookup (`getEligibleLoanForBookFeedback`).
+- Enforced 1-feedback-per-loan unique database constraint (`loanId` `@unique` in Prisma schema).
+- Enforced loan status requirement (`loan.status === 'RETURNED'`) and student ownership verification before creating reviews.
+- Updated `lib/services/book-service.ts` so public catalog ratings and review streams filter `where: { isModerated: false }`.
+- Updated `lib/services/history-service.ts` so student loans overview reports feedback state per returned loan.
+- Created Server Actions `app/actions/feedback-actions.ts` with Clerk session verification and `ADMIN` role protection for moderation/deletion.
+- Created UI components in `components/modules/feedback/`:
+  - `SubmitFeedbackModal`: Interactive modal with 1–5 star hover selector, comment textarea (0/1000 counter), error alert, and submit state.
+  - `AdminFeedbackModeration`: Administrative moderation console featuring stats summary cards, status tabs (All, Published, Moderated), search input, moderation toggle buttons, and permanent delete confirmation modal.
+  - `FeedbackSkeleton`: Shimmer skeleton loading placeholder for zero CLS.
+- Integrated feedback triggers into student loan dashboard (`StudentLoansView`) and book detail view (`ReviewsList`).
+- Built route `app/(app)/admin/feedback/page.tsx` & `loading.tsx` and updated `app/(app)/admin/page.tsx` with admin console card navigation.
 - Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero warnings or errors.
-

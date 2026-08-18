@@ -1,15 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
-import { BookOpen, Shield, ClipboardList, BookMarked, Bookmark } from "lucide-react";
+import { BookOpen, Shield, ClipboardList, BookMarked, Bookmark, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();
   const { isSignedIn, isLoaded, user } = useUser();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userRole = user?.publicMetadata?.role as string | undefined;
 
   const isAssistantOrAdmin = userRole === "ASSISTANT" || userRole === "ADMIN";
@@ -33,12 +35,12 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* Navigation Links */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1">
           <Link
             href="/"
             className={cn(
-              "px-3 py-2 text-sm font-medium rounded-full transition-colors",
+              "px-3.5 py-2 text-sm font-medium rounded-full transition-colors",
               pathname === "/"
                 ? "bg-accent text-accent-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -52,7 +54,7 @@ export function Navbar() {
               <Link
                 href="/reservations"
                 className={cn(
-                  "px-3 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                  "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                   pathname.startsWith("/reservations")
                     ? "bg-accent text-accent-foreground font-semibold"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -65,7 +67,7 @@ export function Navbar() {
               <Link
                 href="/loans"
                 className={cn(
-                  "px-3 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                  "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                   pathname.startsWith("/loans")
                     ? "bg-accent text-accent-foreground font-semibold"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -79,7 +81,7 @@ export function Navbar() {
                 <Link
                   href="/assistant"
                   className={cn(
-                    "px-3 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                    "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                     pathname.startsWith("/assistant")
                       ? "bg-accent text-accent-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -94,13 +96,13 @@ export function Navbar() {
                 <Link
                   href="/admin"
                   className={cn(
-                    "px-3 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                    "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                     pathname.startsWith("/admin")
                       ? "bg-accent text-accent-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   )}
                 >
-                  <Shield className="h-4 w-4 text-purple-600" />
+                  <Shield className="h-4 w-4 text-brand-blue" />
                   Admin
                 </Link>
               )}
@@ -108,7 +110,7 @@ export function Navbar() {
           )}
         </nav>
 
-        {/* Auth Action */}
+        {/* Auth Action & Mobile Toggle */}
         <div className="flex items-center gap-3">
           {!isLoaded ? (
             <div className="h-8 w-20 skeleton-shimmer rounded-full" />
@@ -128,8 +130,100 @@ export function Navbar() {
               </Button>
             </SignInButton>
           )}
+
+          {/* Mobile Hamburger Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            aria-label="Toggle mobile menu"
+            className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-accent transition-colors"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Collapsible Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-b border-border bg-card/98 backdrop-blur-md px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-2">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className={cn(
+              "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+              pathname === "/"
+                ? "bg-accent text-foreground font-semibold"
+                : "text-muted-foreground hover:bg-accent/50"
+            )}
+          >
+            <BookOpen className="h-4 w-4 text-brand-blue" />
+            Catalog
+          </Link>
+
+          {isLoaded && isSignedIn && (
+            <>
+              <Link
+                href="/reservations"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                  pathname.startsWith("/reservations")
+                    ? "bg-accent text-foreground font-semibold"
+                    : "text-muted-foreground hover:bg-accent/50"
+                )}
+              >
+                <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+                My Holds
+              </Link>
+
+              <Link
+                href="/loans"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                  pathname.startsWith("/loans")
+                    ? "bg-accent text-foreground font-semibold"
+                    : "text-muted-foreground hover:bg-accent/50"
+                )}
+              >
+                <BookMarked className="h-4 w-4" />
+                My Loans
+              </Link>
+
+              {isAssistantOrAdmin && (
+                <Link
+                  href="/assistant"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                    pathname.startsWith("/assistant")
+                      ? "bg-accent text-foreground font-semibold"
+                      : "text-muted-foreground hover:bg-accent/50"
+                  )}
+                >
+                  <ClipboardList className="h-4 w-4 text-brand-blue" />
+                  Circulation Desk
+                </Link>
+              )}
+
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                    pathname.startsWith("/admin")
+                      ? "bg-accent text-foreground font-semibold"
+                      : "text-muted-foreground hover:bg-accent/50"
+                  )}
+                >
+                  <Shield className="h-4 w-4 text-brand-blue" />
+                  Admin Console
+                </Link>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 }

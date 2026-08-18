@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
+import Link from "next/link";
 import { format, addDays } from "date-fns";
 import {
   Search,
@@ -17,6 +18,7 @@ import {
   XCircle,
   FileText,
   History,
+  LogOut,
 } from "lucide-react";
 import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
 import { Button } from "@/components/ui/button";
@@ -299,7 +301,7 @@ export function CirculationDesk({
             <h1 className="text-3xl font-bold font-display text-foreground">
               Circulation Desk Console
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFE500] text-black border border-black/10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow text-black border border-black/10">
               <Sparkles className="w-3.5 h-3.5" /> Sub-10s Desk Mode
             </span>
           </div>
@@ -313,17 +315,22 @@ export function CirculationDesk({
             <Clock className="w-4 h-4 text-muted-foreground" />
             <span>{format(new Date(), "EEEE, MMM dd, yyyy")}</span>
           </div>
+          <Link href="/">
+            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
+              <LogOut className="w-4 h-4 text-muted-foreground" />
+              <span>Exit Desk Console</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
       {/* Global Alert Notification Banner */}
       {alert && (
         <div
-          className={`p-4 rounded-2xl border flex items-start justify-between gap-4 animate-in fade-in slide-in-from-top-2 ${
-            alert.type === "success"
+          className={`p-4 rounded-2xl border flex items-start justify-between gap-4 animate-in fade-in slide-in-from-top-2 ${alert.type === "success"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200"
               : "bg-destructive/10 border-destructive/30 text-destructive dark:text-red-300"
-          }`}
+            }`}
         >
           <div className="flex items-start gap-3">
             {alert.type === "success" ? (
@@ -412,11 +419,10 @@ export function CirculationDesk({
       <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
         <button
           onClick={() => setActiveTab("checkout")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-            activeTab === "checkout"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${activeTab === "checkout"
               ? "bg-primary text-primary-foreground shadow-sm scale-105"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           <UserCheck className="w-4 h-4" />
           Rapid Checkout
@@ -424,11 +430,10 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("checkin")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-            activeTab === "checkin"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${activeTab === "checkin"
               ? "bg-primary text-primary-foreground shadow-sm scale-105"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           <RefreshCw className="w-4 h-4" />
           Rapid Check-in
@@ -436,16 +441,15 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("holds")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-            activeTab === "holds"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${activeTab === "holds"
               ? "bg-primary text-primary-foreground shadow-sm scale-105"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           <Clock className="w-4 h-4" />
           Holds Queue
           {pendingReservations.length > 0 && (
-            <span className="px-2 py-0.5 text-[10px] rounded-full bg-[#FFE500] text-black font-bold">
+            <span className="px-2 py-0.5 text-[10px] rounded-full bg-brand-yellow text-black font-bold">
               {pendingReservations.length}
             </span>
           )}
@@ -453,11 +457,10 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("loans")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-            activeTab === "loans"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${activeTab === "loans"
               ? "bg-primary text-primary-foreground shadow-sm scale-105"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           <BookOpen className="w-4 h-4" />
           Active Loans ({activeLoans.length})
@@ -465,11 +468,10 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-            activeTab === "history"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${activeTab === "history"
               ? "bg-primary text-primary-foreground shadow-sm scale-105"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           <History className="w-4 h-4" />
           Copy Audit Trail & Traceability
@@ -629,13 +631,12 @@ export function CirculationDesk({
                                   {c.barcode}
                                 </span>
                                 <span
-                                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                                    c.status === "AVAILABLE"
+                                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${c.status === "AVAILABLE"
                                       ? "bg-emerald-500/10 text-emerald-600"
                                       : c.status === "RESERVED"
-                                      ? "bg-amber-500/10 text-amber-600"
-                                      : "bg-destructive/10 text-destructive"
-                                  }`}
+                                        ? "bg-amber-500/10 text-amber-600"
+                                        : "bg-destructive/10 text-destructive"
+                                    }`}
                                 >
                                   {c.status}
                                 </span>
@@ -667,11 +668,10 @@ export function CirculationDesk({
                     key={days}
                     type="button"
                     onClick={() => setDueDays(days)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
-                      dueDays === days
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${dueDays === days
                         ? "bg-primary text-primary-foreground border-primary shadow-sm"
                         : "bg-card border-border hover:bg-muted text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     {days} Days (Due {format(addDays(new Date(), days), "MMM dd")})
                   </button>
@@ -685,7 +685,7 @@ export function CirculationDesk({
                 onClick={handleCheckout}
                 disabled={isPending || !selectedStudent || (!selectedCopy && !copyQuery.trim())}
                 size="lg"
-                className="rounded-full px-8 font-semibold bg-[#1D61FF] hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all"
+                className="rounded-full px-8 font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white shadow-md hover:shadow-lg transition-all"
               >
                 {isPending ? (
                   <>
@@ -794,13 +794,12 @@ export function CirculationDesk({
                           setTargetStatus("AVAILABLE");
                         }
                       }}
-                      className={`p-3 rounded-xl text-xs font-semibold border transition-all text-center ${
-                        condition === cond
+                      className={`p-3 rounded-xl text-xs font-semibold border transition-all text-center ${condition === cond
                           ? cond === "DAMAGED"
                             ? "bg-destructive text-destructive-foreground border-destructive shadow-sm"
                             : "bg-primary text-primary-foreground border-primary shadow-sm"
                           : "bg-card border-border hover:bg-muted text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       {cond}
                     </button>
@@ -905,7 +904,7 @@ export function CirculationDesk({
                         <Button
                           size="sm"
                           onClick={() => handleFulfillReservation(resItem)}
-                          className="rounded-full text-xs font-semibold bg-[#FFE500] hover:bg-yellow-400 text-black border border-black/10"
+                          className="rounded-full text-xs font-semibold bg-brand-yellow hover:bg-brand-yellow/90 text-black border border-black/10"
                         >
                           Fulfill Checkout <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Button>
@@ -972,11 +971,10 @@ export function CirculationDesk({
                       </TableCell>
                       <TableCell className="text-xs font-mono">
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                            loanItem.isOverdue
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${loanItem.isOverdue
                               ? "bg-destructive/10 text-destructive border border-destructive/20 animate-pulse"
                               : "bg-muted text-foreground"
-                          }`}
+                            }`}
                         >
                           {format(new Date(loanItem.dueDate), "MMM dd, yyyy")}
                           {loanItem.isOverdue && " (OVERDUE)"}

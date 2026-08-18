@@ -72,6 +72,11 @@ export interface StudentLoanItem {
   daysRemaining: number;
   isOverdue: boolean;
   daysOverdue: number;
+  feedback?: {
+    id: string;
+    rating: number;
+    comment: string | null;
+  } | null;
 }
 
 export interface StudentLoansOverview {
@@ -284,6 +289,13 @@ export async function getUserLoansAndHistory(clerkUserId: string): Promise<Stude
           lastName: true,
         },
       },
+      feedback: {
+        select: {
+          id: true,
+          rating: true,
+          comment: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -314,6 +326,13 @@ export async function getUserLoansAndHistory(clerkUserId: string): Promise<Stude
       daysRemaining,
       isOverdue,
       daysOverdue,
+      feedback: loan.feedback
+        ? {
+            id: loan.feedback.id,
+            rating: loan.feedback.rating,
+            comment: loan.feedback.comment,
+          }
+        : null,
     };
   });
 
