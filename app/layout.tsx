@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono, Geist } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,13 +31,26 @@ export const metadata: Metadata = {
     "ShelfSync is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={cn("h-full", "antialiased", inter.variable, plusJakartaSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        className={cn(
+          "h-full antialiased font-sans",
+          inter.variable,
+          plusJakartaSans.variable,
+          jetbrainsMono.variable
+        )}
+      >
+        <body className="min-h-full flex flex-col bg-background text-foreground">
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

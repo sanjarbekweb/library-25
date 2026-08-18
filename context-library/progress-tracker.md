@@ -5,11 +5,11 @@ change.
 
 ## Current Phase
 
-- Complete (Unit 01)
+- Complete (Unit 02)
 
 ## Current Goal
 
-- Unit 01 complete. Ready for Unit 02: Clerk Auth Integration & RBAC Protection.
+- Unit 02 complete. Ready for Unit 03: Public Catalog & SEO Book Detail Pages.
 
 ## Completed
 
@@ -31,13 +31,24 @@ change.
   - [x] Add db:* scripts to package.json (generate, migrate, push, seed, studio)
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed
 
+- [x] Unit 02: Clerk Auth Integration & RBAC Protection
+  - [x] Install `@clerk/nextjs` and `svix`
+  - [x] Define Clerk session types in `types/clerk.d.ts` using Prisma `UserRole`
+  - [x] Build `lib/services/user-service.ts` for database synchronization and role management
+  - [x] Create Clerk webhook handler (`app/api/webhooks/clerk/route.ts`) supporting `user.created`, `user.updated`, and `user.deleted` with Svix signature verification
+  - [x] Set up `middleware.ts` with Clerk route matcher protecting non-public routes
+  - [x] Wrap root layout (`app/layout.tsx`) with `<ClerkProvider>`
+  - [x] Build server layout guards in `app/(app)/assistant/layout.tsx` (ASSISTANT/ADMIN) and `app/(app)/admin/layout.tsx` (ADMIN)
+  - [x] Build auth pages (`app/(auth)/sign-in` and `app/(auth)/sign-up`)
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly
+
 ## In Progress
 
 - None.
 
 ## Next Up
 
-- Unit 02: Clerk Auth Integration & RBAC Protection
+- Unit 03: Public Catalog & SEO Book Detail Pages
 
 ## Open Questions
 
@@ -55,19 +66,16 @@ change.
   - **Authentication:** Clerk (Free Hobby Tier, up to 10,000 MAUs)
   - **Image Storage:** Cloudflare R2 (Free Tier, 10 GB storage, $0 egress fees)
   - **App Hosting:** Vercel Hobby Tier (`.vercel.app`)
-  - **Constraint:** No feature, cron job, or external service may require a paid subscription, credit card requirement, or pay-as-you-go billing threshold.
-- **Prisma v7 breaking changes:**
-  - `url` removed from `datasource` block in schema.prisma; connection URL now configured in `prisma.config.ts` via `defineConfig()`.
-  - PrismaClient requires a driver adapter (`@prisma/adapter-pg` with `PrismaPg`) passed to constructor.
-  - `dotenv/config` imported in prisma.config.ts for env variable loading.
-- **Prisma client singleton:** `lib/prisma.ts` uses globalThis cache guard pattern with PrismaPg adapter.
-- **Seed script:** Uses `upsert` for idempotent re-runs. Creates BookHistory CREATED records for all copies per Immutable Audit Guarantee invariant.
+- **Prisma v7 breaking changes:** Connection config in `prisma.config.ts`, `PrismaPg` driver adapter in `lib/prisma.ts`.
+- **Clerk Auth & RBAC Architecture:**
+  - `publicMetadata.role` defaults to `STUDENT` on user sync.
+  - `middleware.ts` guards all routes except public catalog (`/`, `/books/*`), sign-in/up, and Clerk webhooks.
+  - Protected layout components (`/assistant`, `/admin`) execute server-side `auth()` checks and issue `redirect("/")` before child trees render.
+  - Webhook route delegates strictly to `lib/services/user-service.ts` per Prisma Isolation Invariant.
 
 ## Session Notes
 
 - Session: 2026-08-18
-- Unit 00 and Unit 01 fully complete. All quality gates passed.
-- **100% Free-Tier Requirement Enforced:** Updated `architecture.md`, `plans.md`, `.env.example`, and `progress-tracker.md`.
-- **Migration & Seed:** Set `DATABASE_URL` in `.env` (Neon/Supabase Free Tier or local native Postgres), then run `npm run db:migrate` followed by `npm run db:seed`.
-- `cn()` utility at `lib/utils.ts`, Prisma singleton at `lib/prisma.ts`.
-- Custom Tailwind tokens: `bg-canvas-warm`, `bg-brand-yellow`, `bg-brand-blue`, `text-gamify-streak`, etc.
+- Unit 02 completed. All 4 detailed steps implemented and verified.
+- Routes built and verified: `/`, `/admin`, `/assistant`, `/api/webhooks/clerk`, `/sign-in/[[...sign-in]]`, `/sign-up/[[...sign-up]]`.
+- Both `npx tsc --noEmit` and `npm run build` passed cleanly.
