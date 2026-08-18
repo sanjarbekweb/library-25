@@ -5,11 +5,11 @@ change.
 
 ### Current Phase
 
-- Complete (Unit 08)
+- Complete (Unit 09)
 
 ## Current Goal
 
-- Unit 08 complete. Ready for Unit 09: Admin User & Role Management Console.
+- Unit 09 complete. Ready for Unit 10: Collection Growth & Circulation Analytics Panel.
 
 ## Completed
 
@@ -86,13 +86,22 @@ change.
   - [x] Upgrade Admin Dashboard (`app/(app)/admin/page.tsx`) with navigation cards linking to review moderation
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
 
+- [x] Unit 09: Admin User & Role Management Console
+  - [x] Create Zod schemas in `lib/schemas/user-schema.ts` (`AdminUserQuerySchema`, `UpdateUserRoleSchema`, `ToggleUserStatusSchema`)
+  - [x] Update `lib/services/user-service.ts` with `getAdminUsers`, `updateUserRole`, `toggleUserStatus` including Clerk Backend API metadata sync (`clerkClient().users.updateUserMetadata`)
+  - [x] Create Server Actions (`app/actions/user-actions.ts`) with Clerk `auth()` session validation and `ADMIN` role checks
+  - [x] Build UI components: `UserSkeleton` zero-CLS shimmer loader, `UserManagement` interactive console with search input, role filter tabs, status filter tabs, user list table, stats metrics cards, role modification dialog, and account deactivation modal
+  - [x] Build Admin route `app/(app)/admin/users/page.tsx` and `app/(app)/admin/users/loading.tsx`
+  - [x] Update Admin Hub (`app/(app)/admin/page.tsx`) linking User & Role Management console card to `/admin/users`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
 ## In Progress
 
 - None.
 
 ## Next Up
 
-- Unit 09: Admin User & Role Management Console
+- Unit 10: Collection Growth & Circulation Analytics Panel
 
 ## Open Questions
 
@@ -135,3 +144,14 @@ change.
 - Integrated feedback triggers into student loan dashboard (`StudentLoansView`) and book detail view (`ReviewsList`).
 - Built route `app/(app)/admin/feedback/page.tsx` & `loading.tsx` and updated `app/(app)/admin/page.tsx` with admin console card navigation.
 - Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero warnings or errors.
+
+- Unit 09 completed: Admin User & Role Management Console.
+- Updated `lib/schemas/user-schema.ts` with Zod validation schemas (`AdminUserQuerySchema`, `UpdateUserRoleSchema`, `ToggleUserStatusSchema`).
+- Updated `lib/services/user-service.ts` with domain functions (`getAdminUsers`, `updateUserRole`, `toggleUserStatus`) enforcing admin authentication guards, self-demotion/self-deactivation guards, sole-admin protection, and instant sync with Clerk Backend API metadata (`clerkClient().users.updateUserMetadata`).
+- Created Server Actions `app/actions/user-actions.ts` with Clerk `auth()` session validation and `ADMIN` role protection.
+- Created UI components in `components/modules/admin/`:
+  - `UserSkeleton`: Shimmer skeleton loading placeholder for zero CLS layout transitions.
+  - `UserManagement`: Comprehensive admin user management console featuring search input, role filter pills (All, Student, Assistant, Admin), status filter pills (All, Active, Deactivated), summary stats metrics cards, paginated user table, role update dialog, and account deactivation modal.
+- Built route `app/(app)/admin/users/page.tsx` & `app/(app)/admin/users/loading.tsx` and updated `app/(app)/admin/page.tsx` navigation card linking to `/admin/users`.
+- Verification passed: `npx tsc --noEmit` and `npm run build` completed with zero warnings or errors.
+

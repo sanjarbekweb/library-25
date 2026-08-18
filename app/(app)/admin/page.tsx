@@ -61,22 +61,25 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* User Management Card */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group opacity-80">
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group">
           <CardContent className="p-6 flex flex-col justify-between h-full space-y-6">
             <div className="space-y-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
                 <Users className="h-6 w-6" />
               </div>
-              <h2 className="font-display font-bold text-xl text-foreground">
+              <h2 className="font-display font-bold text-xl text-foreground group-hover:text-brand-blue transition-colors">
                 User &amp; Role Management
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Manage user accounts, elevate assistant credentials, and configure RBAC permission policies. (Unit 09)
+                Manage user accounts, elevate assistant credentials, promote roles, and set account activation status.
               </p>
             </div>
-            <Button variant="outline" disabled className="w-full rounded-full text-xs gap-2">
-              <span>Coming in Unit 09</span>
-            </Button>
+            <Link href="/admin/users">
+              <Button className="w-full rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2">
+                <span>Manage Users &amp; Roles</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
