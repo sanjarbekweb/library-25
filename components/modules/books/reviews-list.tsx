@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Star, MessageSquareQuote, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import {
+  Star,
+  MessageSquareQuote,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import { BookFeedbackItem } from "@/lib/services/book-service";
 import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
 import { submitDirectBookReviewAction } from "@/app/actions/feedback-actions";
@@ -39,6 +45,32 @@ export function ReviewsList({
   const [directError, setDirectError] = useState<string | null>(null);
   const [directSuccess, setDirectSuccess] = useState<string | null>(null);
 
+  const handleDirectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingDirect(true);
+    setDirectError(null);
+
+    const res = await submitDirectBookReviewAction({
+      bookId,
+      rating: directRating,
+      comment: directComment ? directComment : null,
+    });
+
+    setIsSubmittingDirect(false);
+
+    if (!res.ok) {
+      setDirectError(res.error?.message || "Failed to submit review.");
+      return;
+    }
+
+    setDirectSuccess("Your review and rating have been posted!");
+    setTimeout(() => {
+      setIsDirectModalOpen(false);
+      setDirectSuccess(null);
+      window.location.reload();
+    }, 1000);
+  };
+
   return (
     <div className="space-y-6">
       {/* Verified Student Review Prompt Banner */}
@@ -50,7 +82,8 @@ export function ReviewsList({
               You completed a loan for this title!
             </h4>
             <p className="text-xs text-amber-800 dark:text-amber-300">
-              Share your reading experience and help other students discover great books.
+              Share your reading experience and help other students discover
+              great books.
             </p>
           </div>
           <Button
@@ -63,7 +96,7 @@ export function ReviewsList({
         </div>
       )}
 
-      {/* Overview & Distribution Header */}
+      {/* Overview and Distribution Header */}
       <div className="rounded-2xl border border-border bg-card p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
         {/* Rating Score */}
         <div className="flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-border">
@@ -83,7 +116,8 @@ export function ReviewsList({
             ))}
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            Based on {totalReviews} student review{totalReviews === 1 ? "" : "s"}
+            Based on {totalReviews} student{" "}
+            {totalReviews === 1 ? "review" : "reviews"}
           </span>
         </div>
 
@@ -92,12 +126,18 @@ export function ReviewsList({
           {[5, 4, 3, 2, 1].map((ratingKey) => {
             const count = ratingDistribution[ratingKey] || 0;
             const percentage =
-              totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+              totalReviews > 0
+                ? Math.round((count / totalReviews) * 100)
+                : 0;
 
             return (
-              <div key={ratingKey} className="flex items-center gap-3 text-xs">
+              <div
+                key={ratingKey}
+                className="flex items-center gap-3 text-xs"
+              >
                 <span className="w-12 font-medium flex items-center gap-1 text-muted-foreground">
-                  {ratingKey} <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  {ratingKey}{" "}
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                 </span>
                 <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                   <div
@@ -119,7 +159,7 @@ export function ReviewsList({
         <div className="flex items-center justify-between gap-4">
           <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
             <MessageSquareQuote className="h-5 w-5 text-brand-blue" />
-            Community Reviews &amp; Ratings ({totalReviews})
+            Community Reviews ({totalReviews})
           </h3>
 
           {isSignedIn && !eligibleLoanId && (
@@ -141,7 +181,8 @@ export function ReviewsList({
               No student reviews submitted for this book yet.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Be the first student to rate and leave a written review for this title.
+              Be the first student to rate and leave a written review for this
+              title.
             </p>
           </div>
         ) : (
@@ -168,7 +209,6 @@ export function ReviewsList({
                   </span>
                 </div>
 
-                {/* Rating Stars */}
                 <div className="flex items-center gap-0.5">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
@@ -182,10 +222,11 @@ export function ReviewsList({
                   ))}
                 </div>
 
-                {/* Written Comment */}
                 {item.comment && (
                   <p className="text-sm text-foreground/90 leading-relaxed pt-1">
-                    &ldquo;{item.comment}&rdquo;
+                    {"\u201C"}
+                    {item.comment}
+                    {"\u201D"}
                   </p>
                 )}
               </div>
@@ -194,7 +235,7 @@ export function ReviewsList({
         )}
       </div>
 
-      {/* Review Modal Dialog for Verified Loan */}
+      {/* Verified Loan Review Modal */}
       {eligibleLoanId && (
         <SubmitFeedbackModal
           isOpen={isModalOpen}
@@ -205,7 +246,7 @@ export function ReviewsList({
         />
       )}
 
-      {/* DIRECT BOOK REVIEW MODAL */}
+      {/* Direct Book Review Modal */}
       {isDirectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
           <div className="bg-card border border-border rounded-3xl p-6 max-w-md w-full space-y-6 shadow-2xl animate-in zoom-in-95">
@@ -213,15 +254,18 @@ export function ReviewsList({
               <div>
                 <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                   <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-                  Rate &amp; Review Book
+                  Rate and Review Book
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Share your 5-star rating for <strong className="text-foreground">{bookTitle}</strong>
+                  Share your 5-star rating for{" "}
+                  <strong className="text-foreground">{bookTitle}</strong>
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsDirectModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm font-bold p-1 rounded-full"
+                className="text-muted-foreground hover:text-foreground text-lg font-bold p-1.5 rounded-full min-w-[32px] min-h-[32px] flex items-center justify-center"
+                aria-label="Close review modal"
               >
                 ✕
               </button>
@@ -241,34 +285,7 @@ export function ReviewsList({
               </div>
             )}
 
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setIsSubmittingDirect(true);
-                setDirectError(null);
-
-                const res = await submitDirectBookReviewAction({
-                  bookId,
-                  rating: directRating,
-                  comment: directComment ? directComment : null,
-                });
-
-                setIsSubmittingDirect(false);
-
-                if (!res.ok) {
-                  setDirectError(res.error?.message || "Failed to submit review.");
-                  return;
-                }
-
-                setDirectSuccess("Your review and rating have been posted!");
-                setTimeout(() => {
-                  setIsDirectModalOpen(false);
-                  setDirectSuccess(null);
-                  window.location.reload();
-                }, 1000);
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleDirectSubmit} className="space-y-4">
               {/* Star Rating Picker */}
               <div className="space-y-2 text-center">
                 <label className="text-xs font-semibold text-foreground">
@@ -280,7 +297,7 @@ export function ReviewsList({
                       key={star}
                       type="button"
                       onClick={() => setDirectRating(star)}
-                      className="p-1 hover:scale-110 transition-transform"
+                      className="p-1.5 hover:scale-110 transition-transform min-w-[40px] min-h-[40px] flex items-center justify-center"
                     >
                       <Star
                         className={`h-8 w-8 ${
@@ -308,7 +325,7 @@ export function ReviewsList({
                   placeholder="Tell other readers what you thought about the plot, themes, or writing style..."
                   value={directComment}
                   onChange={(e) => setDirectComment(e.target.value)}
-                  className="w-full rounded-2xl border border-input bg-background p-3 text-xs focus:ring-1 focus:ring-ring"
+                  className="w-full rounded-2xl border border-input bg-background p-3 text-xs focus:ring-1 focus:ring-ring resize-none"
                 />
                 <div className="text-right text-[10px] text-muted-foreground font-mono">
                   {directComment.length}/1000
@@ -334,7 +351,7 @@ export function ReviewsList({
                   ) : (
                     <Star className="h-4 w-4 fill-current" />
                   )}
-                  <span>Post Review &amp; Rating</span>
+                  <span>Post Review</span>
                 </Button>
               </div>
             </form>

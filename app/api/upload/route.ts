@@ -4,12 +4,20 @@ import { uploadCoverImageToR2 } from "@/lib/storage/r2-client";
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
+    const { userId, sessionClaims } = await auth();
 
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Unauthorized access" },
         { status: 401 }
+      );
+    }
+
+    const role = sessionClaims?.metadata?.role;
+    if (role !== "ASSISTANT" && role !== "ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "Only assistants or admins can upload images" },
+        { status: 403 }
       );
     }
 

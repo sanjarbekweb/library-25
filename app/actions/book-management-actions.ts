@@ -22,7 +22,11 @@ export async function createBookAction(input: CreateBookInput) {
     }
 
     const dbUser = await getUserByClerkId(userId);
-    const role = dbUser?.role || "STUDENT";
+    if (!dbUser) {
+      return { success: false, error: "User profile not found in system database." };
+    }
+
+    const role = dbUser.role || "STUDENT";
     if (role !== "ASSISTANT" && role !== "ADMIN") {
       return {
         success: false,
@@ -38,7 +42,7 @@ export async function createBookAction(input: CreateBookInput) {
       };
     }
 
-    const result = await createBookWithCopies(parsed.data, userId, role);
+    const result = await createBookWithCopies(parsed.data, dbUser.id, role);
 
     revalidatePath("/catalog");
     revalidatePath("/assistant/books");
@@ -66,7 +70,11 @@ export async function addBookCopyAction(input: AddBookCopyInput) {
     }
 
     const dbUser = await getUserByClerkId(userId);
-    const role = dbUser?.role || "STUDENT";
+    if (!dbUser) {
+      return { success: false, error: "User profile not found in system database." };
+    }
+
+    const role = dbUser.role || "STUDENT";
     if (role !== "ASSISTANT" && role !== "ADMIN") {
       return {
         success: false,
@@ -82,7 +90,7 @@ export async function addBookCopyAction(input: AddBookCopyInput) {
       };
     }
 
-    const result = await addPhysicalCopy(parsed.data, userId, role);
+    const result = await addPhysicalCopy(parsed.data, dbUser.id, role);
 
     revalidatePath("/catalog");
     revalidatePath("/assistant/books");

@@ -87,10 +87,20 @@ export async function getManageableBooks(): Promise<ManageableBookItem[]> {
  */
 export async function createBookWithCopies(
   input: CreateBookInput,
-  actorId: string,
+  actorIdentifier: string,
   actorRole: string
 ) {
   const validated = CreateBookSchema.parse(input);
+
+  const actor = await prisma.user.findFirst({
+    where: {
+      OR: [{ id: actorIdentifier }, { clerkId: actorIdentifier }],
+    },
+  });
+
+  if (!actor) {
+    throw new Error("Actor user record not found in database.");
+  }
 
   const {
     title,
@@ -141,7 +151,7 @@ export async function createBookWithCopies(
         data: {
           bookCopyId: copy.id,
           action: "CREATED",
-          actorId,
+          actorId: actor.id,
           previousState: null,
           newState: CopyStatus.AVAILABLE,
           notes: `Registered initial physical copy (${copy.barcode}) for new title: ${book.title}`,
@@ -165,11 +175,21 @@ export async function createBookWithCopies(
  */
 export async function addPhysicalCopy(
   input: AddBookCopyInput,
-  actorId: string,
+  actorIdentifier: string,
   actorRole: string
 ) {
   const validated = AddBookCopySchema.parse(input);
   const { bookId, barcode, condition } = validated;
+
+  const actor = await prisma.user.findFirst({
+    where: {
+      OR: [{ id: actorIdentifier }, { clerkId: actorIdentifier }],
+    },
+  });
+
+  if (!actor) {
+    throw new Error("Actor user record not found in database.");
+  }
 
   const result = await prisma.$transaction(async (tx) => {
     const book = await tx.book.findUnique({
@@ -197,7 +217,7 @@ export async function addPhysicalCopy(
       data: {
         bookCopyId: copy.id,
         action: "CREATED",
-        actorId,
+        actorId: actor.id,
         previousState: null,
         newState: CopyStatus.AVAILABLE,
         notes: `Added physical copy (${copy.barcode}, ${condition}) to book: ${book.title}`,
