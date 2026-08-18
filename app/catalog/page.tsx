@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { BookOpen, Sparkles, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { getCatalogBooks, getCategories } from "@/lib/services/book-service";
+import { getCatalogBooks, getCategories, getTopDemandBooks } from "@/lib/services/book-service";
 import { syncCurrentAuthenticatedUser } from "@/lib/services/user-service";
 import { Navbar } from "@/components/shared/navbar";
 import { BookCard } from "@/components/modules/catalog/book-card";
 import { CatalogFilterBar } from "@/components/modules/catalog/catalog-filter-bar";
 import { CatalogSkeleton } from "@/components/modules/catalog/catalog-skeleton";
+import { TopDemandShowcase } from "@/components/modules/catalog/top-demand-showcase";
 import { Button } from "@/components/ui/button";
 
 interface PageProps {
@@ -35,10 +36,11 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     | "newest"
     | "rating";
 
-  const [, categories, catalogData] = await Promise.all([
+  const [, categories, catalogData, topDemandBooks] = await Promise.all([
     syncCurrentAuthenticatedUser(),
     getCategories(),
     getCatalogBooks({ category, search, sort, page, limit: 12 }),
+    getTopDemandBooks(4),
   ]);
 
   const { books, total, totalPages } = catalogData;
@@ -47,55 +49,31 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      {/* Hero Header Canvas or Compact Search Banner */}
+      {/* Top Demand Showcase Banner (or Compact Search Banner) */}
       {search ? (
         <section className="border-b border-border bg-canvas-warm dark:bg-canvas-dark py-6">
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
             <div>
               <h1 className="font-display font-bold text-xl sm:text-2xl text-foreground">
-                Search Results for &ldquo;<span className="text-brand-blue">{search}</span>&rdquo;
+                Search Results for {"\""}<span className="text-brand-blue">{search}</span>{"\""}
               </h1>
               <p className="text-xs text-muted-foreground font-mono mt-0.5">
                 Found {total} title{total === 1 ? "" : "s"} in collection
               </p>
             </div>
             <Link href="/catalog">
-              <Button variant="outline" size="sm" className="rounded-full text-xs">
+              <Button variant="outline" size="sm" className="rounded-full text-xs min-h-[40px] px-4">
                 Clear Search
               </Button>
             </Link>
           </div>
         </section>
       ) : (
-        <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-12 md:py-16 bg-grid-pattern">
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow text-black text-xs font-bold tracking-tight shadow-xs">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>School Library Catalog</span>
-            </div>
-
-            <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground max-w-3xl mx-auto">
-              Discover &amp; Reserve Physical Books with <span className="underline decoration-brand-yellow decoration-4 underline-offset-4">Real-Time Inventory</span>
-            </h1>
-
-            <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Browse our school library catalog, filter by subject categories, view live physical copy status, and hold books for in-person pickup.
-            </p>
-
-            <div className="pt-2 flex items-center justify-center gap-4 text-xs font-mono text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                {total} Book{total === 1 ? "" : "s"} In Collection
-              </span>
-              <span>&bull;</span>
-              <span>{categories.length} Categories</span>
-            </div>
-          </div>
-        </section>
+        <TopDemandShowcase books={topDemandBooks} />
       )}
 
       {/* Main Catalog View */}
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <main id="catalog-browse" className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         <h2 className="sr-only">Catalog Filters & Book Listings</h2>
 
         {/* Interactive Filter & Sort Bar */}

@@ -447,3 +447,48 @@ export const getCategories = unstable_cache(
   ["catalog-categories"],
   { revalidate: 300, tags: ["catalog-categories"] }
 );
+
+/**
+ * Service function to retrieve top demand and recommended books for catalog showcase.
+ */
+export async function getTopDemandBooks(limit: number = 4): Promise<CatalogBookItem[]> {
+  const books = await prisma.book.findMany({
+    take: limit,
+    include: {
+      copies: { select: { status: true } },
+      feedbacks: { select: { rating: true } },
+      reservations: { select: { id: true } },
+    },
+    orderBy: [
+      { feedbacks: { _count: "desc" } },
+      { reservations: { _count: "desc" } },
+      { createdAt: "desc" },
+    ],
+  });
+
+  return books.map((b) => {
+    const totalCopiesCount = b.copies.length;
+    const availableCopiesCount = b.copies.filter(
+      (c) => c.status === "AVAILABLE"
+    ).length;
+    const totalRating = b.feedbacks.reduce((acc, f) => acc + f.rating, 0);
+    const reviewsCount = b.feedbacks.length;
+    const averageRating =
+      reviewsCount > 0 ? Number((totalRating / reviewsCount).toFixed(1)) : null;
+
+    return {
+      id: b.id,
+      title: b.title,
+      author: b.author,
+      isbn: b.isbn,
+      category: b.category,
+      description: b.description,
+      coverImageUrl: b.coverImageUrl,
+      publicationYear: b.publicationYear,
+      availableCopiesCount,
+      totalCopiesCount,
+      averageRating,
+      reviewsCount,
+    };
+  });
+}
