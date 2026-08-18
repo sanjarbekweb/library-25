@@ -8,11 +8,14 @@ import { Bookmark, Clock, CheckCircle2, AlertCircle, Loader2, X } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { requestReservationAction, cancelReservationAction } from "@/app/actions/reservation-actions";
 
+import { ReserveHoldModal } from "./reserve-hold-modal";
+
 interface ReserveButtonProps {
   bookId: string;
   availableCopiesCount: number;
   existingReservationId?: string | null;
   isSignedIn: boolean;
+  bookTitle?: string;
 }
 
 export function ReserveButton({
@@ -20,8 +23,10 @@ export function ReserveButton({
   availableCopiesCount,
   existingReservationId,
   isSignedIn,
+  bookTitle,
 }: ReserveButtonProps) {
   const [isPending, startTransition] = useTransition();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeReservationId, setActiveReservationId] = useState<string | null>(
     existingReservationId ?? null
   );
@@ -30,15 +35,16 @@ export function ReserveButton({
     message: string;
   } | null>(null);
 
-  const handleReserve = () => {
+  const handleConfirmReservation = (holdDays?: number, holdUntilDate?: string) => {
+    setIsModalOpen(false);
     setFeedback(null);
     startTransition(async () => {
-      const res = await requestReservationAction(bookId);
+      const res = await requestReservationAction(bookId, holdDays, holdUntilDate);
       if (res.ok && res.data) {
         setActiveReservationId(res.data.reservationId);
         setFeedback({
           type: "success",
-          message: "Hold placed! Pick up your book at the circulation desk within 48 hours.",
+          message: "Hold placed successfully! Pick up your book copy at the circulation desk before expiration.",
         });
       } else {
         setFeedback({
@@ -117,7 +123,7 @@ export function ReserveButton({
       ) : availableCopiesCount > 0 ? (
         <Button
           size="lg"
-          onClick={handleReserve}
+          onClick={() => setIsModalOpen(true)}
           disabled={isPending}
           className="w-full sm:w-auto rounded-full gap-2 font-bold px-8 bg-brand-yellow text-black hover:bg-brand-yellow/90 shadow-sm"
         >
@@ -160,6 +166,14 @@ export function ReserveButton({
           <span>{feedback.message}</span>
         </div>
       )}
+
+      <ReserveHoldModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmReservation}
+        isPending={isPending}
+        bookTitle={bookTitle}
+      />
     </div>
   );
 }

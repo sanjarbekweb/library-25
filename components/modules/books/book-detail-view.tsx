@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { format } from "date-fns";
 import {
   ArrowLeft,
   BookOpen,
@@ -114,7 +115,6 @@ export function BookDetailView({
                 </p>
               </div>
 
-              {/* Synopsis / Description */}
               {book.description ? (
                 <div className="prose prose-sm dark:prose-invert text-muted-foreground leading-relaxed pt-2">
                   {book.description}
@@ -124,12 +124,30 @@ export function BookDetailView({
                   No synopsis available for this title.
                 </p>
               )}
+
+              {/* Next Availability Schedule Banner */}
+              {!isAvailable && book.nextAvailableDate && (
+                <div className="p-4 rounded-2xl border border-amber-300 bg-amber-50/70 text-amber-950 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold shadow-xs">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold font-display text-amber-950 dark:text-amber-200">
+                      Expected Return & Next Availability Schedule
+                    </p>
+                    <p className="text-xs text-amber-900/80 dark:text-amber-300 mt-0.5 font-mono">
+                      Earliest physical copy is scheduled to be available on <strong>{format(new Date(book.nextAvailableDate), "EEEE, MMMM d, yyyy")}</strong>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Bar */}
             <div className="pt-4 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <ReserveButton
                 bookId={book.id}
+                bookTitle={book.title}
                 availableCopiesCount={book.copyBreakdown.available}
                 existingReservationId={existingReservationId}
                 isSignedIn={isSignedIn}

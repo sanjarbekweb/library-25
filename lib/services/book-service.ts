@@ -21,6 +21,7 @@ export interface CatalogBookItem {
   totalCopiesCount: number;
   averageRating: number | null;
   reviewsCount: number;
+  nextAvailableDate?: Date | string | null;
 }
 
 export type GetCatalogBooksParams = GetCatalogBooksInput;
@@ -64,6 +65,7 @@ export interface BookDetails {
   totalReviews: number;
   ratingDistribution: Record<number, number>;
   feedbacks: BookFeedbackItem[];
+  nextAvailableDate: Date | null;
 }
 
 /**
@@ -217,7 +219,20 @@ export async function getCatalogBooks(
       include: {
         copies: {
           select: {
+            id: true,
             status: true,
+            loans: {
+              where: { status: "ACTIVE" },
+              select: { dueDate: true },
+              orderBy: { dueDate: "asc" },
+              take: 1,
+            },
+            reservations: {
+              where: { status: "PENDING" },
+              select: { expiresAt: true },
+              orderBy: { expiresAt: "asc" },
+              take: 1,
+            },
           },
         },
         feedbacks: {
@@ -246,6 +261,19 @@ export async function getCatalogBooks(
           )
         : null;
 
+    let nextAvailableDate: Date | null = null;
+    if (availableCopiesCount === 0) {
+      const dates: Date[] = [];
+      book.copies.forEach((c) => {
+        if (c.loans[0]?.dueDate) dates.push(c.loans[0].dueDate);
+        if (c.reservations[0]?.expiresAt) dates.push(c.reservations[0].expiresAt);
+      });
+      if (dates.length > 0) {
+        dates.sort((a, b) => a.getTime() - b.getTime());
+        nextAvailableDate = dates[0];
+      }
+    }
+
     return {
       id: book.id,
       title: book.title,
@@ -259,6 +287,7 @@ export async function getCatalogBooks(
       totalCopiesCount,
       averageRating,
       reviewsCount,
+      nextAvailableDate,
     };
   });
 
@@ -354,6 +383,33 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
       ? Number((totalRatingSum / totalReviews).toFixed(1))
       : null;
 
+  let nextAvailableDate: Date | null = null;
+  if (copyBreakdown.available > 0) {
+    nextAvailableDate = new Date();
+  } else {
+    const [earliestLoan, earliestReservation] = await Promise.all([
+      prisma.loan.findFirst({
+        where: { bookCopy: { bookId: book.id }, status: "ACTIVE" },
+        orderBy: { dueDate: "asc" },
+        select: { dueDate: true },
+      }),
+      prisma.reservation.findFirst({
+        where: { bookId: book.id, status: "PENDING" },
+        orderBy: { expiresAt: "asc" },
+        select: { expiresAt: true },
+      }),
+    ]);
+
+    const dates: Date[] = [];
+    if (earliestLoan?.dueDate) dates.push(earliestLoan.dueDate);
+    if (earliestReservation?.expiresAt) dates.push(earliestReservation.expiresAt);
+
+    if (dates.length > 0) {
+      dates.sort((a, b) => a.getTime() - b.getTime());
+      nextAvailableDate = dates[0];
+    }
+  }
+
   return {
     id: book.id,
     title: book.title,
@@ -369,6 +425,7 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
     totalReviews,
     ratingDistribution,
     feedbacks,
+    nextAvailableDate,
   };
 }
 

@@ -27,10 +27,12 @@ export interface StudentReservationItem {
  */
 export async function requestBookReservation(
   bookId: string,
-  userClerkId: string
+  userClerkId: string,
+  holdDays?: number,
+  holdUntilDate?: string
 ) {
   // Validate input schema
-  CreateReservationSchema.parse({ bookId });
+  const parsed = CreateReservationSchema.parse({ bookId, holdDays, holdUntilDate });
 
   // 1. Resolve user in system of record
   const user = await prisma.user.findUnique({
@@ -73,9 +75,29 @@ export async function requestBookReservation(
     );
   }
 
-  // 48-hour expiration window for in-person pickup hold
-  const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + 48);
+  // Calculate expiration window based on custom hold duration or calendar date (Max 7 days limit)
+  const now = new Date();
+  let expiresAt = new Date();
+
+  if (parsed.holdUntilDate) {
+    const customDate = new Date(parsed.holdUntilDate);
+    const maxDate = new Date(now);
+    maxDate.setDate(maxDate.getDate() + 7);
+
+    if (customDate > maxDate) {
+      expiresAt = maxDate;
+    } else if (customDate <= now) {
+      expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    } else {
+      expiresAt = customDate;
+    }
+  } else if (parsed.holdDays) {
+    const days = Math.min(Math.max(parsed.holdDays, 1), 7);
+    expiresAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+  } else {
+    // Default 48 hours (2 days)
+    expiresAt.setHours(expiresAt.getHours() + 48);
+  }
 
   // 4. Atomic transaction: Update copy status, create reservation, append audit log
   const result = await prisma.$transaction(async (tx) => {

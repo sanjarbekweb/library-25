@@ -111,6 +111,16 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
 
 ---
 
+### Unit 05.5: Custom Student Hold Duration & Calendar Expiration Selection (`05.5-hold-duration.md`)
+* **Goal:** Allow students to choose their hold duration (1–7 days) or pick a calendar date for pickup expiration when placing an online book reservation.
+* **Detailed Steps:**
+  1. Update `CreateReservationSchema` in `lib/schemas/reservation-schema.ts` to accept optional `holdDays` (1–7 days) and optional `holdUntilDate` (calendar date).
+  2. Update `requestBookReservation` in `lib/services/reservation-service.ts` to calculate `expiresAt` based on custom hold duration (up to max 7 days limit).
+  3. Build `ReserveHoldModal` component (`components/modules/books/reserve-hold-modal.tsx`) with duration preset pills and interactive calendar date picker.
+  4. Integrate modal into `ReserveButton` on book detail pages.
+
+---
+
 ### Unit 06: Circulation Desk Rapid Checkout/Check-in Flow (`06-checkout-flow.md`)
 * **Goal:** Enable assistants to execute in-person checkouts and check-ins in ≤3 clicks and under 10 seconds[cite: 3].
 * **Detailed Steps:**
@@ -163,6 +173,15 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
   1. Implement optimized PostgreSQL aggregation queries in `lib/services/analytics-service.ts` (monthly borrow volume, category distribution, overdue loan ratio, active reader cohorts)[cite: 3].
   2. Build Recharts visualization widgets via shadcn `chart` primitives[cite: 3].
   3. Ensure analytics dashboard queries load directly from Postgres within ≤60s freshness[cite: 3].
+
+---
+
+### Unit 10.5: Book Availability Calendar & Usage Duration Limits (`10.5-calendar-availability.md`)
+* **Goal:** Allow users to see when unavailable/borrowed books will be returned and available for use, and enable setting custom book usage duration limits using a calendar-style selector.
+* **Detailed Steps:**
+  1. Update `lib/services/book-service.ts` to compute `nextAvailableDate` for books with 0 currently available copies by analyzing active loans (`dueDate`) and reservations (`expiresAt`).
+  2. Display "Next Available Date" calendar badges on book detail pages (`BookDetailView`) and catalog cards with dynamic time-distance indicators.
+  3. Build an interactive **Calendar Date & Usage Limit Selector** (`CalendarUsageLimitPicker`) in the Circulation Desk console (`CirculationDesk`) and Reservation views, allowing users/assistants to set exact due dates with a configurable usage duration limit (e.g. max 30 days).
 
 ---
 

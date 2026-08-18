@@ -51,6 +51,7 @@ export function BookCard({ book }: BookCardProps) {
           <CopyAvailabilityBadge
             availableCount={book.availableCopiesCount}
             totalCount={book.totalCopiesCount}
+            nextAvailableDate={book.nextAvailableDate}
             className="text-[10px] sm:text-xs px-2 py-0.5"
           />
         </div>

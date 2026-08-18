@@ -21,6 +21,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
+import { CalendarUsageLimitPicker } from "@/components/modules/books/calendar-usage-limit-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -657,26 +658,16 @@ export function CirculationDesk({
               </div>
             </div>
 
-            {/* Step 3: Loan Duration Presets */}
+            {/* Step 3: Loan Duration & Calendar Usage Limit Selector */}
             <div className="space-y-3 border-t border-border/60 pt-4">
               <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                3. Loan Duration Period
+                3. Loan Duration & Expiration Deadline (Calendar Style)
               </label>
-              <div className="flex flex-wrap items-center gap-3">
-                {[7, 14, 21, 30].map((days) => (
-                  <button
-                    key={days}
-                    type="button"
-                    onClick={() => setDueDays(days)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${dueDays === days
-                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                        : "bg-card border-border hover:bg-muted text-muted-foreground"
-                      }`}
-                  >
-                    {days} Days (Due {format(addDays(new Date(), days), "MMM dd")})
-                  </button>
-                ))}
-              </div>
+              <CalendarUsageLimitPicker
+                initialDays={dueDays}
+                maxUsageDays={30}
+                onChange={(days) => setDueDays(days)}
+              />
             </div>
 
             {/* Final Action Button */}

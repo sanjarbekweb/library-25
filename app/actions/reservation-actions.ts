@@ -22,7 +22,9 @@ export interface ServerActionResponse<T = unknown> {
  * Enforces server-side Clerk session verification (Invariant #3).
  */
 export async function requestReservationAction(
-  bookId: string
+  bookId: string,
+  holdDays?: number,
+  holdUntilDate?: string
 ): Promise<ServerActionResponse<{ reservationId: string }>> {
   try {
     const { userId } = await auth();
@@ -37,7 +39,7 @@ export async function requestReservationAction(
       };
     }
 
-    const reservation = await requestBookReservation(bookId, userId);
+    const reservation = await requestBookReservation(bookId, userId, holdDays, holdUntilDate);
 
     revalidatePath(`/books/${bookId}`);
     revalidatePath("/reservations");

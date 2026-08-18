@@ -5,11 +5,11 @@ change.
 
 ### Current Phase
 
-- Complete (Unit 09)
+- Complete (Unit 05.5)
 
 ## Current Goal
 
-- Unit 09 complete. Ready for Unit 10: Collection Growth & Circulation Analytics Panel.
+- Unit 05.5 complete. Ready for Unit 10: Collection Growth & Circulation Analytics Panel.
 
 ## Completed
 
@@ -93,6 +93,21 @@ change.
   - [x] Build UI components: `UserSkeleton` zero-CLS shimmer loader, `UserManagement` interactive console with search input, role filter tabs, status filter tabs, user list table, stats metrics cards, role modification dialog, and account deactivation modal
   - [x] Build Admin route `app/(app)/admin/users/page.tsx` and `app/(app)/admin/users/loading.tsx`
   - [x] Update Admin Hub (`app/(app)/admin/page.tsx`) linking User & Role Management console card to `/admin/users`
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
+- [x] Unit 05.5: Custom Student Hold Duration & Calendar Expiration Selection
+  - [x] Update `CreateReservationSchema` in `lib/schemas/reservation-schema.ts` to accept optional `holdDays` (1–7 days) and optional `holdUntilDate` (calendar date)
+  - [x] Update `requestBookReservation` in `lib/services/reservation-service.ts` to compute custom `expiresAt` based on duration or calendar date (up to max 7 days limit)
+  - [x] Update `requestReservationAction` in `app/actions/reservation-actions.ts` to pass hold parameters
+  - [x] Build interactive `ReserveHoldModal` component (`components/modules/books/reserve-hold-modal.tsx`) with 1-7 day preset pills, HTML5 date picker, and pickup expiration summary
+  - [x] Integrate `ReserveHoldModal` into `ReserveButton` on book detail pages
+  - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
+
+- [x] Unit 10.5: Book Availability Calendar & Usage Duration Limits
+  - [x] Compute `nextAvailableDate` in `lib/services/book-service.ts` for catalog entries and detail views by analyzing active loans (`dueDate`) and pending reservations (`expiresAt`)
+  - [x] Build interactive `CalendarUsageLimitPicker` component (`components/modules/books/calendar-usage-limit-picker.tsx`) with 30-day max duration limits, quick presets, and HTML5 date picker
+  - [x] Add "Next Available Date" calendar schedule banner to `BookDetailView` when copies are unavailable
+  - [x] Integrate `CalendarUsageLimitPicker` into `CirculationDesk` rapid checkout flow
   - [x] Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with zero errors/warnings
 
 ## In Progress
