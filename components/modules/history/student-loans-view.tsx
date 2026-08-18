@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { formatTashkentDate } from "@/lib/utils/tashkent-time";
 import {
   BookMarked,
   Clock,
@@ -217,11 +218,11 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                       <div className="text-[11px] text-muted-foreground space-y-0.5">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          <span>Borrowed: {format(new Date(loan.borrowedAt), "MMM d, yyyy")}</span>
+                          <span>Borrowed: {formatTashkentDate(loan.borrowedAt)}</span>
                         </div>
                         <div className="flex items-center gap-1 font-semibold text-foreground">
                           <Clock className="h-3 w-3 text-brand-blue" />
-                          <span>Due: {format(new Date(loan.dueDate), "MMM d, yyyy")}</span>
+                          <span>Due: {formatTashkentDate(loan.dueDate)}</span>
                         </div>
                       </div>
 

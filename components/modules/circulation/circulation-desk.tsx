@@ -22,6 +22,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { formatTashkentDate, formatTashkentDateTime } from "@/lib/utils/tashkent-time";
 import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
 import { CalendarUsageLimitPicker } from "@/components/modules/books/calendar-usage-limit-picker";
 import { Button } from "@/components/ui/button";
@@ -97,6 +98,10 @@ export function CirculationDesk({
   const [isSearchingCopies, setIsSearchingCopies] = useState(false);
 
   const [dueDays, setDueDays] = useState(14);
+
+  // Books in Hands filter state
+  const [inHandsSearch, setInHandsSearch] = useState("");
+  const [inHandsFilter, setInHandsFilter] = useState<"ALL" | "OVERDUE" | "ON_SCHEDULE">("ALL");
 
   // Student Search Handler
   useEffect(() => {
@@ -326,8 +331,8 @@ export function CirculationDesk({
 
         <div className="flex items-center gap-3 self-start md:self-auto">
           <div className="px-4 py-2 rounded-xl bg-card border border-border text-xs font-mono flex items-center gap-2">
-            <Clock className="w-4 h-4 text-muted-foreground" />
-            <span>{format(new Date(), "EEEE, MMM dd, yyyy")}</span>
+            <Clock className="w-4 h-4 text-brand-yellow" />
+            <span>{formatTashkentDateTime(new Date())}</span>
           </div>
           <Link href="/">
             <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
@@ -476,8 +481,13 @@ export function CirculationDesk({
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
             }`}
         >
-          <BookOpen className="w-4 h-4" />
-          Active Loans ({activeLoans.length})
+          <UserCheck className="w-4 h-4 text-blue-500" />
+          Book In Use
+          {activeLoans.length > 0 && (
+            <span className="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 font-bold">
+              {activeLoans.length}
+            </span>
+          )}
         </button>
 
         <button
@@ -644,23 +654,16 @@ export function CirculationDesk({
                                 <span className="font-mono text-xs font-bold px-1.5 py-0.5 bg-muted rounded">
                                   {c.barcode}
                                 </span>
-                                <span
-                                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${c.status === "AVAILABLE"
-                                      ? "bg-emerald-500/10 text-emerald-600"
-                                      : c.status === "RESERVED"
-                                        ? "bg-amber-500/10 text-amber-600"
-                                        : "bg-destructive/10 text-destructive"
-                                    }`}
-                                >
-                                  {c.status}
+                                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600">
+                                  {c.condition}
                                 </span>
                               </div>
-                              <div className="font-medium text-sm text-foreground mt-1">
+                              <p className="font-bold text-sm text-foreground mt-0.5">
                                 {c.bookTitle}
-                              </div>
+                              </p>
                             </div>
-                            <span className="text-xs text-muted-foreground group-hover:text-primary font-medium">
-                              Select →
+                            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
+                              Available
                             </span>
                           </button>
                         ))}
@@ -671,11 +674,12 @@ export function CirculationDesk({
               </div>
             </div>
 
-            {/* Step 3: Loan Duration & Calendar Usage Limit Selector */}
-            <div className="space-y-3 border-t border-border/60 pt-4">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                3. Loan Duration & Expiration Deadline (Calendar Style)
+            {/* Loan Duration Selector */}
+            <div className="space-y-3 pt-3 border-t border-border">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" /> 3. Select Loan Duration (Days)
               </label>
+
               <CalendarUsageLimitPicker
                 initialDays={dueDays}
                 maxUsageDays={30}
@@ -683,13 +687,12 @@ export function CirculationDesk({
               />
             </div>
 
-            {/* Final Action Button */}
-            <div className="border-t border-border/60 pt-4 flex justify-end">
+            {/* Submit Checkout Button */}
+            <div className="pt-4 flex justify-end">
               <Button
                 onClick={handleCheckout}
-                disabled={isPending || !selectedStudent || (!selectedCopy && !copyQuery.trim())}
-                size="lg"
-                className="rounded-full px-8 font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white shadow-md hover:shadow-lg transition-all"
+                disabled={isPending || !selectedStudent || !selectedCopy}
+                className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold px-8 rounded-full min-h-[46px] text-sm shadow-md"
               >
                 {isPending ? (
                   <>
@@ -803,7 +806,7 @@ export function CirculationDesk({
                                 ) : c.status === "RESERVED" && c.currentHolderName ? (
                                   <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
                                     <Clock className="w-3 h-3 text-amber-500 shrink-0" />
-                                    Reserved Hold (Awaiting Pickup): {c.currentHolderName}
+                                    Reserved Hold: {c.currentHolderName}
                                   </span>
                                 ) : (
                                   <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
@@ -818,16 +821,9 @@ export function CirculationDesk({
                             </div>
                           </div>
 
-                          <div className="flex flex-col items-end shrink-0 gap-1">
-                            <span className="text-xs text-brand-blue font-bold group-hover:translate-x-0.5 transition-transform">
-                              Select {"→"}
-                            </span>
-                            {c.dueDate && (
-                              <span className="text-[10px] text-muted-foreground font-mono">
-                                Due {format(new Date(c.dueDate), "MMM dd")}
-                              </span>
-                            )}
-                          </div>
+                          <span className="text-xs text-brand-blue font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
+                            Select Copy →
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -841,7 +837,6 @@ export function CirculationDesk({
                   </p>
                 )}
 
-                {/* Selected Book Rich Return Preview Card */}
                 {selectedCheckinCopy && (
                   <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 space-y-3 animate-in fade-in zoom-in-95">
                     <div className="flex items-start justify-between gap-3 border-b border-emerald-500/20 pb-3">
@@ -1142,10 +1137,10 @@ export function CirculationDesk({
         <Card className="rounded-2xl border border-border bg-card shadow-sm">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="text-lg font-bold font-display flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-primary" /> Active Loans Directory
+              <UserCheck className="w-5 h-5 text-blue-500" /> Book In Use Directory (In Hands of Users)
             </CardTitle>
             <CardDescription className="text-xs">
-              All physical book copies currently checked out to students.
+              Directory of active physical book loans currently possessed by students and faculty.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">

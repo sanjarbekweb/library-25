@@ -117,7 +117,7 @@ async function main() {
   const books = await Promise.all([
     prisma.book.upsert({
       where: { isbn: "978-0-06-112008-4" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=600&h=800&fit=max&q=80" },
       create: {
         title: "To Kill a Mockingbird",
         author: "Harper Lee",
@@ -126,11 +126,12 @@ async function main() {
         description:
           "A classic novel about racial injustice in the American South, seen through the eyes of young Scout Finch.",
         publicationYear: 1960,
+        coverImageUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-452-28423-4" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&h=800&fit=max&q=80" },
       create: {
         title: "1984",
         author: "George Orwell",
@@ -139,11 +140,12 @@ async function main() {
         description:
           "A dystopian novel set in a totalitarian society under constant surveillance, exploring themes of truth and freedom.",
         publicationYear: 1949,
+        coverImageUrl: "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-7432-7356-5" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=max&q=80" },
       create: {
         title: "The Great Gatsby",
         author: "F. Scott Fitzgerald",
@@ -152,11 +154,12 @@ async function main() {
         description:
           "A tale of wealth, love, and the American Dream set in the Jazz Age of 1920s New York.",
         publicationYear: 1925,
+        coverImageUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-316-76948-0" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=800&fit=max&q=80" },
       create: {
         title: "The Catcher in the Rye",
         author: "J.D. Salinger",
@@ -165,11 +168,12 @@ async function main() {
         description:
           "The story of teenager Holden Caulfield navigating identity, belonging, and growing up in 1950s New York.",
         publicationYear: 1951,
+        coverImageUrl: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-06-093546-7" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=800&fit=max&q=80" },
       create: {
         title: "To Kill a Kingdom",
         author: "Alexandra Christo",
@@ -178,11 +182,12 @@ async function main() {
         description:
           "A dark fantasy retelling of The Little Mermaid about a siren princess and a prince who hunts her kind.",
         publicationYear: 2018,
+        coverImageUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-14-028329-7" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&h=800&fit=max&q=80" },
       create: {
         title: "The Odyssey",
         author: "Homer",
@@ -191,11 +196,12 @@ async function main() {
         description:
           "The epic ancient Greek poem following Odysseus on his ten-year journey home after the Trojan War.",
         publicationYear: -800,
+        coverImageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-06-231609-7" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1604866830893-c13cafa515d5?w=600&h=800&fit=max&q=80" },
       create: {
         title: "Sapiens: A Brief History of Humankind",
         author: "Yuval Noah Harari",
@@ -204,11 +210,12 @@ async function main() {
         description:
           "An exploration of the history of humanity from the Stone Age to the present, examining the forces that shaped our world.",
         publicationYear: 2011,
+        coverImageUrl: "https://images.unsplash.com/photo-1604866830893-c13cafa515d5?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-439-02348-1" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&h=800&fit=max&q=80" },
       create: {
         title: "The Hunger Games",
         author: "Suzanne Collins",
@@ -217,11 +224,12 @@ async function main() {
         description:
           "In a dystopian future, Katniss Everdeen must fight to survive in a televised death match called the Hunger Games.",
         publicationYear: 2008,
+        coverImageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-545-01022-1" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=600&h=800&fit=max&q=80" },
       create: {
         title: "Harry Potter and the Deathly Hallows",
         author: "J.K. Rowling",
@@ -230,11 +238,12 @@ async function main() {
         description:
           "The final installment in the Harry Potter series, where Harry faces Voldemort in a climactic battle for the wizarding world.",
         publicationYear: 2007,
+        coverImageUrl: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=600&h=800&fit=max&q=80",
       },
     }),
     prisma.book.upsert({
       where: { isbn: "978-0-13-468599-1" },
-      update: {},
+      update: { coverImageUrl: "https://images.unsplash.com/photo-1513185041617-8ab03f83d6c5?w=600&h=800&fit=max&q=80" },
       create: {
         title: "The Pragmatic Programmer",
         author: "David Thomas & Andrew Hunt",

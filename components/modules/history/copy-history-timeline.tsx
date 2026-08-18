@@ -18,6 +18,7 @@ import {
   UserCheck,
   FileText,
 } from "lucide-react";
+import { formatTashkentDateTime } from "@/lib/utils/tashkent-time";
 import { cn } from "@/lib/utils";
 
 interface CopyHistoryTimelineProps {
@@ -144,7 +145,7 @@ export function CopyHistoryTimeline({ history, compact = false }: CopyHistoryTim
                     {config.label}
                   </span>
                   <span className="text-xs text-muted-foreground font-mono">
-                    {format(new Date(log.createdAt), "MMM d, yyyy • h:mm a")}
+                    {formatTashkentDateTime(log.createdAt)}
                   </span>
                 </div>
 
