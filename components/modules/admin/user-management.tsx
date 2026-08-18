@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Users,
@@ -492,11 +493,7 @@ export function UserManagement({
 
                     {/* Joined Date */}
                     <td className="p-4 hidden lg:table-cell text-muted-foreground font-mono text-[11px]">
-                      {new Date(user.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {format(new Date(user.createdAt), "MMM d, yyyy")}
                     </td>
 
                     {/* Action Dropdown */}

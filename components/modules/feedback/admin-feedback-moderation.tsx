@@ -32,7 +32,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { AdminFeedbackResult, AdminFeedbackItem } from "@/lib/services/feedback-service";
+import type { AdminFeedbackResult, AdminFeedbackItem } from "@/lib/services/feedback-service";
 import { moderateFeedbackAction, deleteFeedbackAction } from "@/app/actions/feedback-actions";
 import { cn } from "@/lib/utils";
 

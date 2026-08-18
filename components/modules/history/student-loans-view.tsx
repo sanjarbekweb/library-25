@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { StudentLoansOverview, StudentLoanItem } from "@/lib/services/history-service";
+import type { StudentLoansOverview, StudentLoanItem } from "@/lib/services/history-service";
 import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
 import { cn } from "@/lib/utils";
 

@@ -19,8 +19,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CopyTraceabilityDetail } from "@/lib/services/history-service";
+import { useEffect } from "react";
+import Image from "next/image";
+import type { CopyTraceabilityDetail } from "@/lib/services/history-service";
+import type { CopySearchResult } from "@/lib/services/circulation-service";
 import { getCopyTraceabilityByBarcodeAction } from "@/app/actions/history-actions";
+import { searchCopiesAction } from "@/app/actions/circulation-actions";
 import { CopyHistoryTimeline } from "./copy-history-timeline";
 import { cn } from "@/lib/utils";
 
@@ -30,16 +34,30 @@ interface CopyTraceabilityViewProps {
 
 export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityViewProps) {
   const [barcodeInput, setBarcodeInput] = useState("");
+  const [searchResults, setSearchResults] = useState<CopySearchResult[]>([]);
   const [detail, setDetail] = useState<CopyTraceabilityDetail | null>(initialDetail);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleLookup = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const query = barcodeInput.trim();
-    if (!query) return;
+  // Live search for matching book titles or barcodes
+  useEffect(() => {
+    if (!barcodeInput.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      const res = await searchCopiesAction(barcodeInput);
+      if (res.ok && res.data) {
+        setSearchResults(res.data);
+      }
+    }, 250);
 
+    return () => clearTimeout(timer);
+  }, [barcodeInput]);
+
+  const executeLookup = (query: string) => {
     setError(null);
+    setSearchResults([]);
     startTransition(async () => {
       const res = await getCopyTraceabilityByBarcodeAction(query);
       if (res.ok) {
@@ -51,11 +69,18 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
     });
   };
 
+  const handleLookup = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = barcodeInput.trim();
+    if (!query) return;
+    executeLookup(query);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header / Search Console */}
-      <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
-        <CardHeader className="bg-muted/40 pb-4 border-b border-border">
+      <Card className="border-border bg-card shadow-sm rounded-2xl relative">
+        <CardHeader className="bg-muted/40 pb-4 border-b border-border rounded-t-2xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <CardTitle className="text-xl font-bold font-display flex items-center gap-2">
@@ -63,7 +88,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
                 Physical Copy Traceability Inspector
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground mt-1">
-                Enter any physical copy barcode or scan RFID tag to inspect full immutable history log and current status.
+                Search by book name, title, author, or physical copy barcode to inspect full audit history and status.
               </CardDescription>
             </div>
           </div>
@@ -71,19 +96,86 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
         <CardContent className="p-6">
           <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <QrCode className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Enter Copy Barcode (e.g. BC-1001-01)..."
+                placeholder="Search by book name (e.g. 1984, Gatsby), author, or barcode..."
                 value={barcodeInput}
                 onChange={(e) => setBarcodeInput(e.target.value)}
-                className="pl-10 font-mono text-sm"
+                className="pl-10 text-sm font-medium rounded-xl min-h-[44px]"
               />
+
+              {/* Live Search Autocomplete Dropdown */}
+              {searchResults.length > 0 && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
+                  {searchResults.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        setBarcodeInput(c.barcode);
+                        executeLookup(c.barcode);
+                      }}
+                      className="w-full p-3.5 text-left hover:bg-accent/70 transition-colors flex items-center justify-between gap-3 group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative h-12 w-9 rounded bg-muted overflow-hidden shrink-0 border border-border shadow-2xs">
+                          {c.coverImageUrl ? (
+                            <Image
+                              src={c.coverImageUrl}
+                              alt={c.bookTitle}
+                              fill
+                              sizes="36px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                              <BookOpen className="h-4 w-4" />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="min-w-0 space-y-0.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 bg-muted text-foreground rounded border border-border">
+                              {c.barcode}
+                            </span>
+                            {c.status === "BORROWED" && c.currentHolderName ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                                <User className="w-3 h-3 text-blue-500 shrink-0" />
+                                Book In Hand: {c.currentHolderName}
+                              </span>
+                            ) : c.status === "RESERVED" && c.currentHolderName ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                                Reserved Hold: {c.currentHolderName}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                Available on Shelf
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="font-bold text-sm text-foreground truncate group-hover:text-brand-blue transition-colors">
+                            {c.bookTitle}
+                          </h4>
+                          <p className="text-xs text-muted-foreground truncate">by {c.bookAuthor}</p>
+                        </div>
+                      </div>
+
+                      <span className="text-xs text-brand-blue font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
+                        Inspect {"→"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
             <Button
               type="submit"
               disabled={isPending || !barcodeInput.trim()}
-              className="bg-brand-blue text-white hover:bg-brand-blue/90 font-medium px-6 rounded-full"
+              className="bg-brand-blue text-white hover:bg-brand-blue/90 font-medium px-6 rounded-full min-h-[44px]"
             >
               {isPending ? (
                 <div className="flex items-center gap-2">
@@ -93,7 +185,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
               ) : (
                 <div className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
-                  <span>Lookup Copy</span>
+                  <span>Inspect Traceability</span>
                 </div>
               )}
             </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { format } from "date-fns";
 import Link from "next/link";
 import {
   BarChart3,
@@ -22,7 +23,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AnalyticsData, getCollectionAnalytics } from "@/lib/services/analytics-service";
+import type { AnalyticsData } from "@/lib/services/analytics-service";
 import { AnalyticsTimeframe } from "@/lib/schemas/analytics-schema";
 import { getAnalyticsDataAction } from "@/app/actions/analytics-actions";
 import { cn } from "@/lib/utils";
@@ -71,7 +72,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
               Live Telemetry
             </span>
             <span className="text-xs text-muted-foreground font-mono">
-              Updated {new Date(data.generatedAt).toLocaleTimeString()}
+              Updated {format(new Date(data.generatedAt), "hh:mm:ss a")}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground mt-2 flex items-center gap-3">

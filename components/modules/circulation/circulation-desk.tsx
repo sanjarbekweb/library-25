@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
+import type {
   CirculationDeskSummary,
   PendingReservationItem,
   ActiveLoanItem,
@@ -760,7 +760,7 @@ export function CirculationDesk({
 
                   {/* Search Autocomplete Dropdown */}
                   {checkinCopyResults.length > 0 && !selectedCheckinCopy && (
-                    <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-2xl shadow-xl max-h-72 overflow-y-auto divide-y divide-border/60">
+                    <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
                       {checkinCopyResults.map((c) => (
                         <button
                           key={c.id}
@@ -795,14 +795,19 @@ export function CirculationDesk({
                                 <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 bg-muted text-foreground rounded border border-border">
                                   {c.barcode}
                                 </span>
-                                {c.currentHolderName ? (
+                                {c.status === "BORROWED" && c.currentHolderName ? (
                                   <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
                                     <UserCheck className="w-3 h-3 text-blue-500 shrink-0" />
-                                    Holder: {c.currentHolderName}
+                                    Book In Hand: {c.currentHolderName}
+                                  </span>
+                                ) : c.status === "RESERVED" && c.currentHolderName ? (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                    <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                                    Reserved Hold (Awaiting Pickup): {c.currentHolderName}
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                                    No Active Borrower
+                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                    Available on Shelf
                                   </span>
                                 )}
                               </div>
@@ -883,9 +888,14 @@ export function CirculationDesk({
                       <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                           <div className="p-2.5 rounded-xl bg-card border border-border/60 space-y-0.5">
-                            <span className="text-[10px] text-muted-foreground uppercase font-bold block">Borrower Student</span>
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                              Physical Holder (Book In Hand)
+                            </span>
                             <span className="font-bold text-foreground block truncate">
                               {selectedCheckinCopy.currentHolderName || "Assigned Student"}
+                            </span>
+                            <span className="text-[10px] text-blue-600 dark:text-blue-400 block font-medium">
+                              Active Borrower • Possesses Physical Copy
                             </span>
                           </div>
 

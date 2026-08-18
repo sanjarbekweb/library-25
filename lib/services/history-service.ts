@@ -148,10 +148,29 @@ export async function getCopyHistory(copyId: string): Promise<BookHistoryItem[]>
 export async function getCopyTraceabilityByBarcode(
   barcode: string
 ): Promise<CopyTraceabilityDetail> {
-  const parsed = BarcodeLookupSchema.parse({ barcode });
+  const trimmed = barcode.trim();
+  const cleanQuery = trimmed.replace(/[- ]/g, "");
 
-  const copy = await prisma.bookCopy.findUnique({
-    where: { barcode: parsed.barcode },
+  const copy = await prisma.bookCopy.findFirst({
+    where: {
+      OR: [
+        { barcode: { equals: trimmed, mode: "insensitive" } },
+        { barcode: { equals: cleanQuery, mode: "insensitive" } },
+        { barcode: { contains: trimmed, mode: "insensitive" } },
+        { id: trimmed },
+        {
+          book: {
+            OR: [
+              { title: { contains: trimmed, mode: "insensitive" } },
+              { author: { contains: trimmed, mode: "insensitive" } },
+              { isbn: { contains: trimmed, mode: "insensitive" } },
+              { isbn: { contains: cleanQuery, mode: "insensitive" } },
+            ],
+          },
+        },
+      ],
+    },
+    orderBy: { updatedAt: "desc" },
     include: {
       book: {
         select: {

@@ -18,7 +18,7 @@ import {
   Loader2,
   Calendar,
 } from "lucide-react";
-import { ManageableBookItem } from "@/lib/services/book-management-service";
+import type { ManageableBookItem } from "@/lib/services/book-management-service";
 import {
   createBookAction,
   addBookCopyAction,
