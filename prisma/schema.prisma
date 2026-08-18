@@ -1,0 +1,238 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// Enums
+// ============================================
+
+enum UserRole {
+  STUDENT
+  ASSISTANT
+  ADMIN
+}
+
+enum CopyCondition {
+  MINT
+  GOOD
+  FAIR
+  DAMAGED
+}
+
+enum CopyStatus {
+  AVAILABLE
+  RESERVED
+  BORROWED
+  MAINTENANCE
+  LOST
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
+
+enum ReservationStatus {
+  PENDING
+  FULFILLED
+  CANCELLED
+  EXPIRED
+}
+
+enum HistoryAction {
+  CREATED
+  CHECKOUT
+  CHECKIN
+  RESERVED
+  RESERVATION_FULFILLED
+  RESERVATION_CANCELLED
+  RESERVATION_EXPIRED
+  CONDITION_CHANGE
+  STATUS_CHANGE
+  LOST
+  MAINTENANCE
+}
+
+// ============================================
+// Models
+// ============================================
+
+/// User synced from Clerk via webhook.
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String
+  lastName  String
+  role      UserRole @default(STUDENT)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  heldCopies   BookCopy[]    @relation("CurrentHolder")
+  loans        Loan[]        @relation("StudentLoans")
+  assistedLoans Loan[]       @relation("AssistantLoans")
+  reservations Reservation[]
+  feedbacks    Feedback[]
+  historyActions BookHistory[] @relation("HistoryActor")
+
+  @@index([clerkId])
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+/// Catalog book entry (title-level metadata).
+model Book {
+  id             String   @id @default(cuid())
+  title          String
+  author         String
+  isbn           String?  @unique
+  category       String
+  description    String?  @db.Text
+  coverImageUrl  String?
+  publicationYear Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  copies       BookCopy[]
+  reservations Reservation[]
+  feedbacks    Feedback[]
+
+  @@index([title])
+  @@index([author])
+  @@index([category])
+  @@index([isbn])
+  @@map("books")
+}
+
+/// Individual physical copy of a book.
+model BookCopy {
+  id              String        @id @default(cuid())
+  bookId          String
+  barcode         String        @unique
+  condition       CopyCondition @default(MINT)
+  status          CopyStatus    @default(AVAILABLE)
+  currentHolderId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  book          Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  currentHolder User?         @relation("CurrentHolder", fields: [currentHolderId], references: [id], onDelete: SetNull)
+  loans         Loan[]
+  reservations  Reservation[]
+  history       BookHistory[]
+
+  @@index([bookId])
+  @@index([status])
+  @@index([barcode])
+  @@index([currentHolderId])
+  @@map("book_copies")
+}
+
+/// Loan record tracking a checkout/return cycle.
+model Loan {
+  id          String     @id @default(cuid())
+  bookCopyId  String
+  studentId   String
+  assistantId String
+  borrowedAt  DateTime   @default(now())
+  dueDate     DateTime
+  returnedAt  DateTime?
+  status      LoanStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  bookCopy  BookCopy  @relation(fields: [bookCopyId], references: [id], onDelete: Cascade)
+  student   User      @relation("StudentLoans", fields: [studentId], references: [id], onDelete: Cascade)
+  assistant User      @relation("AssistantLoans", fields: [assistantId], references: [id], onDelete: Cascade)
+  feedback  Feedback?
+
+  @@index([bookCopyId])
+  @@index([studentId])
+  @@index([assistantId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("loans")
+}
+
+/// Immutable audit log for every BookCopy state change.
+/// Records are append-only — never update or delete.
+model BookHistory {
+  id            String        @id @default(cuid())
+  bookCopyId    String
+  action        HistoryAction
+  actorId       String
+  previousState String?
+  newState       String?
+  notes         String?       @db.Text
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  bookCopy BookCopy @relation(fields: [bookCopyId], references: [id], onDelete: Cascade)
+  actor    User     @relation("HistoryActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([bookCopyId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("book_history")
+}
+
+/// Student reservation request for a book.
+model Reservation {
+  id         String            @id @default(cuid())
+  bookId     String
+  bookCopyId String?
+  studentId  String
+  expiresAt  DateTime
+  status     ReservationStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  // Relations
+  book     Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookCopy BookCopy? @relation(fields: [bookCopyId], references: [id], onDelete: SetNull)
+  student  User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+  @@index([studentId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("reservations")
+}
+
+/// Verified post-loan feedback (one per loan).
+model Feedback {
+  id          String   @id @default(cuid())
+  bookId      String
+  studentId   String
+  loanId      String   @unique
+  rating      Int
+  comment     String?  @db.Text
+  isModerated Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  book    Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  loan    Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+  @@index([studentId])
+  @@index([rating])
+  @@map("feedbacks")
+}

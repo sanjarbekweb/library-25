@@ -26,7 +26,7 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
 ├────────┬─────────────────────────────────────────────────┬───────────────────────────┤
 │ Unit   │ Scope / Focus Area                              │ Primary Deliverable       │
 ├────────┼─────────────────────────────────────────────────┼───────────────────────────┤
-│ U-00   │ Project Scaffolding & Containerized Environment │ Next.js + Docker Compose  │
+│ U-00   │ Project Scaffolding & $0 Free-Tier Infrastructure│ Next.js + Free-Tier Providers │
 │ U-01   │ Database Schema, Enums & Migrations             │ Prisma Models & Seeds     │
 │ U-02   │ Clerk Authentication & RBAC Layer               │ Webhook Sync & Role Guard │
 │ U-03   │ SSR Catalog & Book Detail SEO                   │ Server Components & Meta  │
@@ -44,14 +44,14 @@ Each unit represents an isolated, verifiable milestone[cite: 3]. Before advancin
 
 ---
 
-### Unit 00: Project Scaffolding & Containerized Infrastructure (`00-scaffold.md`)
-* **Goal:** Initialize project workspace, styling system, container services, and base design tokens[cite: 1, 3].
+### Unit 00: Project Scaffolding & $0 Free-Tier Infrastructure (`00-scaffold.md`)
+* **Goal:** Initialize project workspace, styling system, 100% free-tier database/search environment, and base design tokens[cite: 1, 3].
 * **Detailed Steps:**
   1. Initialize Next.js 15 App Router application with TypeScript (`strict: true`)[cite: 3].
   2. Configure `tailwind.config.js` with color tokens (`canvas-warm`, `brand-yellow`, `brand-blue`, `gamify-streak`), custom border radii (`rounded-2xl`, `rounded-full`), and coordinate grid utilities[cite: 1, 3].
   3. Initialize `shadcn/ui` components directory structure (`components/ui/`) and install base primitives (Button, Input, Dialog, Dropdown, Table, Card)[cite: 1, 3].
-  4. Create `docker-compose.yml` defining local instances for PostgreSQL 16 and Meilisearch with persistent volumes[cite: 3].
-  5. Configure `.env.example` with database URLs, Clerk public/secret keys, and Meilisearch master/search credentials[cite: 3].
+  4. Configure database connection (Neon Serverless Postgres Free Tier or Supabase Free Tier) and standalone open-source Meilisearch binary/free setup[cite: 3].
+  5. Configure `.env.example` with database URLs, Clerk public/secret keys (Free Hobby Tier), and Meilisearch master/search credentials[cite: 3].
 
 ---
 
