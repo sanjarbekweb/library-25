@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BookOpen, Sparkles, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { getCatalogBooks, getCategories } from "@/lib/services/book-service";
+import { syncCurrentAuthenticatedUser } from "@/lib/services/user-service";
 import { Navbar } from "@/components/shared/navbar";
 import { BookCard } from "@/components/modules/catalog/book-card";
 import { CatalogFilterBar } from "@/components/modules/catalog/catalog-filter-bar";
@@ -34,7 +35,8 @@ export default async function HomePage({ searchParams }: PageProps) {
     | "newest"
     | "rating";
 
-  const [categories, catalogData] = await Promise.all([
+  const [, categories, catalogData] = await Promise.all([
+    syncCurrentAuthenticatedUser(),
     getCategories(),
     getCatalogBooks({ category, search, sort, page, limit: 12 }),
   ]);

@@ -100,3 +100,40 @@ export async function getUserByClerkId(clerkId: string) {
     where: { clerkId },
   });
 }
+
+/**
+ * Ensures the currently authenticated Clerk user is automatically synced to PostgreSQL.
+ * Provides instant JIT sync for local development where cloud webhooks cannot reach localhost.
+ */
+export async function syncCurrentAuthenticatedUser() {
+  const { currentUser } = await import("@clerk/nextjs/server");
+  const user = await currentUser();
+  if (!user) return null;
+
+  const primaryEmail =
+    user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+      ?.emailAddress ||
+    user.emailAddresses[0]?.emailAddress ||
+    "";
+
+  const role =
+    (user.publicMetadata?.role as "STUDENT" | "ASSISTANT" | "ADMIN") ||
+    "STUDENT";
+
+  return prisma.user.upsert({
+    where: { clerkId: user.id },
+    update: {
+      email: primaryEmail,
+      firstName: user.firstName || "Student",
+      lastName: user.lastName || "",
+      role,
+    },
+    create: {
+      clerkId: user.id,
+      email: primaryEmail,
+      firstName: user.firstName || "Student",
+      lastName: user.lastName || "",
+      role,
+    },
+  });
+}

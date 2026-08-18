@@ -49,7 +49,9 @@ export function CatalogFilterBar({
   const updateFilters = (updates: Record<string, string | null>) => {
     const queryString = createQueryString(updates);
     startTransition(() => {
-      router.push(`${pathname}${queryString ? `?${queryString}` : ""}`);
+      router.push(`${pathname}${queryString ? `?${queryString}` : ""}`, {
+        scroll: false,
+      });
     });
   };
 
