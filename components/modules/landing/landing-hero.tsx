@@ -104,12 +104,12 @@ export function LandingHero() {
               ) : (
                 <>
                   <Button size="lg" className="rounded-full font-bold px-6 shadow-md" asChild>
-                    <Link href="/dashboard">
+                    <Link href="/catalog">
                       Explore Catalog &amp; Holds &rarr;
                     </Link>
                   </Button>
                   <Button size="lg" variant="outline" className="rounded-full font-bold px-6 border-hairline" asChild>
-                    <Link href="/borrowed">
+                    <Link href="/loans">
                       My Active Loans
                     </Link>
                   </Button>
