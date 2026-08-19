@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import { BookOpen, Shield, ClipboardList, BookMarked, Bookmark, Menu, X, Search } from "lucide-react";
+import { useLenis } from "lenis/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSearchVisibility } from "@/lib/hooks/use-search-visibility";
@@ -13,6 +14,7 @@ import { SearchHeader } from "@/components/modules/search/search-header";
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const lenis = useLenis();
   const { isSignedIn, isLoaded, user } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -22,6 +24,23 @@ export function Navbar() {
 
   const isAssistantOrAdmin = userRole === "ASSISTANT" || userRole === "ADMIN";
   const isAdmin = userRole === "ADMIN";
+
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (lenis) {
+      lenis.scrollTo(targetId, {
+        duration: 1.6,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        offset: -70,
+      });
+    } else {
+      const el = document.querySelector(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   // Collapse expanded search if main catalog search becomes visible again
   useEffect(() => {
@@ -56,7 +75,7 @@ export function Navbar() {
         <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
           {/* Brand Logo - Fixed Left */}
           <Link href={isSignedIn ? "/catalog" : "/"} className="flex items-center gap-2.5 group shrink-0 transition-transform duration-300">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-yellow text-black font-bold shadow-sm transition-transform group-hover:scale-105">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-yellow text-black font-bold shadow-sm transition-transform">
               <BookOpen className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
@@ -85,25 +104,29 @@ export function Navbar() {
                 <>
                   <a
                     href="#product"
-                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
+                    onClick={(e) => handleScrollToSection(e, "#product")}
+                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out"
                   >
                     Product
                   </a>
                   <a
                     href="#features"
-                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
+                    onClick={(e) => handleScrollToSection(e, "#features")}
+                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out"
                   >
                     Features
                   </a>
                   <a
                     href="#pricing"
-                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
+                    onClick={(e) => handleScrollToSection(e, "#pricing")}
+                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out"
                   >
                     Pricing
                   </a>
                   <a
                     href="#resources"
-                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
+                    onClick={(e) => handleScrollToSection(e, "#resources")}
+                    className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out"
                   >
                     Resources
                   </a>
@@ -293,28 +316,28 @@ export function Navbar() {
               <>
                 <a
                   href="#product"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleScrollToSection(e, "#product")}
                   className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-foreground hover:bg-accent/50"
                 >
                   Product
                 </a>
                 <a
                   href="#features"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleScrollToSection(e, "#features")}
                   className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-foreground hover:bg-accent/50"
                 >
                   Features
                 </a>
                 <a
                   href="#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleScrollToSection(e, "#pricing")}
                   className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-foreground hover:bg-accent/50"
                 >
                   Pricing
                 </a>
                 <a
                   href="#resources"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleScrollToSection(e, "#resources")}
                   className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-foreground hover:bg-accent/50"
                 >
                   Resources

@@ -15,7 +15,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 shadow-xs">
               <ShieldAlert className="h-5 w-5" />
             </div>
             Admin Control Console
@@ -27,7 +27,7 @@ export default function AdminDashboardPage() {
 
         <div>
           <Link href="/catalog">
-            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
+            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border hover:border-foreground/20">
               <LogOut className="w-4 h-4 text-muted-foreground" />
               <span>Exit Admin Console</span>
             </Button>
@@ -38,7 +38,7 @@ export default function AdminDashboardPage() {
       {/* Navigation Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Feedback Moderation Card */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all group">
           <CardContent className="p-6 flex flex-col justify-between h-full space-y-6">
             <div className="space-y-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* User Management Card */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all group">
           <CardContent className="p-6 flex flex-col justify-between h-full space-y-6">
             <div className="space-y-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
@@ -84,7 +84,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Analytics Card */}
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-brand-blue/50 transition-all group">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all group">
           <CardContent className="p-6 flex flex-col justify-between h-full space-y-6">
             <div className="space-y-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">

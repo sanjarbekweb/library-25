@@ -107,7 +107,11 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
 
               {/* Live Search Autocomplete Dropdown */}
               {searchResults.length > 0 && (
-                <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
+                <div
+                  data-lenis-prevent="true"
+                  data-lenis-prevent-touch="true"
+                  className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto overscroll-contain divide-y divide-border/60 p-1"
+                >
                   {searchResults.map((c) => (
                     <button
                       key={c.id}

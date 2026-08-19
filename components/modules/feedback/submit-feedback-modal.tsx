@@ -120,7 +120,7 @@ export function SubmitFeedbackModal({
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(null)}
-                    className="p-1.5 focus:outline-none rounded-xl transition-transform hover:scale-125 focus-visible:ring-2 focus-visible:ring-brand-blue"
+                    className="p-1.5 focus:outline-none rounded-xl transition-colors focus-visible:ring-2 focus-visible:ring-brand-blue"
                   >
                     <Star
                       className={`h-8 w-8 transition-colors ${

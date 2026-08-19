@@ -147,7 +147,11 @@ export function SearchHeader({
 
       {/* Instant Search Results Dropdown */}
       {isOpen && debouncedQuery.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-card/98 backdrop-blur-md shadow-2xl overflow-hidden p-2 space-y-1 animate-in fade-in-50 zoom-in-95">
+        <div
+          data-lenis-prevent="true"
+          data-lenis-prevent-touch="true"
+          className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-card/98 backdrop-blur-md shadow-2xl max-h-[75vh] overflow-y-auto overscroll-contain p-2 space-y-1 animate-in fade-in-50 zoom-in-95"
+        >
           {/* Header metadata pill */}
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/60 text-[11px] font-mono text-muted-foreground">
             <span className="flex items-center gap-1.5">
@@ -252,7 +256,7 @@ export function SearchHeader({
           {!isLoading && hits.length > 0 && (
             <div className="pt-1 text-center border-t border-border/60">
               <Link
-                href={`/?search=${encodeURIComponent(debouncedQuery)}`}
+                href={`/catalog?search=${encodeURIComponent(debouncedQuery)}`}
                 onClick={() => setIsOpen(false)}
                 className="block py-1.5 text-xs font-semibold text-brand-blue hover:underline"
               >

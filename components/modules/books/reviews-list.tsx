@@ -297,7 +297,7 @@ export function ReviewsList({
                       key={star}
                       type="button"
                       onClick={() => setDirectRating(star)}
-                      className="p-1.5 hover:scale-110 transition-transform min-w-[40px] min-h-[40px] flex items-center justify-center"
+                      className="p-1.5 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
                     >
                       <Star
                         className={`h-8 w-8 ${

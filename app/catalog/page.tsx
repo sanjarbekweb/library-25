@@ -7,6 +7,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { BookCard } from "@/components/modules/catalog/book-card";
 import { CatalogFilterBar } from "@/components/modules/catalog/catalog-filter-bar";
 import { CatalogSkeleton } from "@/components/modules/catalog/catalog-skeleton";
+import { CatalogScrollRestoration } from "@/components/modules/catalog/catalog-scroll-restoration";
 import { TopDemandShowcase } from "@/components/modules/catalog/top-demand-showcase";
 import { Button } from "@/components/ui/button";
 
@@ -47,6 +48,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <CatalogScrollRestoration />
       <Navbar />
 
       {/* Top Demand Showcase Banner (or Compact Search Banner) */}
@@ -107,8 +109,8 @@ export default async function CatalogPage({ searchParams }: PageProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} />
+              {books.map((book, idx) => (
+                <BookCard key={book.id} book={book} priority={idx < 4} />
               ))}
             </div>
           )}

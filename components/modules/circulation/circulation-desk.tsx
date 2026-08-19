@@ -562,7 +562,11 @@ export function CirculationDesk({
 
                     {/* Autocomplete Dropdown */}
                     {studentResults.length > 0 && (
-                      <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-border">
+                      <div
+                        data-lenis-prevent="true"
+                        data-lenis-prevent-touch="true"
+                        className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto overscroll-contain divide-y divide-border"
+                      >
                         {studentResults.map((s) => (
                           <button
                             key={s.id}
@@ -638,7 +642,11 @@ export function CirculationDesk({
 
                     {/* Autocomplete Dropdown */}
                     {copyResults.length > 0 && (
-                      <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-border">
+                      <div
+                        data-lenis-prevent="true"
+                        data-lenis-prevent-touch="true"
+                        className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto overscroll-contain divide-y divide-border"
+                      >
                         {copyResults.map((c) => (
                           <button
                             key={c.id}
@@ -763,7 +771,11 @@ export function CirculationDesk({
 
                   {/* Search Autocomplete Dropdown */}
                   {checkinCopyResults.length > 0 && !selectedCheckinCopy && (
-                    <div className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto divide-y divide-border/60 p-1">
+                    <div
+                      data-lenis-prevent="true"
+                      data-lenis-prevent-touch="true"
+                      className="absolute z-[100] top-full left-0 right-0 mt-2 bg-popover text-popover-foreground border border-border rounded-2xl shadow-2xl max-h-80 overflow-y-auto overscroll-contain divide-y divide-border/60 p-1"
+                    >
                       {checkinCopyResults.map((c) => (
                         <button
                           key={c.id}

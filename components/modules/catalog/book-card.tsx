@@ -6,14 +6,15 @@ import { CopyAvailabilityBadge } from "./copy-availability-badge";
 
 interface BookCardProps {
   book: CatalogBookItem;
+  priority?: boolean;
 }
 
-export function BookCard({ book }: BookCardProps) {
+export function BookCard({ book, priority = false }: BookCardProps) {
   return (
     <Link
       href={`/books/${book.id}`}
       aria-label={`View details for ${book.title}`}
-      className="group flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all duration-200"
+      className="group flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden hover:border-foreground/20 hover:shadow-lg hover:scale-[1.03] transition-all duration-300 transform-gpu"
     >
       {/* Cover Image Container */}
       <div className="relative aspect-[3/4] w-full bg-muted overflow-hidden flex items-center justify-center">
@@ -22,12 +23,14 @@ export function BookCard({ book }: BookCardProps) {
             src={book.coverImageUrl}
             alt={`Book cover image for "${book.title}" by ${book.author}`}
             fill
+            priority={priority}
+            loading={priority ? "eager" : undefined}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="flex flex-col items-center justify-center p-6 text-center h-full w-full bg-gradient-to-br from-amber-500/10 via-brand-yellow/10 to-blue-500/10">
-            <BookOpen className="h-12 w-12 text-muted-foreground/40 mb-3 group-hover:scale-110 transition-transform" />
+            <BookOpen className="h-12 w-12 text-muted-foreground/40 mb-3 transition-transform" />
             <span className="font-display font-semibold text-sm line-clamp-2 text-foreground/80">
               {book.title}
             </span>

@@ -153,7 +153,7 @@ export function AdminFeedbackModeration({
 
       {/* Overview Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-mono uppercase">Total Reviews</span>
             <MessageSquareQuote className="h-4 w-4 text-brand-blue" />
@@ -164,7 +164,7 @@ export function AdminFeedbackModeration({
           <p className="text-[11px] text-muted-foreground mt-0.5">Submitted across system</p>
         </Card>
 
-        <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-mono uppercase">Published (Public)</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
@@ -176,7 +176,7 @@ export function AdminFeedbackModeration({
         </Card>
 
         <Card className={cn(
-          "border-border bg-card shadow-sm rounded-2xl p-4",
+          "border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all",
           stats.moderatedCount > 0 && "border-amber-300 bg-amber-50/40 dark:bg-amber-950/20 dark:border-amber-800"
         )}>
           <div className="flex items-center justify-between text-muted-foreground">
@@ -189,7 +189,7 @@ export function AdminFeedbackModeration({
           <p className="text-[11px] text-muted-foreground mt-0.5">Hidden from public catalog</p>
         </Card>
 
-        <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-mono uppercase">System Avg Rating</span>
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
@@ -210,7 +210,7 @@ export function AdminFeedbackModeration({
       )}
 
       {/* Search & Filter Controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-foreground/20 transition-all">
         {/* Status Tab Filters */}
         <div className="flex items-center gap-1 bg-muted p-1 rounded-xl">
           <button
@@ -273,7 +273,7 @@ export function AdminFeedbackModeration({
       {/* Feedbacks Stream / List */}
       <div className="space-y-4">
         {feedbacks.length === 0 ? (
-          <Card className="border-border bg-card shadow-sm rounded-2xl p-8 text-center">
+          <Card className="border border-border bg-card shadow-sm rounded-2xl p-8 text-center">
             <MessageSquareQuote className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />
             <h3 className="font-display font-bold text-base text-foreground">
               No Reviews Match Filter
@@ -288,7 +288,7 @@ export function AdminFeedbackModeration({
               <Card
                 key={item.id}
                 className={cn(
-                  "border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-border/80",
+                  "border border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-foreground/20 hover:shadow-md",
                   item.isModerated && "border-amber-300/70 bg-amber-500/5"
                 )}
               >
@@ -354,8 +354,8 @@ export function AdminFeedbackModeration({
                           <Star
                             key={star}
                             className={`h-4 w-4 ${star <= item.rating
-                                ? "fill-amber-400 text-amber-400"
-                                : "fill-muted text-muted"
+                              ? "fill-amber-400 text-amber-400"
+                              : "fill-muted text-muted"
                               }`}
                           />
                         ))}

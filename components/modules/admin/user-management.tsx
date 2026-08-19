@@ -276,11 +276,10 @@ export function UserManagement({
       {/* Alert Notification */}
       {actionAlert && (
         <div
-          className={`p-4 rounded-2xl border flex items-center justify-between text-xs sm:text-sm ${
-            actionAlert.type === "success"
+          className={`p-4 rounded-2xl border flex items-center justify-between text-xs sm:text-sm ${actionAlert.type === "success"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
               : "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300"
-          }`}
+            }`}
         >
           <div className="flex items-center gap-2">
             {actionAlert.type === "success" ? (
@@ -351,7 +350,7 @@ export function UserManagement({
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-card shadow-sm rounded-2xl col-span-2 lg:col-span-1">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl col-span-2 lg:col-span-1 hover:border-foreground/20 transition-all">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Deactivated</p>
@@ -367,7 +366,7 @@ export function UserManagement({
       </div>
 
       {/* Search & Filtering Bar */}
-      <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
+      <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           {/* Search Form */}
           <form onSubmit={handleSearchSubmit} className="relative flex-1">
@@ -399,11 +398,10 @@ export function UserManagement({
                 variant={selectedRole === role ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleRoleFilter(role)}
-                className={`rounded-full text-xs h-8 px-3 ${
-                  selectedRole === role
+                className={`rounded-full text-xs h-8 px-3 ${selectedRole === role
                     ? "bg-brand-blue text-white hover:bg-brand-blue/90"
                     : "border-border text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 {role === "ALL" ? "All Roles" : role.charAt(0) + role.slice(1).toLowerCase()}
               </Button>
@@ -419,11 +417,10 @@ export function UserManagement({
                 variant={selectedStatus === status ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleStatusFilter(status)}
-                className={`rounded-full text-xs h-8 px-3 ${
-                  selectedStatus === status
+                className={`rounded-full text-xs h-8 px-3 ${selectedStatus === status
                     ? "bg-brand-blue text-white hover:bg-brand-blue/90"
                     : "border-border text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 {status === "ALL" ? "All Status" : status === "ACTIVE" ? "Active" : "Deactivated"}
               </Button>
@@ -433,7 +430,7 @@ export function UserManagement({
       </Card>
 
       {/* User Directory Table */}
-      <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+      <Card className="border border-border bg-card shadow-sm rounded-2xl overflow-hidden hover:border-foreground/20 transition-all">
         {initialUsers.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
@@ -630,11 +627,10 @@ export function UserManagement({
                 <div
                   key={item.role}
                   onClick={() => setTargetRole(item.role as any)}
-                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
-                    targetRole === item.role
+                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${targetRole === item.role
                       ? "border-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10"
                       : "border-border hover:border-brand-blue/40"
-                  }`}
+                    }`}
                 >
                   <div className="p-2 rounded-xl bg-background border border-border text-foreground shrink-0 mt-0.5">
                     <item.icon className="h-4 w-4" />
@@ -676,11 +672,10 @@ export function UserManagement({
         <DialogContent className="sm:max-w-md rounded-3xl p-6 border-border">
           <DialogHeader className="space-y-2">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
-                statusModalUser?.isActive
+              className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${statusModalUser?.isActive
                   ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
                   : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-              }`}
+                }`}
             >
               {statusModalUser?.isActive ? <Ban className="h-5 w-5" /> : <UserCheck className="h-5 w-5" />}
             </div>
@@ -718,17 +713,16 @@ export function UserManagement({
             <Button
               onClick={handleStatusToggle}
               disabled={isPending}
-              className={`rounded-full font-semibold text-xs ${
-                statusModalUser?.isActive
+              className={`rounded-full font-semibold text-xs ${statusModalUser?.isActive
                   ? "bg-rose-600 text-white hover:bg-rose-700"
                   : "bg-emerald-600 text-white hover:bg-emerald-700"
-              }`}
+                }`}
             >
               {isPending
                 ? "Processing..."
                 : statusModalUser?.isActive
-                ? "Deactivate Account"
-                : "Reactivate Account"}
+                  ? "Deactivate Account"
+                  : "Reactivate Account"}
             </Button>
           </DialogFooter>
         </DialogContent>

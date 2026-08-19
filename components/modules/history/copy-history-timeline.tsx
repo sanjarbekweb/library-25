@@ -124,7 +124,7 @@ export function CopyHistoryTimeline({ history, compact = false }: CopyHistoryTim
             {/* Dot Indicator */}
             <div
               className={cn(
-                "absolute -left-[31px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border shadow-sm transition-transform group-hover:scale-110",
+                "absolute -left-[31px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border shadow-sm transition-colors",
                 config.bgClass
               )}
             >

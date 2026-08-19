@@ -115,7 +115,7 @@ export function LandingBentoGrid() {
                 <button
                   key={badgeText}
                   onClick={() => setSelectedBadge(badgeText)}
-                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out hover:scale-105 flex items-center justify-between ${
+                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out flex items-center justify-between ${
                     selectedBadge === badgeText
                       ? "bg-brand-blue text-white border-brand-blue shadow-sm"
                       : "bg-card text-foreground border-hairline hover:bg-accent"
