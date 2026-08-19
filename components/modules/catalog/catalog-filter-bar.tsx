@@ -88,14 +88,14 @@ export function CatalogFilterBar({
       </div>
 
       {/* Category Pills Slider */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none snap-x snap-mandatory scroll-smooth">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 mr-1 hidden md:inline">
           Categories:
         </span>
         <button
           onClick={() => updateFilters({ category: "all" })}
           className={cn(
-            "px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border",
+            "px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border snap-start shrink-0 min-h-[36px] flex items-center justify-center",
             currentCategory === "all" || !currentCategory
               ? "bg-foreground text-background border-foreground shadow-2xs"
               : "bg-card text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground"
@@ -112,7 +112,7 @@ export function CatalogFilterBar({
               key={cat}
               onClick={() => updateFilters({ category: cat })}
               className={cn(
-                "px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border",
+                "px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border snap-start shrink-0 min-h-[36px] flex items-center justify-center",
                 isSelected
                   ? "bg-foreground text-background border-foreground shadow-2xs"
                   : "bg-card text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground"

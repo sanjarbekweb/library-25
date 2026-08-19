@@ -115,7 +115,7 @@ export function Navbar() {
                     <Link
                       href="/catalog"
                       className={cn(
-                        "px-3.5 py-2 text-sm font-medium rounded-full transition-colors",
+                        "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors",
                         pathname.startsWith("/catalog")
                           ? "bg-accent text-accent-foreground font-semibold"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -127,7 +127,7 @@ export function Navbar() {
                     <Link
                       href="/reservations"
                       className={cn(
-                        "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                        "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                         pathname.startsWith("/reservations")
                           ? "bg-accent text-accent-foreground font-semibold"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -140,7 +140,7 @@ export function Navbar() {
                     <Link
                       href="/loans"
                       className={cn(
-                        "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                        "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                         pathname.startsWith("/loans")
                           ? "bg-accent text-accent-foreground font-semibold"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -155,20 +155,20 @@ export function Navbar() {
                         <Link
                           href="/assistant/books"
                           className={cn(
-                            "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                            "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                             pathname.startsWith("/assistant/books")
                               ? "bg-accent text-accent-foreground font-semibold"
                               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                           )}
                         >
                           <BookOpen className="h-4 w-4 text-emerald-500" />
-                          Manage Books
+                          <span className="hidden xl:inline">Manage </span>Books
                         </Link>
 
                         <Link
                           href="/assistant"
                           className={cn(
-                            "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                            "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                             pathname === "/assistant" || pathname === "/assistant/desk"
                               ? "bg-accent text-accent-foreground font-semibold"
                               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -184,7 +184,7 @@ export function Navbar() {
                       <Link
                         href="/admin"
                         className={cn(
-                          "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                          "px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
                           pathname.startsWith("/admin")
                             ? "bg-accent text-accent-foreground font-semibold"
                             : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
