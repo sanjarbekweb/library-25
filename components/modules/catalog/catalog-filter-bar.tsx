@@ -6,6 +6,7 @@ import { SearchHeader } from "@/components/modules/search/search-header";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/language-provider";
 
 interface CatalogFilterBarProps {
   categories: string[];
@@ -23,6 +24,7 @@ export function CatalogFilterBar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
 
   const createQueryString = useCallback(
@@ -79,10 +81,10 @@ export function CatalogFilterBar({
             onChange={(e) => updateFilters({ sort: e.target.value })}
             className="h-11 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue"
           >
-            <option value="newest">Newest Arrivals</option>
-            <option value="rating">Highest Rated</option>
-            <option value="title-asc">Title: A to Z</option>
-            <option value="title-desc">Title: Z to A</option>
+            <option value="newest">{t("newest")}</option>
+            <option value="rating">{t("ratingHigh")}</option>
+            <option value="title-asc">{t("titleAsc")}</option>
+            <option value="title-desc">{t("titleDesc")}</option>
           </select>
         </div>
       </div>
@@ -101,7 +103,7 @@ export function CatalogFilterBar({
               : "bg-card text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground"
           )}
         >
-          All Categories
+          {t("allCategories")}
         </button>
 
         {categories.map((cat) => {

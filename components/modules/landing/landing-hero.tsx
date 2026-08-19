@@ -21,9 +21,11 @@ import {
 } from "@/components/ui/tooltip";
 
 import { useUser } from "@clerk/nextjs";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function LandingHero() {
   const [activeState, setActiveState] = useState<1 | 2>(1);
+  const { t } = useLanguage();
   const { isSignedIn, isLoaded, user } = useUser();
   const userRole = user?.publicMetadata?.role as string | undefined;
   const isAssistantOrAdmin = userRole === "ASSISTANT" || userRole === "ADMIN";
@@ -62,10 +64,10 @@ export function LandingHero() {
             {activeState === 1 ? (
               <>
                 <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-foreground tracking-tight leading-[1.1]">
-                  All-in-one Library Platform
+                  {t("heroTitle")}
                 </h1>
                 <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  ShelfSync is a modern, all-in-one library platform designed to perfectly fit your campus needs.
+                  {t("heroSubtitle")}
                 </p>
               </>
             ) : (

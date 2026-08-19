@@ -3,11 +3,14 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Loader2, BookOpen, Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BookSearchDocument } from "@/lib/search/client";
+import { useLanguage } from "@/components/providers/language-provider";
+import { ImageWithLoader } from "@/components/shared/image-with-loader";
 
 interface SearchApiResponse {
   ok: boolean;
@@ -34,11 +37,13 @@ interface SearchHeaderProps {
 
 export function SearchHeader({
   className,
-  placeholder = "Search books by title, author, or ISBN (typo-tolerant)...",
+  placeholder,
   initialValue = "",
   onSearchSubmit,
   autoFocus = false,
 }: SearchHeaderProps) {
+  const { t } = useLanguage();
+  const effectivePlaceholder = placeholder || t("searchPlaceholder");
   const [searchTerm, setSearchTerm] = useState(initialValue);
   const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
@@ -125,7 +130,7 @@ export function SearchHeader({
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder={placeholder}
+          placeholder={effectivePlaceholder}
           aria-label="Search catalog with typo-tolerance"
           value={searchTerm}
           onChange={handleInputChange}
@@ -146,126 +151,128 @@ export function SearchHeader({
       </form>
 
       {/* Instant Search Results Dropdown */}
-      {isOpen && debouncedQuery.length > 0 && (
-        <div
-          data-lenis-prevent="true"
-          data-lenis-prevent-touch="true"
-          className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-card/98 backdrop-blur-md shadow-2xl max-h-[75vh] overflow-y-auto overscroll-contain p-2 space-y-1 animate-in fade-in-50 zoom-in-95"
-        >
-          {/* Header metadata pill */}
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/60 text-[11px] font-mono text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-brand-yellow" />
-              <span>
-                {source === "meilisearch"
-                  ? "Meilisearch Search Engine"
-                  : "Typo-Tolerant Search Engine"}
+      <AnimatePresence>
+        {isOpen && debouncedQuery.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            data-lenis-prevent="true"
+            data-lenis-prevent-touch="true"
+            className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-card/98 backdrop-blur-md shadow-2xl max-h-[75vh] overflow-y-auto overscroll-contain p-2 space-y-1"
+          >
+            {/* Header metadata pill */}
+            <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/60 text-[11px] font-mono text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3 text-brand-yellow" />
+                <span>
+                  {source === "meilisearch"
+                    ? "Meilisearch Search Engine"
+                    : "Typo-Tolerant Search Engine"}
+                </span>
               </span>
-            </span>
-            {isLoading ? (
-              <span className="flex items-center gap-1">
-                <Loader2 className="h-3 w-3 animate-spin text-brand-blue" />
-                Searching...
-              </span>
-            ) : (
-              <span>{totalHits} match{totalHits === 1 ? "" : "es"}</span>
-            )}
-          </div>
+              {isLoading ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin text-brand-blue" />
+                  Searching...
+                </span>
+              ) : (
+                <span>{totalHits} match{totalHits === 1 ? "" : "es"}</span>
+              )}
+            </div>
 
-          {/* Results list */}
-          {isLoading ? (
-            <div className="p-6 text-center space-y-2">
-              <Loader2 className="h-6 w-6 animate-spin mx-auto text-brand-blue" />
-              <p className="text-xs text-muted-foreground font-mono">
-                Searching collection index...
-              </p>
-            </div>
-          ) : isError ? (
-            <div className="p-4 text-center text-xs text-destructive flex items-center justify-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              <span>Failed to fetch search results</span>
-            </div>
-          ) : hits.length === 0 ? (
-            <div className="p-6 text-center space-y-2">
-              <BookOpen className="h-8 w-8 text-muted-foreground/40 mx-auto" />
-              <p className="text-sm font-display font-medium text-foreground">
-                No matching titles found
-              </p>
-              <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                Try searching for keywords like title, author name, or category.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border/40">
-              {hits.map((book) => (
-                <Link
-                  key={book.id}
-                  href={`/books/${book.id}`}
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-accent/80 transition-colors group"
-                >
-                  {/* Thumbnail Cover */}
-                  <div className="relative h-12 w-9 rounded-md bg-muted overflow-hidden shrink-0 border border-border shadow-2xs">
-                    {book.coverImageUrl ? (
-                      <Image
-                        src={book.coverImageUrl}
+            {/* Results list */}
+            {isLoading ? (
+              <div className="p-6 text-center space-y-2">
+                <Loader2 className="h-6 w-6 animate-spin text-brand-blue mx-auto" />
+                <p className="text-xs text-muted-foreground font-mono">
+                  Searching collection...
+                </p>
+              </div>
+            ) : isError ? (
+              <div className="p-4 text-center text-xs text-destructive flex items-center justify-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                <span>Failed to fetch search results</span>
+              </div>
+            ) : hits.length === 0 ? (
+              <div className="p-6 text-center space-y-2">
+                <AlertCircle className="h-6 w-6 text-muted-foreground/60 mx-auto" />
+                <p className="text-xs font-semibold text-foreground">
+                  No books found for &quot;{debouncedQuery}&quot;
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  Try checking spelling or search by category name
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {hits.map((book) => (
+                  <Link
+                    key={book.id}
+                    href={`/books/${book.id}`}
+                    onClick={() => setIsOpen(false)}
+                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-accent/70 transition-colors"
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative h-12 w-9 rounded-md bg-muted overflow-hidden shrink-0 border border-border/40">
+                      <ImageWithLoader
+                        src={book.coverImageUrl || ""}
                         alt={`Cover thumbnail for search result "${book.title}"`}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-[1.02] transition-transform"
                         sizes="36px"
                       />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
-                        <BookOpen className="h-4 w-4" />
+                    </div>
+
+                    {/* Book Metadata */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand-blue transition-colors">
+                          {book.title}
+                        </h4>
+                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-accent text-foreground border border-border shrink-0">
+                          {book.category}
+                        </span>
                       </div>
-                    )}
-                  </div>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        by {book.author}
+                      </p>
+                    </div>
 
-                  {/* Book Metadata */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-display font-bold text-foreground truncate group-hover:text-brand-blue transition-colors">
-                      {book.title}
-                    </h4>
-                    <p className="text-xs text-muted-foreground truncate">
-                      by {book.author}
-                    </p>
-                  </div>
+                    {/* Availability status dot */}
+                    <div className="shrink-0">
+                      {book.availableCopiesCount > 0 ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Avail
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full">
+                          On Hold
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
 
-                  {/* Badges */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="hidden sm:inline-block text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-accent text-foreground border border-border">
-                      {book.category}
-                    </span>
-                    {book.availableCopiesCount > 0 ? (
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-card text-foreground border-hairline shadow-xs">
-                        <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
-                        {book.availableCopiesCount} Available
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
-                        0 Available
-                      </span>
-                    )}
-                  </div>
+            {/* Footer View All link */}
+            {!isLoading && hits.length > 0 && (
+              <div className="pt-1 text-center border-t border-border/60">
+                <Link
+                  href={`/catalog?search=${encodeURIComponent(debouncedQuery)}`}
+                  onClick={() => setIsOpen(false)}
+                  className="block py-1.5 text-xs font-semibold text-brand-blue hover:underline"
+                >
+                  {t("viewAllResults")}
                 </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Footer View All link */}
-          {!isLoading && hits.length > 0 && (
-            <div className="pt-1 text-center border-t border-border/60">
-              <Link
-                href={`/catalog?search=${encodeURIComponent(debouncedQuery)}`}
-                onClick={() => setIsOpen(false)}
-                className="block py-1.5 text-xs font-semibold text-brand-blue hover:underline"
-              >
-                View all results in main catalog &rarr;
-              </Link>
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

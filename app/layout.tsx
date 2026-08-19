@@ -4,6 +4,8 @@ import { Rubik, JetBrains_Mono } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { LanguageProvider } from "@/components/providers/language-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +39,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html
         lang="en"
+        suppressHydrationWarning
         className={cn(
           "h-full antialiased font-sans",
           rubik.variable,
@@ -49,12 +52,16 @@ export default function RootLayout({
           <link rel="dns-prefetch" href="https://covers.openlibrary.org" />
         </head>
         <body className="min-h-full flex flex-col bg-background text-foreground">
-          <LenisProvider>
-            <QueryProvider>
-              {children}
-              <ToastProvider />
-            </QueryProvider>
-          </LenisProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
+            <LanguageProvider>
+              <LenisProvider>
+                <QueryProvider>
+                  {children}
+                  <ToastProvider />
+                </QueryProvider>
+              </LenisProvider>
+            </LanguageProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

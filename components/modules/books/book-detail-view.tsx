@@ -16,6 +16,7 @@ import { ReserveButton } from "./reserve-button";
 import { CopyAvailabilityBadge } from "@/components/modules/catalog/copy-availability-badge";
 import { ReviewsList } from "./reviews-list";
 import { Button } from "@/components/ui/button";
+import { ImageWithLoader } from "@/components/shared/image-with-loader";
 
 interface BookDetailViewProps {
   book: BookDetails;
@@ -51,26 +52,14 @@ export function BookDetailView({
           {/* Left Column: Cover Showcase */}
           <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
             <div className="relative aspect-[3/4] w-full max-w-[260px] rounded-2xl bg-muted overflow-hidden border border-border shadow-md">
-              {book.coverImageUrl ? (
-                <Image
-                  src={book.coverImageUrl}
-                  alt={`Cover image of "${book.title}" by ${book.author}`}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 300px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center p-6 text-center h-full w-full bg-gradient-to-br from-amber-500/10 via-brand-yellow/10 to-blue-500/10">
-                  <BookOpen className="h-16 w-16 text-muted-foreground/40 mb-4" />
-                  <span className="font-display font-semibold text-base text-foreground/80">
-                    {book.title}
-                  </span>
-                  <span className="text-xs text-muted-foreground mt-1">
-                    {book.author}
-                  </span>
-                </div>
-              )}
+              <ImageWithLoader
+                src={book.coverImageUrl || ""}
+                alt={`Cover image of "${book.title}" by ${book.author}`}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 300px"
+                className="object-cover"
+              />
             </div>
 
             {/* Quick Status Pill under image */}

@@ -1,6 +1,9 @@
+"use client";
+
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/language-provider";
 
 interface CopyAvailabilityBadgeProps {
   availableCount: number;
@@ -15,6 +18,7 @@ export function CopyAvailabilityBadge({
   nextAvailableDate,
   className,
 }: CopyAvailabilityBadgeProps) {
+  const { t } = useLanguage();
   const isAvailable = availableCount > 0;
 
   return (
@@ -35,18 +39,18 @@ export function CopyAvailabilityBadge({
       />
       {isAvailable ? (
         <span className="truncate">
-          <span className="hidden sm:inline">{availableCount} of {totalCount} Available</span>
-          <span className="sm:hidden">{availableCount}/{totalCount} Avail</span>
+          <span className="hidden sm:inline">{availableCount}/{totalCount} {t("available")}</span>
+          <span className="sm:hidden">{availableCount}/{totalCount}</span>
         </span>
       ) : nextAvailableDate ? (
         <span className="truncate flex items-center gap-1 font-mono text-[11px]">
           <Calendar className="h-3 w-3 shrink-0" />
-          <span>Next Avail: {format(new Date(nextAvailableDate), "MMM d")}</span>
+          <span>{format(new Date(nextAvailableDate), "MMM d")}</span>
         </span>
       ) : (
         <span className="truncate">
-          <span className="hidden sm:inline">All {totalCount} Checked Out</span>
-          <span className="sm:hidden">{totalCount}/{totalCount} Out</span>
+          <span className="hidden sm:inline">{t("onHold")}</span>
+          <span className="sm:hidden">{totalCount}/{totalCount}</span>
         </span>
       )}
     </span>
