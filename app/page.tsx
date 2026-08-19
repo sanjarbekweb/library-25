@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { BookOpen } from "lucide-react";
 import { Navbar } from "@/components/shared/navbar";
+import { AOSInit } from "@/components/shared/aos-init";
 import { LandingHero } from "@/components/modules/landing/landing-hero";
 import { LandingBentoGrid } from "@/components/modules/landing/landing-bento-grid";
 import { LandingIntegrations } from "@/components/modules/landing/landing-integrations";
@@ -19,6 +20,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-brand-yellow selection:text-black overflow-hidden">
+      <AOSInit />
       <Navbar />
 
       <main className="flex-1">

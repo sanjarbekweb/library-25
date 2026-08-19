@@ -27,7 +27,7 @@ export function LandingTestimonials() {
     <section id="resources" className="py-20 bg-card border-b border-hairline">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+        <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
             <span>Library Stories</span>
           </div>
@@ -44,7 +44,9 @@ export function LandingTestimonials() {
           {testimonials.map((item, idx) => (
             <Card
               key={idx}
-              className="p-8 rounded-3xl border border-hairline bg-background shadow-soft-floating flex flex-col justify-between space-y-6 transition-spring hover:scale-[1.01]"
+              data-aos="fade-up"
+              data-aos-delay={100 * (idx + 1)}
+              className="p-8 rounded-3xl border border-hairline bg-background shadow-soft-floating flex flex-col justify-between space-y-6 hover-scale-card"
             >
               <CardHeader className="p-0 space-y-4">
                 <div className="flex items-center justify-between">

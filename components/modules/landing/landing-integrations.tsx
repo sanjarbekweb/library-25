@@ -44,7 +44,7 @@ export function LandingIntegrations() {
     <section id="pricing" className="py-20 bg-canvas-warm dark:bg-canvas-dark border-b border-hairline overflow-hidden">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+        <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
             <span>Seamless Ecosystem</span>
           </div>
@@ -63,7 +63,9 @@ export function LandingIntegrations() {
             return (
               <div
                 key={idx}
-                className="p-5 rounded-3xl border border-hairline bg-card shadow-soft-floating flex flex-col justify-between space-y-4 transition-spring hover:scale-[1.03]"
+                data-aos="zoom-in"
+                data-aos-delay={100 + idx * 80}
+                className="p-5 rounded-3xl border border-hairline bg-card shadow-soft-floating flex flex-col justify-between space-y-4 hover-scale-subtle"
               >
                 <div className={`h-11 w-11 rounded-2xl ${item.color} flex items-center justify-center font-bold`}>
                   <IconComp className="h-5 w-5" />

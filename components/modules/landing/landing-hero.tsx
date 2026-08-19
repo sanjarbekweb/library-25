@@ -28,10 +28,10 @@ export function LandingHero() {
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-5 sm:space-y-6 my-auto">
         {/* Eyebrow / State Selector Badge */}
-        <div className="inline-flex items-center gap-2 p-1 pr-3 rounded-full bg-card border border-hairline shadow-soft-floating text-xs font-medium">
+        <div data-aos="fade-down" className="inline-flex items-center gap-2 p-1 pr-3 rounded-full bg-card border border-hairline shadow-soft-floating text-xs font-medium">
           <button
             onClick={() => setActiveState(1)}
-            className={`px-3 py-1 rounded-full transition-all text-xs font-bold ${
+            className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105 text-xs font-bold ${
               activeState === 1
                 ? "bg-brand-yellow text-black shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -41,7 +41,7 @@ export function LandingHero() {
           </button>
           <button
             onClick={() => setActiveState(2)}
-            className={`px-3 py-1 rounded-full transition-all text-xs font-bold ${
+            className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105 text-xs font-bold ${
               activeState === 2
                 ? "bg-brand-blue text-white shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -52,7 +52,7 @@ export function LandingHero() {
         </div>
 
         {/* Dynamic State Headlines */}
-        <div className="space-y-3 max-w-4xl mx-auto">
+        <div data-aos="fade-up" data-aos-delay="100" className="space-y-3 max-w-4xl mx-auto">
           {activeState === 1 ? (
             <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground leading-tight animate-in fade-in duration-300">
               All-in-one <span className="text-brand-blue underline decoration-brand-yellow decoration-4 underline-offset-4">Campus Library</span> platform
@@ -75,7 +75,7 @@ export function LandingHero() {
         </div>
 
         {/* Hero CTAs */}
-        <div className="pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div data-aos="fade-up" data-aos-delay="200" className="pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
           {isLoaded && isSignedIn ? (
             <>
               <Link href={isAssistantOrAdmin ? "/assistant" : "/catalog"}>
@@ -113,7 +113,7 @@ export function LandingHero() {
 
         {/* Floating Feature Badges / Connected Nodes */}
         <div className="pt-4 md:pt-6 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl mx-auto">
-          <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
+          <div data-aos="zoom-in-up" data-aos-delay="300" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node">
             <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
               <BookOpen className="h-4 w-4" />
             </div>
@@ -123,7 +123,7 @@ export function LandingHero() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
+          <div data-aos="zoom-in-up" data-aos-delay="400" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node">
             <div className="h-8 w-8 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0">
               <Sparkles className="h-4 w-4" />
             </div>
@@ -133,7 +133,7 @@ export function LandingHero() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
+          <div data-aos="zoom-in-up" data-aos-delay="500" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node">
             <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <MessageSquare className="h-4 w-4" />
             </div>
@@ -143,7 +143,7 @@ export function LandingHero() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
+          <div data-aos="zoom-in-up" data-aos-delay="600" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node">
             <div className="h-8 w-8 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0">
               <Fingerprint className="h-4 w-4" />
             </div>

@@ -27,7 +27,7 @@ export function LandingBentoGrid() {
     <section id="features" className="py-20 bg-card border-b border-hairline">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+        <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
             <span>Built for Modern Libraries</span>
           </div>
@@ -42,7 +42,7 @@ export function LandingBentoGrid() {
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Librarians & Desk Assistants */}
-          <Card className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover:scale-[1.01]">
+          <Card data-aos="fade-up" data-aos-delay="100" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
                 <BarChart3 className="h-5 w-5" />
@@ -90,7 +90,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 2: Faculty & Department Leads */}
-          <Card className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover:scale-[1.01]">
+          <Card data-aos="fade-up" data-aos-delay="200" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
                 <TrendingUp className="h-5 w-5" />
@@ -111,7 +111,7 @@ export function LandingBentoGrid() {
                 <button
                   key={badgeText}
                   onClick={() => setSelectedBadge(badgeText)}
-                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all flex items-center justify-between ${
+                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out hover:duration-500 hover:scale-[1.02] flex items-center justify-between ${
                     selectedBadge === badgeText
                       ? "bg-brand-blue text-white border-brand-blue shadow-sm"
                       : "bg-card text-foreground border-hairline hover:bg-accent"
@@ -125,7 +125,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 3: Catalog Compliance & Policy Stack */}
-          <Card className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover:scale-[1.01]">
+          <Card data-aos="fade-up" data-aos-delay="300" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
                 <ShieldCheck className="h-5 w-5" />
@@ -162,7 +162,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 4: All Book & Patron Telemetry (Col-span 2) */}
-          <Card className="md:col-span-2 flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover:scale-[1.01]">
+          <Card data-aos="fade-up" data-aos-delay="400" className="md:col-span-2 flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold">
                 <Users className="h-5 w-5" />
@@ -244,7 +244,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 5: Students & Researchers */}
-          <Card className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover:scale-[1.01]">
+          <Card data-aos="fade-up" data-aos-delay="500" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
                 <UserCheck className="h-5 w-5" />
