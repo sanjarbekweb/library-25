@@ -781,7 +781,7 @@ export function CirculationDesk({
                               {c.coverImageUrl ? (
                                 <Image
                                   src={c.coverImageUrl}
-                                  alt={c.bookTitle}
+                                  alt={`Book cover thumbnail for "${c.bookTitle}"`}
                                   fill
                                   sizes="36px"
                                   className="object-cover"
@@ -845,7 +845,7 @@ export function CirculationDesk({
                           {selectedCheckinCopy.coverImageUrl ? (
                             <Image
                               src={selectedCheckinCopy.coverImageUrl}
-                              alt={selectedCheckinCopy.bookTitle}
+                              alt={`Selected book cover image for check-in: "${selectedCheckinCopy.bookTitle}"`}
                               fill
                               sizes="40px"
                               className="object-cover"

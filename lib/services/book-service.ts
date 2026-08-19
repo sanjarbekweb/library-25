@@ -69,6 +69,97 @@ export interface BookDetails {
   nextAvailableDate: Date | null;
 }
 
+const getDefaultCatalogBooks = unstable_cache(
+  async (limit: number = 12): Promise<GetCatalogBooksResult> => {
+    const [total, books] = await Promise.all([
+      prisma.book.count(),
+      prisma.book.findMany({
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        include: {
+          copies: {
+            select: {
+              id: true,
+              status: true,
+              loans: {
+                where: { status: "ACTIVE" },
+                select: { dueDate: true },
+                orderBy: { dueDate: "asc" },
+                take: 1,
+              },
+              reservations: {
+                where: { status: "PENDING" },
+                select: { expiresAt: true },
+                orderBy: { expiresAt: "asc" },
+                take: 1,
+              },
+            },
+          },
+          feedbacks: {
+            where: { isModerated: false },
+            select: { rating: true },
+          },
+        },
+      }),
+    ]);
+
+    const mappedBooks: CatalogBookItem[] = books.map((book) => {
+      const availableCopiesCount = book.copies.filter(
+        (copy) => copy.status === "AVAILABLE"
+      ).length;
+      const totalCopiesCount = book.copies.length;
+      const reviewsCount = book.feedbacks.length;
+      const averageRating =
+        reviewsCount > 0
+          ? Number(
+              (
+                book.feedbacks.reduce((acc, f) => acc + f.rating, 0) /
+                reviewsCount
+              ).toFixed(1)
+            )
+          : null;
+
+      let nextAvailableDate: Date | null = null;
+      if (availableCopiesCount === 0) {
+        const dates: Date[] = [];
+        book.copies.forEach((c) => {
+          if (c.loans[0]?.dueDate) dates.push(c.loans[0].dueDate);
+          if (c.reservations[0]?.expiresAt) dates.push(c.reservations[0].expiresAt);
+        });
+        if (dates.length > 0) {
+          dates.sort((a, b) => a.getTime() - b.getTime());
+          nextAvailableDate = dates[0];
+        }
+      }
+
+      return {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        isbn: book.isbn,
+        category: book.category,
+        description: book.description,
+        coverImageUrl: book.coverImageUrl,
+        publicationYear: book.publicationYear,
+        availableCopiesCount,
+        totalCopiesCount,
+        averageRating,
+        reviewsCount,
+        nextAvailableDate,
+      };
+    });
+
+    return {
+      books: mappedBooks,
+      total,
+      page: 1,
+      totalPages: Math.ceil(total / limit) || 1,
+    };
+  },
+  ["default-catalog-page-1"],
+  { revalidate: 60, tags: ["catalog-books"] }
+);
+
 /**
  * Service function to retrieve catalog books with pagination, sorting, and availability metrics.
  * Upholds Prisma Isolation invariant (lib/services/* only).
@@ -80,6 +171,15 @@ export async function getCatalogBooks(
 ): Promise<GetCatalogBooksResult> {
   const params = GetCatalogBooksSchema.parse(rawParams);
   const { category, search, sort, page, limit } = params;
+
+  if (
+    (!category || category.toLowerCase() === "all") &&
+    (!search || search.trim() === "") &&
+    (sort === "newest" || !sort) &&
+    page === 1
+  ) {
+    return getDefaultCatalogBooks(limit);
+  }
 
   const where: Prisma.BookWhereInput = {};
 
@@ -451,44 +551,48 @@ export const getCategories = unstable_cache(
 /**
  * Service function to retrieve top demand and recommended books for catalog showcase.
  */
-export async function getTopDemandBooks(limit: number = 4): Promise<CatalogBookItem[]> {
-  const books = await prisma.book.findMany({
-    take: limit,
-    include: {
-      copies: { select: { status: true } },
-      feedbacks: { select: { rating: true } },
-      reservations: { select: { id: true } },
-    },
-    orderBy: [
-      { feedbacks: { _count: "desc" } },
-      { reservations: { _count: "desc" } },
-      { createdAt: "desc" },
-    ],
-  });
+export const getTopDemandBooks = unstable_cache(
+  async (limit: number = 4): Promise<CatalogBookItem[]> => {
+    const books = await prisma.book.findMany({
+      take: limit,
+      include: {
+        copies: { select: { status: true } },
+        feedbacks: { select: { rating: true } },
+        reservations: { select: { id: true } },
+      },
+      orderBy: [
+        { feedbacks: { _count: "desc" } },
+        { reservations: { _count: "desc" } },
+        { createdAt: "desc" },
+      ],
+    });
 
-  return books.map((b) => {
-    const totalCopiesCount = b.copies.length;
-    const availableCopiesCount = b.copies.filter(
-      (c) => c.status === "AVAILABLE"
-    ).length;
-    const totalRating = b.feedbacks.reduce((acc, f) => acc + f.rating, 0);
-    const reviewsCount = b.feedbacks.length;
-    const averageRating =
-      reviewsCount > 0 ? Number((totalRating / reviewsCount).toFixed(1)) : null;
+    return books.map((b) => {
+      const totalCopiesCount = b.copies.length;
+      const availableCopiesCount = b.copies.filter(
+        (c) => c.status === "AVAILABLE"
+      ).length;
+      const totalRating = b.feedbacks.reduce((acc, f) => acc + f.rating, 0);
+      const reviewsCount = b.feedbacks.length;
+      const averageRating =
+        reviewsCount > 0 ? Number((totalRating / reviewsCount).toFixed(1)) : null;
 
-    return {
-      id: b.id,
-      title: b.title,
-      author: b.author,
-      isbn: b.isbn,
-      category: b.category,
-      description: b.description,
-      coverImageUrl: b.coverImageUrl,
-      publicationYear: b.publicationYear,
-      availableCopiesCount,
-      totalCopiesCount,
-      averageRating,
-      reviewsCount,
-    };
-  });
-}
+      return {
+        id: b.id,
+        title: b.title,
+        author: b.author,
+        isbn: b.isbn,
+        category: b.category,
+        description: b.description,
+        coverImageUrl: b.coverImageUrl,
+        publicationYear: b.publicationYear,
+        availableCopiesCount,
+        totalCopiesCount,
+        averageRating,
+        reviewsCount,
+      };
+    });
+  },
+  ["top-demand-books"],
+  { revalidate: 60, tags: ["top-demand-books"] }
+);

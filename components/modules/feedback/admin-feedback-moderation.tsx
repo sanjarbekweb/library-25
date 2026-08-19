@@ -323,7 +323,7 @@ export function AdminFeedbackModeration({
                         {item.coverImageUrl ? (
                           <Image
                             src={item.coverImageUrl}
-                            alt={item.bookTitle}
+                            alt={`Book thumbnail for feedback review on "${item.bookTitle}"`}
                             fill
                             sizes="60px"
                             className="object-cover"

@@ -123,7 +123,7 @@ export function CopyTraceabilityView({ initialDetail = null }: CopyTraceabilityV
                           {c.coverImageUrl ? (
                             <Image
                               src={c.coverImageUrl}
-                              alt={c.bookTitle}
+                              alt={`Book cover image for copy barcode lookup "${c.bookTitle}"`}
                               fill
                               sizes="36px"
                               className="object-cover"

@@ -323,7 +323,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                               {b.coverImageUrl ? (
                                 <Image
                                   src={b.coverImageUrl}
-                                  alt={b.title}
+                                  alt={`Book cover thumbnail for "${b.title}"`}
                                   fill
                                   sizes="36px"
                                   className="object-cover"

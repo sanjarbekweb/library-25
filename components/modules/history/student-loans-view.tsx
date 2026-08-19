@@ -182,7 +182,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                     {loan.coverImageUrl ? (
                       <Image
                         src={loan.coverImageUrl}
-                        alt={loan.bookTitle}
+                        alt={`Book cover image for borrowed loan "${loan.bookTitle}"`}
                         fill
                         sizes="80px"
                         className="object-cover"

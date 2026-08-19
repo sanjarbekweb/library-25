@@ -113,6 +113,7 @@ model Book {
   @@index([author])
   @@index([category])
   @@index([isbn])
+  @@index([category, createdAt])
   @@map("books")
 }
 
@@ -165,6 +166,8 @@ model Loan {
   @@index([assistantId])
   @@index([status])
   @@index([dueDate])
+  @@index([studentId, status])
+  @@index([status, dueDate])
   @@map("loans")
 }
 
@@ -211,6 +214,8 @@ model Reservation {
   @@index([studentId])
   @@index([status])
   @@index([expiresAt])
+  @@index([studentId, status])
+  @@index([bookId, status])
   @@map("reservations")
 }
 

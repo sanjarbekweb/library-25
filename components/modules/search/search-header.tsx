@@ -202,7 +202,7 @@ export function SearchHeader({
                     {book.coverImageUrl ? (
                       <Image
                         src={book.coverImageUrl}
-                        alt={book.title}
+                        alt={`Cover thumbnail for search result "${book.title}"`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform"
                         sizes="36px"

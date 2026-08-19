@@ -118,7 +118,7 @@ export default async function StudentReservationsPage() {
                         {item.coverImageUrl ? (
                           <Image
                             src={item.coverImageUrl}
-                            alt={item.bookTitle}
+                            alt={`Book cover thumbnail for reserved title "${item.bookTitle}"`}
                             fill
                             className="object-cover"
                             sizes="48px"

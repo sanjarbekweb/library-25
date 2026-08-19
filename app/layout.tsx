@@ -43,6 +43,11 @@ export default function RootLayout({
           jetbrainsMono.variable
         )}
       >
+        <head>
+          <link rel="preconnect" href="https://images.unsplash.com" />
+          <link rel="preconnect" href="https://m.media-amazon.com" />
+          <link rel="dns-prefetch" href="https://covers.openlibrary.org" />
+        </head>
         <body className="min-h-full flex flex-col bg-background text-foreground">
           <LenisProvider>
             <QueryProvider>

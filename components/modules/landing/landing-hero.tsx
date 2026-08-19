@@ -39,21 +39,19 @@ export function LandingHero() {
           <div data-aos="fade-down" className="inline-flex items-center gap-2 p-1 pr-3 rounded-full bg-card border border-hairline shadow-soft-floating text-xs font-medium">
             <button
               onClick={() => setActiveState(1)}
-              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:scale-105 text-xs font-bold ${
-                activeState === 1
+              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:scale-105 text-xs font-bold ${activeState === 1
                   ? "bg-brand-yellow text-black shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Library System
             </button>
             <button
               onClick={() => setActiveState(2)}
-              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:scale-105 text-xs font-bold ${
-                activeState === 2
+              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out hover:scale-105 text-xs font-bold ${activeState === 2
                   ? "bg-brand-blue text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Smart Circulation
             </button>
@@ -96,8 +94,8 @@ export function LandingHero() {
                     </Link>
                   </Button>
                   <Button size="lg" variant="outline" className="rounded-full font-bold px-6 border-hairline" asChild>
-                    <Link href="/dashboard">
-                      Student Dashboard
+                    <Link href="/catalog">
+                      Catalog
                     </Link>
                   </Button>
                 </>

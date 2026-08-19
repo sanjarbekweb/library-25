@@ -50,7 +50,7 @@ export function TopDemandShowcase({ books }: TopDemandShowcaseProps) {
 
         {/* Top Demand Books Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {books.map((book) => {
+          {books.map((book, idx) => {
             const isAvailable = book.availableCopiesCount > 0;
 
             return (
@@ -81,8 +81,9 @@ export function TopDemandShowcase({ books }: TopDemandShowcaseProps) {
                   {book.coverImageUrl ? (
                     <Image
                       src={book.coverImageUrl}
-                      alt={book.title}
+                      alt={`Cover image for top-demand book "${book.title}" by ${book.author}`}
                       fill
+                      priority={idx < 2}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />

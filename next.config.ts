@@ -30,6 +30,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  compress: true,
+  reactStrictMode: true,
   productionBrowserSourceMaps: false,
   experimental: {
     optimizePackageImports: [
@@ -37,9 +39,17 @@ const nextConfig: NextConfig = {
       "date-fns",
       "@tanstack/react-query",
       "zod",
+      "@clerk/nextjs",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+      "clsx",
+      "tailwind-merge",
     ],
   },
   images: {
+    minimumCacheTTL: 2592000, // 30 Days Cache for Book Cover Images
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {

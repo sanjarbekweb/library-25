@@ -54,7 +54,7 @@ export function BookDetailView({
               {book.coverImageUrl ? (
                 <Image
                   src={book.coverImageUrl}
-                  alt={book.title}
+                  alt={`Cover image of "${book.title}" by ${book.author}`}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 300px"

@@ -116,7 +116,20 @@ export async function getUserByClerkId(clerkId: string) {
  * Wrapped in React cache() to deduplicate execution per request lifecycle.
  */
 export const syncCurrentAuthenticatedUser = cache(async () => {
-  const { currentUser } = await import("@clerk/nextjs/server");
+  const { auth, currentUser } = await import("@clerk/nextjs/server");
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  // 1. Fast path: Check local PostgreSQL database first (1-2ms)
+  const existingUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (existingUser) {
+    return existingUser;
+  }
+
+  // 2. Slow path (First-time sign-in): Fetch full profile from Clerk and upsert
   const user = await currentUser();
   if (!user) return null;
 
