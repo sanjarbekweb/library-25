@@ -43,31 +43,31 @@ export function BookCardSkeleton() {
 
 export function TopDemandCardSkeleton() {
   return (
-    <div className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between space-y-4">
+    <div className="bg-card border border-border rounded-2xl p-3.5 flex flex-col justify-between space-y-2.5">
       {/* Top Badge Overlay */}
       <div className="flex items-center justify-between gap-2">
-        <div className="h-6 w-24 skeleton-shimmer rounded-full" />
-        <div className="h-6 w-14 skeleton-shimmer rounded-full" />
+        <div className="h-5 w-20 skeleton-shimmer rounded-full" />
+        <div className="h-5 w-12 skeleton-shimmer rounded-full" />
       </div>
 
-      {/* Book Cover Container */}
-      <div className="relative h-56 sm:h-64 w-full rounded-2xl skeleton-shimmer border border-border/50">
-        <div className="absolute top-2 left-2 h-5 w-24 skeleton-shimmer rounded-md" />
+      {/* Book Cover Container - Normal 3:4 aspect ratio */}
+      <div className="relative aspect-[3/4] w-full rounded-xl skeleton-shimmer border border-border/50">
+        <div className="absolute top-1.5 left-1.5 h-4 w-20 skeleton-shimmer rounded-md" />
       </div>
 
       {/* Title & Author Info */}
-      <div className="space-y-1.5 flex-1 flex flex-col justify-start">
-        <div className="h-5 w-4/5 skeleton-shimmer rounded-md" />
-        <div className="h-3.5 w-1/2 skeleton-shimmer rounded-md" />
+      <div className="space-y-1 flex-1 flex flex-col justify-start">
+        <div className="h-4 w-4/5 skeleton-shimmer rounded-md" />
+        <div className="h-3 w-1/2 skeleton-shimmer rounded-md" />
       </div>
 
       {/* Copy Availability Status & Action CTA */}
-      <div className="space-y-3 pt-2 border-t border-border/60">
+      <div className="space-y-2 pt-2 border-t border-border/60">
         <div className="flex items-center justify-between">
-          <div className="h-5 w-24 skeleton-shimmer rounded-full" />
-          <div className="h-3.5 w-12 skeleton-shimmer rounded-md" />
+          <div className="h-4 w-20 skeleton-shimmer rounded-full" />
+          <div className="h-3 w-10 skeleton-shimmer rounded-md" />
         </div>
-        <div className="h-10 w-full skeleton-shimmer rounded-full" />
+        <div className="h-8 w-full skeleton-shimmer rounded-full" />
       </div>
     </div>
   );
@@ -75,22 +75,21 @@ export function TopDemandCardSkeleton() {
 
 export function TopDemandShowcaseSkeleton() {
   return (
-    <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-10 md:py-14">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
-        {/* Section Header Banner Skeleton */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/60 pb-6">
-          <div className="space-y-2">
-            <div className="h-6 w-56 skeleton-shimmer rounded-full" />
-            <div className="h-8 w-72 sm:w-96 skeleton-shimmer rounded-xl" />
-            <div className="h-4 w-full max-w-xl skeleton-shimmer rounded-md" />
+    <section className="relative border-b border-border bg-canvas-warm dark:bg-canvas-dark py-4 sm:py-5">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-4">
+        {/* Compact Section Header Banner Skeleton */}
+        <div className="flex flex-row items-center justify-between gap-3 border-b border-border/50 pb-3">
+          <div className="flex items-center gap-3">
+            <div className="h-5 w-32 skeleton-shimmer rounded-full" />
+            <div className="h-6 w-44 skeleton-shimmer rounded-md" />
           </div>
           <div className="shrink-0">
-            <div className="h-10 w-44 skeleton-shimmer rounded-full" />
+            <div className="h-8 w-36 skeleton-shimmer rounded-full" />
           </div>
         </div>
 
         {/* 4 Cards Grid Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <TopDemandCardSkeleton key={i} />
           ))}
