@@ -171,13 +171,13 @@ export default async function CatalogPage({ searchParams }: PageProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
+      <footer className="border-t border-hairline bg-card py-6 text-center text-xs text-muted-foreground">
         <div className="container max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-brand-yellow" />
-            <span className="font-bold text-foreground">ShelfSync Platform</span>
+            <span className="font-bold text-foreground">ShelfSync Library</span>
           </div>
-          <span>&copy; {new Date().getFullYear()} School Library System. Spec-Driven Architecture.</span>
+          <span>&copy; {new Date().getFullYear()} ShelfSync. All rights reserved.</span>
         </div>
       </footer>
     </div>

@@ -213,7 +213,7 @@
 }
 
 /* ============================================
-   Base Body Styles
+   Base Body Styles & Blueprint Utilities
    ============================================ */
 
 body {
@@ -230,4 +230,82 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+/* ============================================
+   Design System Blueprint Utility Classes
+   ============================================ */
+
+.shadow-soft-floating {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.02),
+    0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.border-hairline {
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.dark .border-hairline {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-frosted {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.dark .glass-frosted {
+  background: rgba(22, 25, 30, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transition-spring {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: 300ms;
+}
+
+.glow-bloom-violet {
+  position: relative;
+}
+
+.glow-bloom-violet::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glow-bloom-coral {
+  position: relative;
+}
+
+.glow-bloom-coral::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(255, 87, 51, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glow-bloom-sky {
+  position: relative;
+}
+
+.glow-bloom-sky::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
 }
