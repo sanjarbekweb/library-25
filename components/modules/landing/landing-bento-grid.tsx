@@ -48,7 +48,7 @@ export function LandingBentoGrid() {
           {/* Card 1: Librarians & Desk Staff */}
           <Card data-aos="fade-up" data-aos-delay="100" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+              <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
                 <BarChart3 className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold">For Librarians &amp; Desk Staff</CardTitle>
@@ -83,7 +83,7 @@ export function LandingBentoGrid() {
                     <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end group">
                       <div
                         style={{ height: bar.val }}
-                        className="w-full rounded-t-md bg-gradient-to-t from-brand-blue to-violet-500 group-hover:brightness-110 transition-all"
+                        className="w-full rounded-t-md bg-gradient-to-t from-brand-blue to-blue-600 group-hover:brightness-110 transition-all"
                       />
                       <span className="text-[9px] font-mono text-muted-foreground">{bar.month}</span>
                     </div>

@@ -34,7 +34,7 @@ export function LandingHero() {
     <TooltipProvider>
       <section id="product" className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center border-b border-hairline bg-canvas-warm dark:bg-canvas-dark py-8 md:py-12 bg-grid-pattern overflow-hidden">
         {/* Soft Radial Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-gradient-to-tr from-violet-500/10 via-indigo-500/10 to-amber-500/10 blur-[90px] pointer-events-none -z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-gradient-to-tr from-brand-blue/15 via-brand-yellow/10 to-brand-blue/15 blur-[90px] pointer-events-none -z-0" />
 
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-5 sm:space-y-6 my-auto">
           {/* Eyebrow / State Selector Badge */}
@@ -137,7 +137,7 @@ export function LandingHero() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div data-aos="zoom-in-up" data-aos-delay="300" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node cursor-pointer">
-                  <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-xl bg-brand-yellow/20 text-black dark:text-brand-yellow flex items-center justify-center shrink-0 font-bold">
                     <BookOpen className="h-4 w-4" />
                   </div>
                   <div className="text-left">
@@ -188,7 +188,7 @@ export function LandingHero() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div data-aos="zoom-in-up" data-aos-delay="600" className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating hover-scale-node cursor-pointer">
-                  <div className="h-8 w-8 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0">
                     <Fingerprint className="h-4 w-4" />
                   </div>
                   <div className="text-left">

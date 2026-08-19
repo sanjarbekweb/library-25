@@ -79,7 +79,7 @@ export function CatalogFilterBar({
             aria-label="Sort catalog titles"
             value={currentSort}
             onChange={(e) => updateFilters({ sort: e.target.value })}
-            className="h-11 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue"
+            className="h-11 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 transition-all duration-200 cursor-pointer hover:border-foreground/20"
           >
             <option value="newest">{t("newest")}</option>
             <option value="rating">{t("ratingHigh")}</option>

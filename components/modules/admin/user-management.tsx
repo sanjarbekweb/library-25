@@ -369,14 +369,14 @@ export function UserManagement({
       <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <form onSubmit={handleSearchSubmit} className="relative flex-1 group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-brand-blue group-focus-within:scale-110 transition-all duration-200" />
             <Input
               type="text"
               placeholder="Search user by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-10 rounded-xl bg-background border-border text-xs focus:ring-brand-blue h-10"
+              className="pl-10 pr-10 rounded-xl bg-background/80 border-border text-xs focus-visible:ring-4 focus-visible:ring-brand-blue/15 focus-visible:border-brand-blue h-10 transition-all duration-200"
             />
             {searchQuery && (
               <button

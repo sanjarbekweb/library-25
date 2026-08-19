@@ -151,7 +151,7 @@ export function ReserveHoldModal({
               max={formattedMaxDate}
               value={formattedInputDate}
               onChange={handleCalendarInputChange}
-              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all"
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background/80 text-foreground text-sm font-mono focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 transition-all duration-200"
             />
           </div>
         </div>

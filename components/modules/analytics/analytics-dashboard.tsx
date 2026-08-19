@@ -334,7 +334,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
         <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-              <Layers className="w-5 h-5 text-purple-600" />
+              <Layers className="w-5 h-5 text-brand-blue" />
               Category Breakdown
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
@@ -353,7 +353,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
                 </div>
                 <div className="w-full bg-muted/40 rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-purple-600 h-full rounded-full transition-all duration-500"
+                    className="bg-brand-blue h-full rounded-full transition-all duration-500"
                     style={{ width: `${Math.min(cat.percentage, 100)}%` }}
                   />
                 </div>

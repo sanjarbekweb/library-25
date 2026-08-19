@@ -162,7 +162,7 @@ export function SubmitFeedbackModal({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="What did you like or dislike about this book? Was it easy to understand?"
-                className="w-full rounded-2xl border border-input bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue/50 resize-none transition-all"
+                className="w-full rounded-2xl border border-input bg-background/80 p-3.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 resize-none transition-all duration-200"
               />
             </div>
 

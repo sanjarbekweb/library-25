@@ -126,8 +126,8 @@ export function SearchHeader({
 
   return (
     <div ref={containerRef} className={cn("relative w-full max-w-xl", className)}>
-      <form onSubmit={handleFormSubmit} className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <form onSubmit={handleFormSubmit} className="relative group">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-brand-blue group-focus-within:scale-110 transition-all duration-200" />
         <Input
           type="text"
           placeholder={effectivePlaceholder}
@@ -136,7 +136,7 @@ export function SearchHeader({
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           autoFocus={autoFocus}
-          className="pl-10 pr-9 h-11 rounded-full border-border bg-card shadow-2xs focus-visible:ring-brand-blue font-medium"
+          className="pl-10 pr-9 h-11 rounded-full border-border bg-card/90 shadow-xs font-medium focus-visible:border-brand-blue focus-visible:bg-card focus-visible:ring-4 focus-visible:ring-brand-blue/15 transition-all duration-200"
         />
         {searchTerm ? (
           <button

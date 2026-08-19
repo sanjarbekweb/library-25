@@ -41,7 +41,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     syncCurrentAuthenticatedUser(),
     getCategories(),
     getCatalogBooks({ category, search, sort, page, limit: 12 }),
-    getTopDemandBooks(4),
+    getTopDemandBooks(5),
   ]);
 
   const { books, total, totalPages } = catalogData;

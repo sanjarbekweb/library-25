@@ -552,7 +552,7 @@ export const getCategories = unstable_cache(
  * Service function to retrieve top demand and recommended books for catalog showcase.
  */
 export const getTopDemandBooks = unstable_cache(
-  async (limit: number = 4): Promise<CatalogBookItem[]> => {
+  async (limit: number = 5): Promise<CatalogBookItem[]> => {
     const books = await prisma.book.findMany({
       take: limit,
       include: {

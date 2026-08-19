@@ -21,7 +21,7 @@ export function LandingTestimonials() {
       quote:
         "Finding textbooks for course research and tracking hold availability is effortless. The catalog search is fast, accurate, and always displays real-time copy stock.",
       avatar: "MA",
-      bg: "bg-purple-600 text-white",
+      bg: "bg-brand-yellow text-black font-bold",
     },
   ];
 

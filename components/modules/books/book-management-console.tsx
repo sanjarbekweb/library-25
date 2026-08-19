@@ -570,7 +570,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full h-9 rounded-xl border border-input bg-background px-3 py-1 text-xs focus:ring-1 focus:ring-ring"
+                    className="w-full h-9 rounded-xl border border-input bg-background/80 px-3 py-1.5 text-xs font-medium focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 cursor-pointer transition-all duration-200"
                   >
                     {CATEGORY_PRESETS.map((cat) => (
                       <option key={cat} value={cat}>
@@ -608,7 +608,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                   placeholder="Summary of the book..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full rounded-xl border border-input bg-background p-3 text-xs focus:ring-1 focus:ring-ring"
+                  className="w-full rounded-xl border border-input bg-background/80 p-3 text-xs font-medium focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 resize-none transition-all duration-200"
                 />
               </div>
 
