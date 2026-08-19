@@ -22,7 +22,7 @@ export function LandingHero() {
   const isAssistantOrAdmin = userRole === "ASSISTANT" || userRole === "ADMIN";
 
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center border-b border-hairline bg-canvas-warm dark:bg-canvas-dark py-8 md:py-12 bg-grid-pattern overflow-hidden">
+    <section id="product" className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center border-b border-hairline bg-canvas-warm dark:bg-canvas-dark py-8 md:py-12 bg-grid-pattern overflow-hidden">
       {/* Soft Radial Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-gradient-to-tr from-violet-500/10 via-indigo-500/10 to-amber-500/10 blur-[90px] pointer-events-none -z-0" />
 
@@ -37,7 +37,7 @@ export function LandingHero() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            HR System
+            Library System
           </button>
           <button
             onClick={() => setActiveState(2)}
@@ -47,7 +47,7 @@ export function LandingHero() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Unified Workspace
+            Smart Circulation
           </button>
         </div>
 
@@ -55,21 +55,21 @@ export function LandingHero() {
         <div className="space-y-3 max-w-4xl mx-auto">
           {activeState === 1 ? (
             <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground leading-tight animate-in fade-in duration-300">
-              All-in-one <span className="text-brand-blue underline decoration-brand-yellow decoration-4 underline-offset-4">HR &amp; Library</span> platform
+              All-in-one <span className="text-brand-blue underline decoration-brand-yellow decoration-4 underline-offset-4">Campus Library</span> platform
             </h1>
           ) : (
             <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-foreground leading-tight animate-in fade-in duration-300">
-              Core HR &amp; Copy <span className="text-violet-600 dark:text-violet-400 underline decoration-violet-500 decoration-4 underline-offset-4">Solutions</span>
+              Centralized Catalog &amp; <span className="text-violet-600 dark:text-violet-400 underline decoration-violet-500 decoration-4 underline-offset-4">Circulation Desk</span>
             </h1>
           )}
 
           {activeState === 1 ? (
             <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              CoreShift is a modern, all-in-one HR &amp; resource platform designed to perfectly fit your business needs.
+              ShelfSync is a modern, all-in-one library management platform designed to streamline book discovery, reservations, desk checkouts, and collection tracking.
             </p>
           ) : (
             <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              Streamline HR processes in one centralized platform, enhancing team transparency and copy traceability.
+              Streamline physical book loans, real-time hold reservations, and automated overdue alerts in one unified campus workspace.
             </p>
           )}
         </div>
@@ -94,17 +94,17 @@ export function LandingHero() {
             </>
           ) : (
             <>
-              <Link href="/sign-in">
+              <Link href="/catalog">
                 <Button size="lg" variant="gradient" className="w-full sm:w-auto rounded-full font-semibold px-7 gap-2">
-                  <span>Request a Demo</span>
+                  <span>Explore Book Catalog</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
 
-              <Link href="/catalog">
+              <Link href="#features">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full font-semibold px-7 gap-2 border-hairline">
                   <BookOpen className="h-4 w-4 text-brand-yellow" />
-                  <span>Learn More</span>
+                  <span>Library Features</span>
                 </Button>
               </Link>
             </>
@@ -115,21 +115,21 @@ export function LandingHero() {
         <div className="pt-4 md:pt-6 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl mx-auto">
           <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
             <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <Lightbulb className="h-4 w-4" />
+              <BookOpen className="h-4 w-4" />
             </div>
             <div className="text-left">
-              <div className="text-xs font-bold text-foreground">Idea / Innovation</div>
-              <div className="text-[10px] text-muted-foreground">Smart Workflows</div>
+              <div className="text-xs font-bold text-foreground">Catalog Search</div>
+              <div className="text-[10px] text-muted-foreground">Instant ISBN &amp; Title Lookup</div>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5 p-3 rounded-2xl border border-hairline bg-card/80 backdrop-blur-md shadow-soft-floating transition-spring hover:scale-[1.02]">
             <div className="h-8 w-8 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0">
-              <ShieldAlert className="h-4 w-4" />
+              <Sparkles className="h-4 w-4" />
             </div>
             <div className="text-left">
-              <div className="text-xs font-bold text-foreground">Security &amp; Compliance</div>
-              <div className="text-[10px] text-muted-foreground">Audit Verified</div>
+              <div className="text-xs font-bold text-foreground">Rapid Circulation</div>
+              <div className="text-[10px] text-muted-foreground">10-Second Desk Checkouts</div>
             </div>
           </div>
 
@@ -138,8 +138,8 @@ export function LandingHero() {
               <MessageSquare className="h-4 w-4" />
             </div>
             <div className="text-left">
-              <div className="text-xs font-bold text-foreground">Collaboration</div>
-              <div className="text-[10px] text-muted-foreground">Real-time Threads</div>
+              <div className="text-xs font-bold text-foreground">Hold Queue</div>
+              <div className="text-[10px] text-muted-foreground">Automated Reservations</div>
             </div>
           </div>
 
@@ -148,8 +148,8 @@ export function LandingHero() {
               <Fingerprint className="h-4 w-4" />
             </div>
             <div className="text-left">
-              <div className="text-xs font-bold text-foreground">Identity &amp; Access</div>
-              <div className="text-[10px] text-muted-foreground">Role Claims</div>
+              <div className="text-xs font-bold text-foreground">Campus RBAC</div>
+              <div className="text-[10px] text-muted-foreground">Student &amp; Staff Roles</div>
             </div>
           </div>
         </div>

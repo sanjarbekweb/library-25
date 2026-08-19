@@ -1,47 +1,47 @@
 import {
+  Shield,
+  QrCode,
+  BookOpen,
   Mail,
-  MessageCircle,
-  Video,
-  Calendar,
-  Share2,
+  GraduationCap,
 } from "lucide-react";
 
 export function LandingIntegrations() {
   const integrations = [
     {
-      name: "Google Workspace / Gmail",
-      desc: "Unified inbox and calendar synchronization",
-      icon: Mail,
-      color: "bg-red-500/10 text-red-500",
-    },
-    {
-      name: "Slack",
-      desc: "Instant team notifications and slash commands",
-      icon: MessageCircle,
-      color: "bg-purple-500/10 text-purple-500",
-    },
-    {
-      name: "Google Meet",
-      desc: "Seamless video meetings",
-      icon: Video,
-      color: "bg-emerald-500/10 text-emerald-500",
-    },
-    {
-      name: "Microsoft Outlook",
-      desc: "Email & schedule management",
-      icon: Calendar,
+      name: "Campus SSO & OAuth",
+      desc: "Identity provider integration for instant student & faculty auth",
+      icon: Shield,
       color: "bg-blue-500/10 text-blue-500",
     },
     {
-      name: "Microsoft Teams",
-      desc: "Collaborative communication & video channels",
-      icon: Share2,
+      name: "Barcode & RFID Scanners",
+      desc: "Hardware scanner integration for 10-second desk checkouts",
+      icon: QrCode,
+      color: "bg-emerald-500/10 text-emerald-500",
+    },
+    {
+      name: "OpenLibrary & MARC21",
+      desc: "Automated ISBN metadata import and MARC cataloging",
+      icon: BookOpen,
+      color: "bg-purple-500/10 text-purple-500",
+    },
+    {
+      name: "Email Hold Alerts",
+      desc: "Instant pickup notifications when reserved books arrive",
+      icon: Mail,
+      color: "bg-amber-500/10 text-amber-500",
+    },
+    {
+      name: "Institutional LMS",
+      desc: "Seamless integration with university course reserve systems",
+      icon: GraduationCap,
       color: "bg-indigo-500/10 text-indigo-500",
     },
   ];
 
   return (
-    <section className="py-20 bg-canvas-warm dark:bg-canvas-dark border-b border-hairline overflow-hidden">
+    <section id="pricing" className="py-20 bg-canvas-warm dark:bg-canvas-dark border-b border-hairline overflow-hidden">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
@@ -49,8 +49,11 @@ export function LandingIntegrations() {
             <span>Seamless Ecosystem</span>
           </div>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
-            Integrate with your existing tools in seconds
+            Library Ecosystem Integrations
           </h2>
+          <p className="text-sm text-muted-foreground">
+            Connect ShelfSync with your campus scanners, identity providers, and catalog databases.
+          </p>
         </div>
 
         {/* Integrations Grid / Showcase Cards */}

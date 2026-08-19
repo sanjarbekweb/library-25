@@ -4,38 +4,38 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 export function LandingTestimonials() {
   const testimonials = [
     {
-      name: "Sarah Mitchell",
-      role: "HR Director at Nexa Solutions",
+      name: "Dr. Arisov B.",
+      role: "Head Librarian at Central Campus Library",
       rating: "5.0",
       quote:
-        "CoreShift has streamlined our HR processes, making tasks like onboarding and performance tracking more efficient. It helps us stay organized and saves our team time, allowing us to focus more on supporting our employees.",
-      avatar: "SM",
-      bg: "bg-purple-600 text-white",
+        "ShelfSync has revolutionized our campus library operations. Desk checkout times dropped to under 10 seconds, and students love reserving physical titles directly from their phones.",
+      avatar: "AB",
+      bg: "bg-brand-blue text-white",
     },
     {
-      name: "James Carter",
-      role: "HR Manager at BrightPath Solutions",
+      name: "Malika Akhmedova",
+      role: "Senior Student & Research Assistant",
       rating: "5.0",
       quote:
-        "The platform is easy to use, keeps everything in one place, and helps our team stay on top of things without extra hassle.",
-      avatar: "JC",
-      bg: "bg-brand-blue text-white",
+        "Finding textbooks for course research and tracking hold availability is effortless. The catalog search is fast, accurate, and always displays real-time copy stock.",
+      avatar: "MA",
+      bg: "bg-purple-600 text-white",
     },
   ];
 
   return (
-    <section className="py-20 bg-card border-b border-hairline">
+    <section id="resources" className="py-20 bg-card border-b border-hairline">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
-            <span>Customer Stories</span>
+            <span>Library Stories</span>
           </div>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
-            Words of Appreciation
+            Trusted by Librarians &amp; Students
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Thousands of businesses, from startups to enterprises, use CoreShift to handle payments and operations.
+            Discover how ShelfSync simplifies catalog discovery, hold fulfillment, and circulation desk transactions.
           </p>
         </div>
 
