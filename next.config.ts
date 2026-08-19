@@ -33,9 +33,6 @@ const nextConfig: NextConfig = {
   compress: true,
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   experimental: {
     optimizePackageImports: [
       "lucide-react",
