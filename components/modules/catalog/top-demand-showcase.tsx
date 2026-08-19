@@ -116,12 +116,12 @@ export function TopDemandShowcase({ books }: TopDemandShowcaseProps) {
                 <div className="space-y-3 pt-2 border-t border-border/60">
                   <div className="flex items-center justify-between text-xs font-mono">
                     {isAvailable ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="h-3 w-3" />
+                      <span className="inline-flex items-center gap-1.5 text-foreground font-semibold bg-card px-2.5 py-0.5 rounded-full border-hairline shadow-xs">
+                        <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
                         {book.availableCopiesCount} Available
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                      <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 font-semibold bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
                         <Clock className="h-3 w-3" />
                         On Hold / Borrowed
                       </span>

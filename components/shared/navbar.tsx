@@ -36,107 +36,93 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
-            <Link
-              href="/"
-              className={cn(
-                "px-3.5 py-2 text-sm font-medium rounded-full transition-colors",
-                pathname === "/"
-                  ? "bg-accent text-accent-foreground font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-              )}
-            >
-              Home
-            </Link>
-
-            <Link
-              href="/catalog"
-              className={cn(
-                "px-3.5 py-2 text-sm font-medium rounded-full transition-colors",
-                pathname.startsWith("/catalog")
-                  ? "bg-accent text-accent-foreground font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-              )}
-            >
-              Catalog
-            </Link>
-
-            {isLoaded && isSignedIn && (
-              <>
-                <Link
-                  href="/reservations"
-                  className={cn(
-                    "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
-                    pathname.startsWith("/reservations")
-                      ? "bg-accent text-accent-foreground font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  )}
-                >
-                  <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
-                  My Holds
-                </Link>
-
-                <Link
-                  href="/loans"
-                  className={cn(
-                    "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
-                    pathname.startsWith("/loans")
-                      ? "bg-accent text-accent-foreground font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  )}
-                >
-                  <BookMarked className="h-4 w-4" />
-                  My Loans
-                </Link>
-
-                {isAssistantOrAdmin && (
-                  <>
-                    <Link
-                      href="/assistant/books"
-                      className={cn(
-                        "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
-                        pathname.startsWith("/assistant/books")
-                          ? "bg-accent text-accent-foreground font-semibold"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                      )}
-                    >
-                      <BookOpen className="h-4 w-4 text-emerald-500" />
-                      Manage Books
-                    </Link>
-
-                    <Link
-                      href="/assistant"
-                      className={cn(
-                        "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
-                        pathname === "/assistant" || pathname === "/assistant/desk"
-                          ? "bg-accent text-accent-foreground font-semibold"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                      )}
-                    >
-                      <ClipboardList className="h-4 w-4 text-brand-blue" />
-                      Circulation Desk
-                    </Link>
-                  </>
+          {/* Desktop Navigation Links — Only visible when authenticated */}
+          {isLoaded && isSignedIn && (
+            <nav className="hidden md:flex items-center gap-1">
+              <Link
+                href="/catalog"
+                className={cn(
+                  "px-3.5 py-2 text-sm font-medium rounded-full transition-colors",
+                  pathname.startsWith("/catalog")
+                    ? "bg-accent text-accent-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
+              >
+                Catalog
+              </Link>
 
-                {isAdmin && (
+              <Link
+                href="/reservations"
+                className={cn(
+                  "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                  pathname.startsWith("/reservations")
+                    ? "bg-accent text-accent-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+                My Holds
+              </Link>
+
+              <Link
+                href="/loans"
+                className={cn(
+                  "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                  pathname.startsWith("/loans")
+                    ? "bg-accent text-accent-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                )}
+              >
+                <BookMarked className="h-4 w-4" />
+                My Loans
+              </Link>
+
+              {isAssistantOrAdmin && (
+                <>
                   <Link
-                    href="/admin"
+                    href="/assistant/books"
                     className={cn(
                       "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
-                      pathname.startsWith("/admin")
+                      pathname.startsWith("/assistant/books")
                         ? "bg-accent text-accent-foreground font-semibold"
                         : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                     )}
                   >
-                    <Shield className="h-4 w-4 text-brand-blue" />
-                    Admin
+                    <BookOpen className="h-4 w-4 text-emerald-500" />
+                    Manage Books
                   </Link>
-                )}
-              </>
-            )}
-          </nav>
+
+                  <Link
+                    href="/assistant"
+                    className={cn(
+                      "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                      pathname === "/assistant" || pathname === "/assistant/desk"
+                        ? "bg-accent text-accent-foreground font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    )}
+                  >
+                    <ClipboardList className="h-4 w-4 text-brand-blue" />
+                    Circulation Desk
+                  </Link>
+                </>
+              )}
+
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={cn(
+                    "px-3.5 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5",
+                    pathname.startsWith("/admin")
+                      ? "bg-accent text-accent-foreground font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
+                >
+                  <Shield className="h-4 w-4 text-brand-blue" />
+                  Admin
+                </Link>
+              )}
+            </nav>
+          )}
 
           {/* Auth Action & Mobile Toggle */}
           <div className="flex items-center gap-3">
@@ -159,34 +145,22 @@ export function Navbar() {
               </SignInButton>
             )}
 
-            {/* Mobile Hamburger Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              aria-label="Toggle mobile menu"
-              className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-accent transition-colors"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            {/* Mobile Hamburger Menu Button (Only for authenticated users) */}
+            {isLoaded && isSignedIn && (
+              <button
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                aria-label="Toggle mobile menu"
+                className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-accent transition-colors"
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Collapsible Navigation Drawer */}
-        {mobileMenuOpen && (
+        {/* Mobile Collapsible Navigation Drawer (Only for authenticated users) */}
+        {isLoaded && isSignedIn && mobileMenuOpen && (
           <div className="md:hidden border-b border-border bg-card/98 backdrop-blur-md px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-2">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                pathname === "/"
-                  ? "bg-accent text-foreground font-semibold"
-                  : "text-muted-foreground hover:bg-accent/50"
-              )}
-            >
-              <BookOpen className="h-4 w-4 text-brand-yellow" />
-              Home
-            </Link>
-
             <Link
               href="/catalog"
               onClick={() => setMobileMenuOpen(false)}
@@ -201,84 +175,80 @@ export function Navbar() {
               Catalog
             </Link>
 
-            {isLoaded && isSignedIn && (
+            <Link
+              href="/reservations"
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                pathname.startsWith("/reservations")
+                  ? "bg-accent text-foreground font-semibold"
+                  : "text-muted-foreground hover:bg-accent/50"
+              )}
+            >
+              <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+              My Holds
+            </Link>
+
+            <Link
+              href="/loans"
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                pathname.startsWith("/loans")
+                  ? "bg-accent text-foreground font-semibold"
+                  : "text-muted-foreground hover:bg-accent/50"
+              )}
+            >
+              <BookMarked className="h-4 w-4" />
+              My Loans
+            </Link>
+
+            {isAssistantOrAdmin && (
               <>
                 <Link
-                  href="/reservations"
+                  href="/assistant/books"
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
                     "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                    pathname.startsWith("/reservations")
+                    pathname.startsWith("/assistant/books")
                       ? "bg-accent text-foreground font-semibold"
                       : "text-muted-foreground hover:bg-accent/50"
                   )}
                 >
-                  <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
-                  My Holds
+                  <BookOpen className="h-4 w-4 text-emerald-500" />
+                  Manage Books
                 </Link>
 
                 <Link
-                  href="/loans"
+                  href="/assistant"
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
                     "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                    pathname.startsWith("/loans")
+                    pathname === "/assistant" || pathname === "/assistant/desk"
                       ? "bg-accent text-foreground font-semibold"
                       : "text-muted-foreground hover:bg-accent/50"
                   )}
                 >
-                  <BookMarked className="h-4 w-4" />
-                  My Loans
+                  <ClipboardList className="h-4 w-4 text-brand-blue" />
+                  Circulation Desk
                 </Link>
-
-                {isAssistantOrAdmin && (
-                  <>
-                    <Link
-                      href="/assistant/books"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                        pathname.startsWith("/assistant/books")
-                          ? "bg-accent text-foreground font-semibold"
-                          : "text-muted-foreground hover:bg-accent/50"
-                      )}
-                    >
-                      <BookOpen className="h-4 w-4 text-emerald-500" />
-                      Manage Books
-                    </Link>
-
-                    <Link
-                      href="/assistant"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                        pathname === "/assistant" || pathname === "/assistant/desk"
-                          ? "bg-accent text-foreground font-semibold"
-                          : "text-muted-foreground hover:bg-accent/50"
-                      )}
-                    >
-                      <ClipboardList className="h-4 w-4 text-brand-blue" />
-                      Circulation Desk
-                    </Link>
-                  </>
-                )}
-
-                {isAdmin && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
-                      pathname.startsWith("/admin")
-                        ? "bg-accent text-foreground font-semibold"
-                        : "text-muted-foreground hover:bg-accent/50"
-                    )}
-                  >
-                    <Shield className="h-4 w-4 text-brand-blue" />
-                    Admin Console
-                  </Link>
-                )}
               </>
+            )}
+
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-colors min-h-[44px]",
+                  pathname.startsWith("/admin")
+                    ? "bg-accent text-foreground font-semibold"
+                    : "text-muted-foreground hover:bg-accent/50"
+                )}
+              >
+                <Shield className="h-4 w-4 text-brand-blue" />
+                Admin Console
+              </Link>
             )}
           </div>
         )}

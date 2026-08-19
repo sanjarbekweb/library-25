@@ -120,7 +120,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
                 <span>Admin Hub</span>
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="/catalog">
               <Button
                 variant="outline"
                 size="sm"
@@ -635,7 +635,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
               <span>Back to Admin Hub</span>
             </Button>
           </Link>
-          <Link href="/">
+          <Link href="/catalog">
             <Button
               size="sm"
               className="rounded-full gap-2 text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue/90"

@@ -334,7 +334,7 @@ export function CirculationDesk({
             <Clock className="w-4 h-4 text-brand-yellow" />
             <span>{formatTashkentDateTime(new Date())}</span>
           </div>
-          <Link href="/">
+          <Link href="/catalog">
             <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
               <LogOut className="w-4 h-4 text-muted-foreground" />
               <span>Exit Desk Console</span>

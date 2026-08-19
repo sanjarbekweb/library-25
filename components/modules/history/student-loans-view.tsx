@@ -64,7 +64,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
               <span>View My Holds</span>
             </Button>
           </Link>
-          <Link href="/">
+          <Link href="/catalog">
             <Button size="sm" className="rounded-full gap-2 bg-brand-blue text-white hover:bg-brand-blue/90 font-medium">
               <BookOpen className="h-4 w-4" />
               <span>Browse Catalog</span>
@@ -258,7 +258,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
               You do not have any physical books checked out at the moment. Browse the library catalog to reserve available titles.
             </p>
             <div className="mt-4">
-              <Link href="/">
+              <Link href="/catalog">
                 <Button size="sm" className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90">
                   Browse Catalog
                 </Button>

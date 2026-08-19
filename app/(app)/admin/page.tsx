@@ -26,7 +26,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div>
-          <Link href="/">
+          <Link href="/catalog">
             <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
               <LogOut className="w-4 h-4 text-muted-foreground" />
               <span>Exit Admin Console</span>

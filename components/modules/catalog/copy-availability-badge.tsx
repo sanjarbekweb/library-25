@@ -20,17 +20,17 @@ export function CopyAvailabilityBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium tracking-tight transition-colors",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-tight transition-colors shadow-xs border-hairline",
         isAvailable
-          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-          : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
+          ? "bg-card text-foreground border-hairline"
+          : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
         className
       )}
     >
       <span
         className={cn(
           "h-1.5 w-1.5 rounded-full shrink-0",
-          isAvailable ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+          isAvailable ? "bg-brand-blue" : "bg-amber-500"
         )}
       />
       {isAvailable ? (

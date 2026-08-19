@@ -59,7 +59,7 @@ export function CatalogShell({
                 Found {total} title{total === 1 ? "" : "s"} matching your query
               </p>
             </div>
-            <Link href="/">
+            <Link href="/catalog">
               <button className="px-4 py-2 rounded-full border border-border text-xs font-semibold text-foreground hover:bg-accent transition-colors">
                 Clear Search
               </button>
@@ -85,7 +85,7 @@ export function CatalogShell({
             <p className="text-xs text-muted-foreground">
               We couldn&apos;t find any books matching your selected filters or search terms.
             </p>
-            <Link href="/">
+            <Link href="/catalog">
               <button className="px-4 py-2 rounded-full bg-brand-blue text-white text-xs font-bold shadow-xs">
                 Reset Filters
               </button>

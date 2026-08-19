@@ -41,7 +41,7 @@ export default async function StudentReservationsPage() {
         {/* Header Breadcrumb & Title */}
         <div className="space-y-3">
           <Link
-            href="/"
+            href="/catalog"
             className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="h-4 w-4" /> Back to Catalog
@@ -95,7 +95,7 @@ export default async function StudentReservationsPage() {
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                 Explore the catalog and click &ldquo;Reserve Book for Pickup&rdquo; on any available title to hold a physical copy.
               </p>
-              <Link href="/">
+              <Link href="/catalog">
                 <button className="text-xs font-bold text-brand-blue hover:underline pt-2">
                   Browse Catalog &rarr;
                 </button>
