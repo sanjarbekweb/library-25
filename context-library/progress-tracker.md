@@ -13,6 +13,12 @@ change.
 
 ## Completed
 
+- [x] Lenis Smooth Scrolling Integration
+  - Installed `lenis` library
+  - Created client-side `LenisProvider` component (`components/providers/lenis-provider.tsx`) using `ReactLenis` and `lenis.css`
+  - Integrated `LenisProvider` at the root layout level (`app/layout.tsx`)
+  - Verification: `npx tsc --noEmit` and `npm run build` passed cleanly with 0 errors
+
 - [x] Unit 00: Project Scaffolding & Local/Cloud Infrastructure ($0 Free-Tier)
   - [x] Initialize Next.js App Router with TypeScript (strict: true)
   - [x] Configure Tailwind v4 with design tokens and custom border radii

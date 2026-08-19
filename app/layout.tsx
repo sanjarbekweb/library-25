@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Rubik, JetBrains_Mono } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { LenisProvider } from "@/components/providers/lenis-provider";
+import { ToastProvider } from "@/components/providers/toast-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +28,6 @@ export const metadata: Metadata = {
     "ShelfSync is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
 };
 
-import { ToastProvider } from "@/components/providers/toast-provider";
-
 export default function RootLayout({
   children,
 }: {
@@ -44,10 +44,12 @@ export default function RootLayout({
         )}
       >
         <body className="min-h-full flex flex-col bg-background text-foreground">
-          <QueryProvider>
-            {children}
-            <ToastProvider />
-          </QueryProvider>
+          <LenisProvider>
+            <QueryProvider>
+              {children}
+              <ToastProvider />
+            </QueryProvider>
+          </LenisProvider>
         </body>
       </html>
     </ClerkProvider>
