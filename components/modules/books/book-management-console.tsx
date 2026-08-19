@@ -480,8 +480,8 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
 
                                       <div className="pt-2 border-t border-border/60 flex justify-end">
                                         <Link
-                                          href={`/assistant/circulation?tab=history&barcode=${encodeURIComponent(copy.barcode)}`}
-                                          className="text-[11px] font-bold text-brand-blue hover:underline inline-flex items-center gap-1"
+                                          href={`/assistant/history?barcode=${encodeURIComponent(copy.barcode)}`}
+                                          className="text-[11px] font-bold text-brand-blue hover:underline inline-flex items-center gap-1 cursor-pointer"
                                         >
                                           Inspect Traceability <ArrowRight className="h-3 w-3" />
                                         </Link>

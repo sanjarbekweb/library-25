@@ -476,67 +476,7 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
  */
 export async function lookupBookCopies(query: string): Promise<CopySearchResult[]> {
   const trimmed = query.trim();
-  if (!trimmed) {
-    const copies = await prisma.bookCopy.findMany({
-      take: 10,
-      orderBy: { updatedAt: "desc" },
-      include: {
-        book: true,
-        currentHolder: true,
-        loans: { where: { status: "ACTIVE" }, take: 1 },
-      },
-    });
-
-    return copies.map((c) => ({
-      id: c.id,
-      barcode: c.barcode,
-      condition: c.condition,
-      status: c.status,
-      bookId: c.book.id,
-      bookTitle: c.book.title,
-      bookAuthor: c.book.author,
-      bookIsbn: c.book.isbn,
-      coverImageUrl: c.book.coverImageUrl,
-      category: c.book.category,
-      currentHolderName: c.currentHolder
-        ? `${c.currentHolder.firstName} ${c.currentHolder.lastName}`
-        : null,
-      currentHolderId: c.currentHolderId,
-      activeLoanId: c.loans[0]?.id || null,
-      dueDate: c.loans[0]?.dueDate || null,
-      borrowedAt: c.loans[0]?.borrowedAt || null,
-    }));
-  }
-
-  const cleanQuery = trimmed.replace(/[- ]/g, "");
-
-  const copies = await prisma.bookCopy.findMany({
-    where: {
-      OR: [
-        { barcode: { contains: trimmed, mode: "insensitive" } },
-        { barcode: { contains: cleanQuery, mode: "insensitive" } },
-        { id: trimmed },
-        {
-          book: {
-            OR: [
-              { title: { contains: trimmed, mode: "insensitive" } },
-              { author: { contains: trimmed, mode: "insensitive" } },
-              { isbn: { contains: trimmed, mode: "insensitive" } },
-              { isbn: { contains: cleanQuery, mode: "insensitive" } },
-            ],
-          },
-        },
-      ],
-    },
-    take: 12,
-    include: {
-      book: true,
-      currentHolder: true,
-      loans: { where: { status: "ACTIVE" }, take: 1 },
-    },
-  });
-
-  return copies.map((c) => ({
+  const mapCopy = (c: any) => ({
     id: c.id,
     barcode: c.barcode,
     condition: c.condition,
@@ -554,7 +494,116 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
     activeLoanId: c.loans[0]?.id || null,
     dueDate: c.loans[0]?.dueDate || null,
     borrowedAt: c.loans[0]?.borrowedAt || null,
-  }));
+  });
+
+  if (!trimmed) {
+    const copies = await prisma.bookCopy.findMany({
+      take: 12,
+      orderBy: { updatedAt: "desc" },
+      include: {
+        book: true,
+        currentHolder: true,
+        loans: { where: { status: "ACTIVE" }, take: 1 },
+      },
+    });
+
+    return copies.map(mapCopy);
+  }
+
+  const cleanQuery = trimmed.replace(/[- ]/g, "");
+
+  // Step 1: Direct Substring & Barcode Search
+  let copies = await prisma.bookCopy.findMany({
+    where: {
+      OR: [
+        { barcode: { contains: trimmed, mode: "insensitive" } },
+        { barcode: { contains: cleanQuery, mode: "insensitive" } },
+        { id: trimmed },
+        {
+          book: {
+            OR: [
+              { title: { contains: trimmed, mode: "insensitive" } },
+              { author: { contains: trimmed, mode: "insensitive" } },
+              { category: { contains: trimmed, mode: "insensitive" } },
+              { isbn: { contains: trimmed, mode: "insensitive" } },
+              { isbn: { contains: cleanQuery, mode: "insensitive" } },
+            ],
+          },
+        },
+      ],
+    },
+    take: 24,
+    include: {
+      book: true,
+      currentHolder: true,
+      loans: { where: { status: "ACTIVE" }, take: 1 },
+    },
+  });
+
+  // Step 2: Tokenized & Fuzzy Stemmed Fallback (e.g. "invester" -> "invest", or multi-word titles)
+  if (copies.length === 0) {
+    const tokens = trimmed
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
+
+    if (tokens.length > 0) {
+      const tokenConditions: any[] = [];
+
+      for (const token of tokens) {
+        const stems = new Set<string>();
+        stems.add(token);
+
+        if (token.length >= 4) {
+          stems.add(token.substring(0, token.length - 2)); // e.g. "invester" -> "invest"
+          stems.add(token.substring(0, token.length - 1)); // e.g. "invester" -> "investe"
+        }
+        if (
+          token.endsWith("er") ||
+          token.endsWith("or") ||
+          token.endsWith("ed") ||
+          token.endsWith("ing") ||
+          token.endsWith("s")
+        ) {
+          stems.add(token.replace(/(er|or|ed|ing|s)$/, ""));
+        }
+
+        for (const stem of Array.from(stems)) {
+          if (stem.length >= 3) {
+            tokenConditions.push(
+              { barcode: { contains: stem, mode: "insensitive" } },
+              {
+                book: {
+                  OR: [
+                    { title: { contains: stem, mode: "insensitive" } },
+                    { author: { contains: stem, mode: "insensitive" } },
+                    { category: { contains: stem, mode: "insensitive" } },
+                    { isbn: { contains: stem, mode: "insensitive" } },
+                  ],
+                },
+              }
+            );
+          }
+        }
+      }
+
+      if (tokenConditions.length > 0) {
+        copies = await prisma.bookCopy.findMany({
+          where: {
+            OR: tokenConditions,
+          },
+          take: 24,
+          include: {
+            book: true,
+            currentHolder: true,
+            loans: { where: { status: "ACTIVE" }, take: 1 },
+          },
+        });
+      }
+    }
+  }
+
+  return copies.map(mapCopy);
 }
 
 /**
