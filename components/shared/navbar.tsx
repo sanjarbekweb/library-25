@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import { UserButton, SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { BookOpen, Shield, ClipboardList, BookMarked, Bookmark, Menu, X, Search } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -289,16 +289,16 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2 transition-transform duration-300">
-                <SignInButton mode="modal">
+                <SignInButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
                   <Button variant="ghost" size="sm" className="rounded-full font-medium px-3.5 text-xs text-foreground">
                     Sign in
                   </Button>
                 </SignInButton>
-                <SignInButton mode="modal">
+                <SignUpButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
                   <Button size="sm" variant="gradient" className="rounded-full font-semibold px-4 text-xs">
                     Request a Demo
                   </Button>
-                </SignInButton>
+                </SignUpButton>
               </div>
             )}
 

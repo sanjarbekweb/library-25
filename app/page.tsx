@@ -19,6 +19,10 @@ export const metadata = {
 export default async function HomePage() {
   const { userId } = await auth();
 
+  if (userId) {
+    redirect("/catalog");
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-brand-yellow selection:text-black overflow-hidden">
       <AOSInit />

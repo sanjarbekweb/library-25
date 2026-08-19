@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function LandingHero() {
@@ -118,16 +118,16 @@ export function LandingHero() {
             ) : (
               /* Public Visitor CTA Buttons */
               <>
-                <Button size="lg" className="rounded-full font-bold px-6 shadow-md" asChild>
-                  <Link href="/sign-in">
+                <SignInButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
+                  <Button size="lg" className="rounded-full font-bold px-6 shadow-md cursor-pointer">
                     Sign in &amp; Access Library &rarr;
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-full font-bold px-6 border-hairline" asChild>
-                  <Link href="/sign-up">
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
+                  <Button size="lg" variant="outline" className="rounded-full font-bold px-6 border-hairline cursor-pointer">
                     Create Student Account
-                  </Link>
-                </Button>
+                  </Button>
+                </SignUpButton>
               </>
             )}
           </div>

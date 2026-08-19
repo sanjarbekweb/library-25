@@ -74,7 +74,7 @@ export function ReserveButton({
 
   if (!isSignedIn) {
     return (
-      <SignInButton mode="modal">
+      <SignInButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
         <Button size="lg" className="w-full sm:w-auto rounded-full gap-2 font-bold px-6 bg-brand-yellow text-black hover:bg-brand-yellow/90">
           <Bookmark className="h-5 w-5" />
           Sign In to Reserve Book
