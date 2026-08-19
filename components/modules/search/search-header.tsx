@@ -29,6 +29,7 @@ interface SearchHeaderProps {
   placeholder?: string;
   initialValue?: string;
   onSearchSubmit?: (query: string) => void;
+  autoFocus?: boolean;
 }
 
 export function SearchHeader({
@@ -36,6 +37,7 @@ export function SearchHeader({
   placeholder = "Search books by title, author, or ISBN (typo-tolerant)...",
   initialValue = "",
   onSearchSubmit,
+  autoFocus = false,
 }: SearchHeaderProps) {
   const [searchTerm, setSearchTerm] = useState(initialValue);
   const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
@@ -128,6 +130,7 @@ export function SearchHeader({
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
+          autoFocus={autoFocus}
           className="pl-10 pr-9 h-11 rounded-full border-border bg-card shadow-2xs focus-visible:ring-brand-blue font-medium"
         />
         {searchTerm ? (

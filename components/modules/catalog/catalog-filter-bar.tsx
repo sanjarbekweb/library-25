@@ -58,12 +58,13 @@ export function CatalogFilterBar({
       {/* Top Controls: Search Input & Sort Dropdown */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         {/* Typo-Tolerant Search Header with Instant Dropdown */}
-        <SearchHeader
-          initialValue={currentSearch}
-          onSearchSubmit={(val) => updateFilters({ search: val || null })}
-          placeholder="Search by title, author, or ISBN (typo-tolerant)..."
-          className="flex-1 max-w-md"
-        />
+        <div id="catalog-search-bar" className="flex-1 max-w-md">
+          <SearchHeader
+            initialValue={currentSearch}
+            onSearchSubmit={(val) => updateFilters({ search: val || null })}
+            placeholder="Search by title, author, or ISBN (typo-tolerant)..."
+          />
+        </div>
 
         {/* Sort Select Dropdown */}
         <div className="flex items-center gap-2 shrink-0">
