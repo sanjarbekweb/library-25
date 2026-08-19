@@ -12,6 +12,7 @@ export function BookCard({ book }: BookCardProps) {
   return (
     <Link
       href={`/books/${book.id}`}
+      aria-label={`View details for ${book.title}`}
       className="group flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all duration-200"
     >
       {/* Cover Image Container */}

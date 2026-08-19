@@ -132,7 +132,11 @@ export function TopDemandShowcase({ books }: TopDemandShowcaseProps) {
                     </span>
                   </div>
 
-                  <Link href={`/books/${book.id}`} className="block">
+                  <Link
+                    href={`/books/${book.id}`}
+                    className="block"
+                    aria-label={`View details and reserve ${book.title}`}
+                  >
                     <Button
                       size="sm"
                       className="w-full rounded-full bg-brand-yellow text-black hover:bg-brand-yellow/90 font-bold text-xs gap-1.5 min-h-[40px] shadow-xs"
