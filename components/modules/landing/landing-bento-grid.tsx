@@ -8,29 +8,33 @@ import {
   ShieldCheck,
   TrendingUp,
   UserCheck,
-  Building2,
   Calendar,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 
 export function LandingBentoGrid() {
   const [activeFilter, setActiveFilter] = useState<"Daily" | "Weekly" | "Monthly">("Monthly");
-  const [selectedBadge, setSelectedBadge] = useState<string>("Access Real-Time Insights");
-
-  const tableRows = [
-    { name: "Albert Gray", dept: "Project Lead", team: "Marketing Team", progress: "70%", status: "In Office" },
-    { name: "Emma Russel", dept: "Writer", team: "Content Team", progress: "45%", status: "Remote" },
-    { name: "David Reed", dept: "Designer", team: "Design Team", progress: "80%", status: "In Office" },
-  ];
+  const [selectedBadge, setSelectedBadge] = useState<string>("Course Reserve Telemetry");
 
   return (
     <section id="features" className="py-20 bg-card border-b border-hairline">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
-            <span>Built for Modern Libraries</span>
-          </div>
+          <Badge variant="outline" className="px-3 py-1 font-mono text-xs">
+            Built for Modern Libraries
+          </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-foreground tracking-tight">
             Built for Modern Libraries
           </h2>
@@ -41,7 +45,7 @@ export function LandingBentoGrid() {
 
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Librarians & Desk Assistants */}
+          {/* Card 1: Librarians & Desk Staff */}
           <Card data-aos="fade-up" data-aos-delay="100" className="flex flex-col justify-between p-6 rounded-3xl border border-hairline bg-background shadow-soft-floating transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
@@ -61,9 +65,9 @@ export function LandingBentoGrid() {
                     <Calendar className="h-3.5 w-3.5 text-brand-blue" />
                     Circulation Volume
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-accent text-foreground">
+                  <Badge variant="blue" className="text-[10px] font-mono px-2 py-0.5">
                     Monthly
-                  </span>
+                  </Badge>
                 </div>
 
                 {/* Monthly Bar Chart (Jan - Jun) */}
@@ -111,7 +115,7 @@ export function LandingBentoGrid() {
                 <button
                   key={badgeText}
                   onClick={() => setSelectedBadge(badgeText)}
-                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out hover:duration-500 hover:scale-[1.02] flex items-center justify-between ${
+                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out hover:scale-105 flex items-center justify-between ${
                     selectedBadge === badgeText
                       ? "bg-brand-blue text-white border-brand-blue shadow-sm"
                       : "bg-card text-foreground border-hairline hover:bg-accent"
@@ -144,18 +148,18 @@ export function LandingBentoGrid() {
                     <FileText className="h-4 w-4 text-emerald-500" />
                     <span>MARC21 Metadata Schema</span>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold">
+                  <Badge variant="emerald" className="text-[10px] font-mono">
                     Verified
-                  </span>
+                  </Badge>
                 </div>
                 <div className="p-3 rounded-2xl bg-card/70 border border-hairline text-xs flex items-center justify-between opacity-80">
                   <div className="flex items-center gap-2.5 text-foreground">
                     <FileText className="h-4 w-4 text-brand-blue" />
                     <span>Physical Copy Loan Policy</span>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-brand-blue font-bold">
+                  <Badge variant="blue" className="text-[10px] font-mono">
                     Active
-                  </span>
+                  </Badge>
                 </div>
               </div>
             </CardContent>
@@ -175,35 +179,35 @@ export function LandingBentoGrid() {
 
             {/* Widget UI: Patron Table & Category Loan Rates */}
             <CardContent className="p-0 pt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 border border-hairline rounded-2xl bg-card p-3 overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-hairline text-muted-foreground font-mono">
-                      <th className="py-2 px-2">Book Title</th>
-                      <th className="py-2 px-2">Patron</th>
-                      <th className="py-2 px-2">Category</th>
-                      <th className="py-2 px-2 text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-hairline">
+              <div className="lg:col-span-2 border border-hairline rounded-2xl bg-card overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-hairline hover:bg-transparent">
+                      <TableHead className="py-2 px-3 text-xs">Book Title</TableHead>
+                      <TableHead className="py-2 px-3 text-xs">Patron</TableHead>
+                      <TableHead className="py-2 px-3 text-xs">Category</TableHead>
+                      <TableHead className="py-2 px-3 text-xs text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {[
                       { name: "Clean Code", patron: "Albert Gray", cat: "CS / Software", status: "Active Loan" },
                       { name: "Quantum Physics", patron: "Emma Russel", cat: "Physics", status: "Hold Ready" },
                       { name: "Design Patterns", patron: "David Reed", cat: "Engineering", status: "Returned" },
                     ].map((row, idx) => (
-                      <tr key={idx} className="hover:bg-accent/40">
-                        <td className="py-2.5 px-2 font-bold text-foreground">{row.name}</td>
-                        <td className="py-2.5 px-2 text-muted-foreground">{row.patron}</td>
-                        <td className="py-2.5 px-2 text-muted-foreground">{row.cat}</td>
-                        <td className="py-2.5 px-2 text-right font-mono font-bold text-brand-blue">{row.status}</td>
-                      </tr>
+                      <TableRow key={idx} className="hover:bg-accent/40 text-xs">
+                        <TableCell className="py-2.5 px-3 font-bold text-foreground">{row.name}</TableCell>
+                        <TableCell className="py-2.5 px-3 text-muted-foreground">{row.patron}</TableCell>
+                        <TableCell className="py-2.5 px-3 text-muted-foreground">{row.cat}</TableCell>
+                        <TableCell className="py-2.5 px-3 text-right font-mono font-bold text-brand-blue">{row.status}</TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
 
-              {/* Side Chart: Category Loan Rates */}
-              <div className="border border-hairline rounded-2xl bg-card p-3 space-y-2 flex flex-col justify-between">
+              {/* Side Chart: Category Loan Rates using Shadcn Progress */}
+              <div className="border border-hairline rounded-2xl bg-card p-3 space-y-3 flex flex-col justify-between">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="font-bold text-foreground">Category Loans</span>
                   <div className="flex gap-1">
@@ -221,21 +225,19 @@ export function LandingBentoGrid() {
                   </div>
                 </div>
 
-                <div className="space-y-1.5 pt-1">
+                <div className="space-y-2 pt-1">
                   {[
                     { label: "Computer Science", val: 95 },
                     { label: "Engineering", val: 80 },
                     { label: "Physics & Math", val: 65 },
                     { label: "Literature", val: 40 },
                   ].map((item, i) => (
-                    <div key={i} className="space-y-0.5">
+                    <div key={i} className="space-y-1">
                       <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
                         <span>{item.label}</span>
                         <span>{item.val}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                        <div style={{ width: `${item.val}%` }} className="h-full bg-brand-yellow rounded-full" />
-                      </div>
+                      <Progress value={item.val} className="h-1.5" />
                     </div>
                   ))}
                 </div>
@@ -255,22 +257,22 @@ export function LandingBentoGrid() {
               </CardDescription>
             </CardHeader>
 
-            {/* Widget UI: Circular Patron Roster */}
+            {/* Widget UI: Circular Patron Roster with Shadcn Avatar */}
             <CardContent className="p-0 pt-6 space-y-3">
               <div className="p-4 rounded-2xl bg-card border border-hairline flex items-center justify-between shadow-xs">
                 <div className="flex -space-x-2 overflow-hidden">
-                  <div className="inline-block h-9 w-9 rounded-2xl ring-2 ring-card bg-amber-400 text-black font-bold flex items-center justify-center text-xs">
-                    AG
-                  </div>
-                  <div className="inline-block h-9 w-9 rounded-2xl ring-2 ring-card bg-brand-blue text-white font-bold flex items-center justify-center text-xs">
-                    ER
-                  </div>
-                  <div className="inline-block h-9 w-9 rounded-2xl ring-2 ring-card bg-emerald-500 text-white font-bold flex items-center justify-center text-xs">
-                    DR
-                  </div>
-                  <div className="inline-block h-9 w-9 rounded-2xl ring-2 ring-card bg-violet-600 text-white font-bold flex items-center justify-center text-xs">
-                    +15
-                  </div>
+                  <Avatar className="h-9 w-9 bg-amber-400 text-black border-2 border-card">
+                    <AvatarFallback className="bg-amber-400 text-black font-bold text-xs">AG</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="h-9 w-9 bg-brand-blue text-white border-2 border-card">
+                    <AvatarFallback className="bg-brand-blue text-white font-bold text-xs">ER</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="h-9 w-9 bg-emerald-500 text-white border-2 border-card">
+                    <AvatarFallback className="bg-emerald-500 text-white font-bold text-xs">DR</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="h-9 w-9 bg-violet-600 text-white border-2 border-card">
+                    <AvatarFallback className="bg-violet-600 text-white font-bold text-xs">+15</AvatarFallback>
+                  </Avatar>
                 </div>
                 <div className="text-right">
                   <div className="text-xs font-bold text-emerald-500 flex items-center gap-1 justify-end">

@@ -265,29 +265,29 @@ body {
 .transition-spring {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 400ms;
+  transition-duration: 0.3s;
 }
 
-/* Smooth Hover Scale & Transition Duration Utilities */
+/* Smooth Hover Scale (5% scale up) & 0.3s Hover Time Utilities */
 .hover-scale-subtle {
-  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1), border-color 400ms ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 .hover-scale-subtle:hover {
-  transform: scale(1.02) translateY(-2px);
+  transform: scale(1.05) translateY(-3px);
 }
 
 .hover-scale-card {
-  transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1), border-color 450ms ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 .hover-scale-card:hover {
-  transform: scale(1.03) translateY(-3px);
+  transform: scale(1.05) translateY(-4px);
 }
 
 .hover-scale-node {
-  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1), background-color 350ms ease, box-shadow 350ms ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, box-shadow 0.3s ease;
 }
 .hover-scale-node:hover {
-  transform: scale(1.05) translateY(-2px);
+  transform: scale(1.05) translateY(-3px);
 }
 
 .glow-bloom-violet {

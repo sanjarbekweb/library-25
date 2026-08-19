@@ -1,5 +1,7 @@
 import { Star, Quote } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function LandingTestimonials() {
   const testimonials = [
@@ -28,9 +30,9 @@ export function LandingTestimonials() {
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
-            <span>Library Stories</span>
-          </div>
+          <Badge variant="outline" className="px-3 py-1 font-mono text-xs">
+            Library Stories
+          </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
             Trusted by Librarians &amp; Students
           </h2>
@@ -65,9 +67,11 @@ export function LandingTestimonials() {
               </CardHeader>
 
               <CardContent className="p-0 flex items-center gap-3 border-t border-hairline pt-4">
-                <div className={`h-11 w-11 rounded-2xl ${item.bg} font-bold flex items-center justify-center text-sm shrink-0`}>
-                  {item.avatar}
-                </div>
+                <Avatar className="h-11 w-11 shrink-0">
+                  <AvatarFallback className={`${item.bg} font-bold text-sm`}>
+                    {item.avatar}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <h3 className="font-display font-bold text-sm text-foreground">{item.name}</h3>
                   <p className="text-xs text-muted-foreground">{item.role}</p>

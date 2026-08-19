@@ -43,25 +43,25 @@ export function Navbar() {
               <>
                 <a
                   href="#product"
-                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105"
+                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
                 >
                   Product
                 </a>
                 <a
                   href="#features"
-                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105"
+                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
                 >
                   Features
                 </a>
                 <a
                   href="#pricing"
-                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105"
+                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
                 >
                   Pricing
                 </a>
                 <a
                   href="#resources"
-                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:duration-500 hover:scale-105"
+                  className="px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-full transition-all duration-300 ease-out hover:scale-105"
                 >
                   Resources
                 </a>

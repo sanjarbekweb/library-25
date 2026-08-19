@@ -4,39 +4,45 @@ import {
   BookOpen,
   Mail,
   GraduationCap,
+  Scan,
+  Database,
+  Cpu,
+  Zap,
 } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
 
 export function LandingIntegrations() {
   const integrations = [
     {
-      name: "Campus SSO & OAuth",
-      desc: "Identity provider integration for instant student & faculty auth",
-      icon: Shield,
-      color: "bg-blue-500/10 text-blue-500",
-    },
-    {
       name: "Barcode & RFID Scanners",
-      desc: "Hardware scanner integration for 10-second desk checkouts",
-      icon: QrCode,
-      color: "bg-emerald-500/10 text-emerald-500",
+      desc: "Instant desk checkouts",
+      icon: Scan,
+      color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
     {
-      name: "OpenLibrary & MARC21",
-      desc: "Automated ISBN metadata import and MARC cataloging",
-      icon: BookOpen,
-      color: "bg-purple-500/10 text-purple-500",
+      name: "Single Sign-On (SSO)",
+      desc: "OIDC & SAML 2.0 Auth",
+      icon: Shield,
+      color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     },
     {
-      name: "Email Hold Alerts",
-      desc: "Instant pickup notifications when reserved books arrive",
-      icon: Mail,
-      color: "bg-amber-500/10 text-amber-500",
+      name: "MARC21 Catalogs",
+      desc: "Z39.50 & OPAC sync",
+      icon: Database,
+      color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     },
     {
-      name: "Institutional LMS",
-      desc: "Seamless integration with university course reserve systems",
-      icon: GraduationCap,
-      color: "bg-indigo-500/10 text-indigo-500",
+      name: "Course Management",
+      desc: "Canvas & Blackboard sync",
+      icon: Cpu,
+      color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    },
+    {
+      name: "High-Volume Print",
+      desc: "Receipt & spine tags",
+      icon: Zap,
+      color: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
     },
   ];
 
@@ -45,9 +51,9 @@ export function LandingIntegrations() {
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-foreground text-xs font-mono border border-hairline">
-            <span>Seamless Ecosystem</span>
-          </div>
+          <Badge variant="outline" className="px-3 py-1 font-mono text-xs">
+            Seamless Ecosystem
+          </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
             Library Ecosystem Integrations
           </h2>
