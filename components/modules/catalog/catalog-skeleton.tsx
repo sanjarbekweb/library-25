@@ -36,20 +36,14 @@ export function TopDemandShowcaseSkeleton() {
 
 export function CatalogFilterBarSkeleton() {
   return (
-    <div className="space-y-4">
-      {/* Top Controls: Search Input & Sort Dropdown */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        <div className="h-11 w-full max-w-md skeleton-shimmer rounded-full" />
-        <div className="h-11 w-40 skeleton-shimmer rounded-full shrink-0" />
-      </div>
-
-      {/* Category Pills Slider */}
-      <div className="flex items-center gap-2 overflow-hidden pb-2 pt-1">
-        <div className="h-8 w-28 skeleton-shimmer rounded-full shrink-0" />
-        <div className="h-8 w-24 skeleton-shimmer rounded-full shrink-0" />
-        <div className="h-8 w-24 skeleton-shimmer rounded-full shrink-0" />
-        <div className="h-8 w-28 skeleton-shimmer rounded-full shrink-0" />
-        <div className="h-8 w-20 skeleton-shimmer rounded-full shrink-0" />
+    <div className="space-y-3">
+      {/* Top Controls: Search Input, Theme Filter Button, Sort Dropdown */}
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="h-11 w-full max-w-xl skeleton-shimmer rounded-full" />
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="h-11 w-32 skeleton-shimmer rounded-full shrink-0" />
+          <div className="h-11 w-36 skeleton-shimmer rounded-full shrink-0" />
+        </div>
       </div>
     </div>
   );
