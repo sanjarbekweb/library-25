@@ -95,7 +95,7 @@ export function CatalogFilterBar({
           <SearchHeader
             initialValue={currentSearch}
             onSearchSubmit={(val) => updateFilters({ search: val || null })}
-            placeholder="Search by title, author, or ISBN (typo-tolerant)..."
+            placeholder={t("searchCatalogTypo")}
           />
         </div>
 
@@ -115,7 +115,7 @@ export function CatalogFilterBar({
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate max-w-[140px] sm:max-w-[180px]">
-                  {isCategoryFiltered ? activeCategoryDisplayName : "Filter Theme"}
+                  {isCategoryFiltered ? activeCategoryDisplayName : t("filterTheme")}
                 </span>
                 {isCategoryFiltered && (
                   <span className="flex h-2 w-2 rounded-full bg-brand-blue shrink-0 animate-pulse" />
@@ -130,14 +130,14 @@ export function CatalogFilterBar({
               <div className="px-2 py-1.5 flex items-center justify-between text-xs font-semibold text-muted-foreground border-b border-border/60">
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-brand-yellow" />
-                  <span>Filter by Theme</span>
+                  <span>{t("filterTheme")}</span>
                 </span>
                 {isCategoryFiltered && (
                   <button
                     onClick={() => updateFilters({ category: "all" })}
-                    className="text-[11px] font-mono text-muted-foreground hover:text-foreground hover:underline"
+                    className="text-[11px] font-semibold text-muted-foreground hover:text-foreground hover:underline"
                   >
-                    Reset
+                    {t("reset")}
                   </button>
                 )}
               </div>
@@ -147,7 +147,7 @@ export function CatalogFilterBar({
                 <div className="px-1 pt-1 pb-1">
                   <input
                     type="text"
-                    placeholder="Search themes..."
+                    placeholder={t("searchThemes")}
                     value={categorySearchQuery}
                     onChange={(e) => setCategorySearchQuery(e.target.value)}
                     onClick={(e) => e.stopPropagation()}

@@ -5,7 +5,7 @@ import { getBookDetails } from "@/lib/services/book-service";
 import { getStudentReservationForBook } from "@/lib/services/reservation-service";
 import { getEligibleLoanForBookFeedback } from "@/lib/services/feedback-service";
 import { BookDetailView } from "@/components/modules/books/book-detail-view";
-import { Navbar } from "@/components/shared/navbar";
+import { AppShellLayout } from "@/components/shared/app-shell-layout";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -101,23 +101,21 @@ export default async function BookDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <AppShellLayout>
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <Navbar />
-
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-6xl mx-auto">
         <BookDetailView
           book={book}
           isSignedIn={!!userId}
           existingReservationId={existingReservation?.id}
           eligibleLoanIdForFeedback={eligibleLoan?.loanId}
         />
-      </main>
-    </div>
+      </div>
+    </AppShellLayout>
   );
 }

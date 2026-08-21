@@ -20,10 +20,12 @@ import {
   AlertCircle,
   AlertTriangle,
   LogOut,
+  ArrowLeft,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/components/providers/language-provider";
 import {
   Dialog,
   DialogContent,
@@ -49,6 +51,7 @@ export function AdminFeedbackModeration({
   currentStatus,
   currentSearch,
 }: AdminFeedbackModerationProps) {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -128,26 +131,22 @@ export function AdminFeedbackModeration({
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 shadow-sm">
-              <ShieldAlert className="h-5 w-5" />
-            </div>
-            Feedback & Review Moderation
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Review student ratings, moderate inappropriate comments, and enforce catalog quality controls.
-          </p>
-        </div>
-
-        <div>
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-3">
           <Link href="/admin">
-            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
-              <LogOut className="w-4 h-4 text-muted-foreground" />
-              <span>Exit to Admin Dashboard</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+              title="Back to Admin"
+              aria-label="Back to Admin"
+            >
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
+          <h1 className="text-2xl font-bold font-display text-foreground">
+            {t("feedbackModeration")}
+          </h1>
         </div>
       </div>
 
@@ -155,56 +154,53 @@ export function AdminFeedbackModeration({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs font-mono uppercase">Total Reviews</span>
+            <span className="text-xs uppercase font-semibold">{t("totalReviews")}</span>
             <MessageSquareQuote className="h-4 w-4 text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.totalCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Submitted across system</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Tizimdagi barcha sharhlar" : language === "ru" ? "Всего отзывов в системе" : "Submitted across system"}</p>
         </Card>
 
         <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs font-mono uppercase">Published (Public)</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <span className="text-xs uppercase font-semibold">{t("publishedPublic")}</span>
+            <CheckCircle2 className="h-4 w-4 text-brand-blue" />
           </div>
-          <p className="text-2xl font-bold font-display mt-2 text-emerald-600 dark:text-emerald-400">
+          <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.publishedCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Visible on catalog detail</p>
-        </Card>
-
-        <Card className={cn(
-          "border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all",
-          stats.moderatedCount > 0 && "border-amber-300 bg-amber-50/40 dark:bg-amber-950/20 dark:border-amber-800"
-        )}>
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs font-mono uppercase">Moderated (Hidden)</span>
-            <EyeOff className="h-4 w-4 text-amber-500" />
-          </div>
-          <p className="text-2xl font-bold font-display mt-2 text-amber-600 dark:text-amber-400">
-            {stats.moderatedCount}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Hidden from public catalog</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Katalogda ko'rinadigan" : language === "ru" ? "Отображаются в каталоге" : "Visible on catalog detail"}</p>
         </Card>
 
         <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs font-mono uppercase">System Avg Rating</span>
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+            <span className="text-xs uppercase font-semibold">{t("moderatedHidden")}</span>
+            <EyeOff className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <p className="text-2xl font-bold font-display mt-2 text-foreground">
+            {stats.moderatedCount}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Katalogdan yashirilgan" : language === "ru" ? "Скрыто из каталога" : "Hidden from public catalog"}</p>
+        </Card>
+
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-xs uppercase font-semibold">{t("systemAvgRating")}</span>
+            <Star className="h-4 w-4 fill-brand-blue text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.averageRating ? `${stats.averageRating} / 5` : "N/A"}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Verified loan average</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "O'rtacha baho" : language === "ru" ? "Средний балл" : "Verified loan average"}</p>
         </Card>
       </div>
 
       {/* Action Error Banner */}
       {actionError && (
-        <div className="rounded-2xl border border-rose-300 bg-rose-50 p-4 text-rose-900 dark:bg-rose-950/50 dark:border-rose-800 dark:text-rose-200 text-xs flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-destructive text-xs flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
           <span>{actionError}</span>
         </div>
       )}
@@ -231,7 +227,7 @@ export function AdminFeedbackModeration({
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
               currentStatus === "published"
-                ? "bg-background text-foreground shadow-xs font-semibold text-emerald-600 dark:text-emerald-400"
+                ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -243,7 +239,7 @@ export function AdminFeedbackModeration({
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
               currentStatus === "moderated"
-                ? "bg-background text-foreground shadow-xs font-semibold text-amber-600 dark:text-amber-400"
+                ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -287,28 +283,25 @@ export function AdminFeedbackModeration({
             {feedbacks.map((item) => (
               <Card
                 key={item.id}
-                className={cn(
-                  "border border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-foreground/20 hover:shadow-md",
-                  item.isModerated && "border-amber-300/70 bg-amber-500/5"
-                )}
+                className="border border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-foreground/20 hover:shadow-md"
               >
                 <CardContent className="p-5 flex flex-col md:flex-row gap-5 justify-between">
                   {/* Left Column: Book & Student Info */}
                   <div className="space-y-3 flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       {item.isModerated ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-muted text-muted-foreground px-2.5 py-0.5 rounded-full border border-border">
                           <EyeOff className="h-3 w-3" />
                           Moderated / Hidden from Public
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-brand-blue/10 text-brand-blue dark:text-blue-400 px-2.5 py-0.5 rounded-full border border-brand-blue/20">
                           <CheckCircle2 className="h-3 w-3" />
                           Published / Public
                         </span>
                       )}
 
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-accent text-accent-foreground border">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-accent text-accent-foreground border border-border">
                         {item.bookCategory}
                       </span>
 
@@ -353,10 +346,11 @@ export function AdminFeedbackModeration({
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
-                            className={`h-4 w-4 ${star <= item.rating
-                              ? "fill-amber-400 text-amber-400"
-                              : "fill-muted text-muted"
-                              }`}
+                            className={`h-4 w-4 ${
+                              star <= item.rating
+                                ? "fill-brand-blue text-brand-blue"
+                                : "fill-muted text-muted"
+                            }`}
                           />
                         ))}
                         <span className="text-xs font-bold text-foreground ml-1.5">
@@ -386,8 +380,8 @@ export function AdminFeedbackModeration({
                       className={cn(
                         "rounded-xl text-xs gap-1.5 w-full sm:w-auto",
                         item.isModerated
-                          ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                          : "hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300"
+                          ? "bg-brand-blue text-white hover:bg-brand-blue/90 font-semibold"
+                          : "border-border text-foreground hover:bg-accent"
                       )}
                     >
                       {item.isModerated ? (
@@ -408,7 +402,7 @@ export function AdminFeedbackModeration({
                       variant="outline"
                       disabled={isPending}
                       onClick={() => setFeedbackToDelete(item)}
-                      className="rounded-xl text-xs gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-900 dark:hover:bg-rose-950/50 w-full sm:w-auto"
+                      className="rounded-xl text-xs gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 w-full sm:w-auto"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       <span>Delete</span>

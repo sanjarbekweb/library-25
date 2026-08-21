@@ -149,7 +149,7 @@
   /* Typography */
   --font-sans: var(--font-rubik), "Rubik", system-ui, sans-serif;
   --font-display: var(--font-rubik), "Rubik", system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), "Fira Code", monospace;
+  --font-mono: var(--font-rubik), "Rubik", system-ui, sans-serif;
 
   /* Border Radius */
   --radius-lg: 8px;

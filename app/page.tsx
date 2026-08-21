@@ -8,6 +8,7 @@ import { LandingHero } from "@/components/modules/landing/landing-hero";
 import { LandingBentoGrid } from "@/components/modules/landing/landing-bento-grid";
 import { LandingIntegrations } from "@/components/modules/landing/landing-integrations";
 import { LandingTestimonials } from "@/components/modules/landing/landing-testimonials";
+import { LandingFaq } from "@/components/modules/landing/landing-faq";
 import { LandingContact } from "@/components/modules/landing/landing-contact";
 
 export const metadata = {
@@ -41,7 +42,10 @@ export default async function HomePage() {
         {/* 4. Social Proof / Testimonials ("Trusted by Librarians & Students") */}
         <LandingTestimonials />
 
-        {/* 5. Direct Telegram Contact & Feedback */}
+        {/* 5. FAQ Section (Headless Animated Accordion) */}
+        <LandingFaq />
+
+        {/* 6. Direct Telegram Contact & Feedback */}
         <LandingContact />
       </main>
 

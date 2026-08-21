@@ -75,8 +75,8 @@ export function SubmitFeedbackModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isSubmitting && onClose()}>
       <DialogContent className="sm:max-w-md rounded-3xl p-6 bg-card border-border">
         <DialogHeader className="space-y-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-1">
-            <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/15 text-brand-blue border border-brand-blue/20 mb-1">
+            <Star className="h-5 w-5 fill-brand-blue text-brand-blue" />
           </div>
           <DialogTitle className="font-display font-bold text-xl text-foreground">
             Rate &amp; Review Book
@@ -88,7 +88,7 @@ export function SubmitFeedbackModal({
 
         {isSuccess ? (
           <div className="py-8 text-center space-y-3">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 animate-bounce">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20 animate-bounce">
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <h4 className="font-display font-bold text-lg text-foreground">
@@ -101,8 +101,8 @@ export function SubmitFeedbackModal({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5 pt-2">
             {errorMessage && (
-              <div className="rounded-2xl border border-rose-300 bg-rose-50 p-3 text-xs text-rose-800 dark:bg-rose-950/50 dark:border-rose-800 dark:text-rose-200 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+              <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-destructive shrink-0" />
                 <span>{errorMessage}</span>
               </div>
             )}
@@ -120,12 +120,12 @@ export function SubmitFeedbackModal({
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(null)}
-                    className="p-1.5 focus:outline-none rounded-xl transition-colors focus-visible:ring-2 focus-visible:ring-brand-blue"
+                    className="p-1.5 focus:outline-none rounded-xl transition-colors focus-visible:ring-2 focus-visible:ring-brand-blue cursor-pointer"
                   >
                     <Star
                       className={`h-8 w-8 transition-colors ${
                         star <= activeRating
-                          ? "fill-amber-400 text-amber-400 drop-shadow-xs"
+                          ? "fill-brand-blue text-brand-blue drop-shadow-xs"
                           : "fill-muted/40 text-muted-foreground/40"
                       }`}
                     />
@@ -172,14 +172,14 @@ export function SubmitFeedbackModal({
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="rounded-full text-xs"
+                className="rounded-full text-xs cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2"
+                className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>

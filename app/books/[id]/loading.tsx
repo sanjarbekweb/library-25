@@ -1,15 +1,14 @@
-import { Navbar } from "@/components/shared/navbar";
+import { AppShellLayout } from "@/components/shared/app-shell-layout";
 
 export default function BookDetailLoading() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <AppShellLayout>
+      <div className="max-w-6xl mx-auto space-y-6">
         {/* Back Link Skeleton */}
         <div className="h-4 w-32 skeleton-shimmer rounded-md" />
 
         {/* Hero Card Skeleton */}
-        <div className="rounded-3xl border border-border bg-card p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div className="rounded-3xl border border-border bg-card p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-8 shadow-xs">
           <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center space-y-4">
             <div className="aspect-[3/4] w-full max-w-[260px] skeleton-shimmer rounded-2xl" />
             <div className="h-6 w-36 skeleton-shimmer rounded-full" />
@@ -46,7 +45,7 @@ export default function BookDetailLoading() {
             ))}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShellLayout>
   );
 }

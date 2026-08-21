@@ -30,11 +30,11 @@ export function ImageWithLoader({
     return (
       <div
         className={cn(
-          "flex flex-col items-center justify-center p-3 text-center w-full h-full bg-gradient-to-br from-amber-500/10 via-brand-yellow/10 to-blue-500/10 text-muted-foreground",
+          "flex flex-col items-center justify-center p-3 text-center w-full h-full bg-brand-blue/5 text-muted-foreground",
           containerClassName
         )}
       >
-        {fallbackIcon || <BookOpen className="h-8 w-8 text-brand-yellow/80" />}
+        {fallbackIcon || <BookOpen className="h-8 w-8 text-brand-blue/60" />}
       </div>
     );
   }

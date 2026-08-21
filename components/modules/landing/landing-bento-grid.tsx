@@ -145,10 +145,10 @@ export function LandingBentoGrid() {
               <div className="relative space-y-2">
                 <div className="p-3 rounded-2xl bg-card border border-hairline shadow-xs flex items-center justify-between">
                   <div className="flex items-center gap-2.5 text-xs font-semibold text-foreground">
-                    <FileText className="h-4 w-4 text-emerald-500" />
+                    <FileText className="h-4 w-4 text-brand-blue" />
                     <span>MARC21 Metadata Schema</span>
                   </div>
-                  <Badge variant="emerald" className="text-[10px] font-mono">
+                  <Badge variant="blue" className="text-[10px] font-mono">
                     Verified
                   </Badge>
                 </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Rubik, JetBrains_Mono } from "next/font/google";
+import { Rubik } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
@@ -11,12 +11,6 @@ import { cn } from "@/lib/utils";
 
 const rubik = Rubik({
   variable: "--font-rubik",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -42,8 +36,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn(
           "h-full antialiased font-sans",
-          rubik.variable,
-          jetbrainsMono.variable
+          rubik.variable
         )}
       >
         <head>
@@ -67,4 +60,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-

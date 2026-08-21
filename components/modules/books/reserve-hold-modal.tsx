@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import { format, addDays, startOfDay, isBefore, isAfter, differenceInCalendarDays } from "date-fns";
-import { Bookmark, Calendar, Clock, AlertCircle, ShieldCheck, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+  DialogPanel,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/components/animate-ui/components/headless/dialog";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 interface ReserveHoldModalProps {
@@ -27,8 +25,8 @@ export function ReserveHoldModal({
   onClose,
   onConfirm,
   isPending,
-  bookTitle,
 }: ReserveHoldModalProps) {
+  const { t, language } = useLanguage();
   const today = startOfDay(new Date());
   const maxAllowableHoldDate = addDays(today, 7);
   const minAllowableHoldDate = addDays(today, 1);
@@ -52,12 +50,24 @@ export function ReserveHoldModal({
     const parsedDate = startOfDay(new Date(val));
 
     if (isBefore(parsedDate, minAllowableHoldDate)) {
-      setError("Hold expiration date must be at least 1 day from today.");
+      setError(
+        language === "uz"
+          ? "Band qilish muddati kamida 1 kundan keyingi sana bo'lishi kerak."
+          : language === "ru"
+          ? "Срок бронирования должен быть минимум на 1 день вперед."
+          : "Hold expiration date must be at least 1 day from today."
+      );
       return;
     }
 
     if (isAfter(parsedDate, maxAllowableHoldDate)) {
-      setError("Maximum allowable hold duration for student pickup is 7 days.");
+      setError(
+        language === "uz"
+          ? "Talabalar uchun maksimal band qilish muddati 7 kun."
+          : language === "ru"
+          ? "Максимальный срок бронирования для самовывоза составляет 7 дней."
+          : "Maximum allowable hold duration for student pickup is 7 days."
+      );
       return;
     }
 
@@ -81,36 +91,16 @@ export function ReserveHoldModal({
   const formattedMaxDate = format(maxAllowableHoldDate, "yyyy-MM-dd");
   const formattedInputDate = format(selectedCalendarDate, "yyyy-MM-dd");
 
+  const quickPresetsLabel = language === "uz" ? "Tezkor muddatlar" : language === "ru" ? "Быстрый выбор срока" : "Quick Hold Duration Presets";
+  const pickCalendarLabel = language === "uz" ? "Yoki taqvimdan aniq sanani tanlang" : language === "ru" ? "Или выберите точную дату в календаре" : "Or Pick Exact Calendar Date";
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md rounded-3xl p-6 bg-card border-border shadow-lg">
-        <DialogHeader className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-yellow/20 text-black border border-brand-yellow/30 font-bold">
-              <Bookmark className="h-5 w-5 fill-current text-foreground" />
-            </div>
-            <div>
-              <DialogTitle className="text-lg font-bold font-display text-foreground">
-                Set Hold Duration & Expiration
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Choose how long to hold this book for desk pickup (Max limit: 7 days).
-              </DialogDescription>
-            </div>
-          </div>
-        </DialogHeader>
-
-        {bookTitle && (
-          <div className="p-3 rounded-xl bg-accent/40 border border-border text-xs">
-            <span className="text-muted-foreground font-mono uppercase text-[10px]">Title:</span>
-            <p className="font-bold text-foreground font-display line-clamp-1 mt-0.5">{bookTitle}</p>
-          </div>
-        )}
-
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogPanel className="sm:max-w-md rounded-3xl p-6 bg-card border-border shadow-2xl space-y-4">
         {/* Quick Presets */}
-        <div className="space-y-2 pt-2">
-          <label className="text-xs font-semibold uppercase font-mono text-muted-foreground tracking-wider">
-            Quick Hold Duration Presets
+        <div className="space-y-2">
+          <label className="text-xs font-semibold uppercase text-muted-foreground tracking-wider block">
+            {quickPresetsLabel}
           </label>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {[1, 2, 3, 5, 7].map((days) => {
@@ -121,15 +111,15 @@ export function ReserveHoldModal({
                   type="button"
                   onClick={() => handlePresetSelect(days)}
                   className={cn(
-                    "px-2.5 py-2 rounded-xl text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center gap-0.5",
+                    "px-2.5 py-2 rounded-xl text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer",
                     isSelected
-                      ? "bg-brand-yellow text-black border-brand-yellow shadow-sm font-bold"
+                      ? "bg-brand-blue text-white border-brand-blue shadow-xs font-bold"
                       : "bg-muted/40 hover:bg-muted text-muted-foreground border-border"
                   )}
                 >
-                  <span>{days} {days === 1 ? "Day" : "Days"}</span>
+                  <span>{days} {days === 1 ? t("day") : t("days")}</span>
                   <span className="text-[9px] font-normal opacity-80">
-                    {days === 2 ? "(Default)" : format(addDays(today, days), "MMM d")}
+                    {days === 2 ? t("defaultPreset") : format(addDays(today, days), "MMM d")}
                   </span>
                 </button>
               );
@@ -138,10 +128,10 @@ export function ReserveHoldModal({
         </div>
 
         {/* Calendar Input Option */}
-        <div className="space-y-1.5 pt-2">
-          <label htmlFor="hold-calendar-date" className="text-xs font-semibold uppercase font-mono text-muted-foreground tracking-wider flex items-center justify-between">
-            <span>Or Pick Exact Calendar Expiration Date</span>
-            <span className="text-[10px] text-brand-blue font-normal">Max 7 Days</span>
+        <div className="space-y-1.5 pt-1">
+          <label htmlFor="hold-calendar-date" className="text-xs font-semibold uppercase text-muted-foreground tracking-wider flex items-center justify-between">
+            <span>{pickCalendarLabel}</span>
+            <span className="text-[10px] text-brand-blue font-semibold">Max 7 {t("days")}</span>
           </label>
           <div className="relative">
             <input
@@ -151,50 +141,39 @@ export function ReserveHoldModal({
               max={formattedMaxDate}
               value={formattedInputDate}
               onChange={handleCalendarInputChange}
-              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background/80 text-foreground text-sm font-mono focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 transition-all duration-200"
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background/80 text-foreground text-sm focus:outline-none focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15 hover:border-foreground/20 transition-all duration-200"
             />
           </div>
         </div>
 
-        {/* Summary Info Box */}
-        {error ? (
-          <div className="p-3 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+        {/* Error Notification */}
+        {error && (
+          <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-xs font-medium flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
             <span>{error}</span>
-          </div>
-        ) : (
-          <div className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-xs space-y-1">
-            <div className="flex items-center gap-1.5 font-bold font-display">
-              <Clock className="h-4 w-4 text-amber-600 shrink-0" />
-              <span>Pickup Expiration Summary</span>
-            </div>
-            <p className="text-[11px] leading-relaxed">
-              Book copy will be reserved at the Circulation Desk until{" "}
-              <strong className="font-semibold">{format(selectedCalendarDate, "EEEE, MMMM d, yyyy")}</strong> ({selectedHoldDays} day{selectedHoldDays > 1 ? "s" : ""} hold).
-            </p>
           </div>
         )}
 
-        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-3">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isPending}
-            className="rounded-full text-xs font-medium"
+            className="rounded-full text-xs font-medium cursor-pointer"
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="button"
             onClick={handleConfirm}
             disabled={isPending || !!error}
-            className="rounded-full text-xs font-bold bg-brand-yellow text-black hover:bg-brand-yellow/90 px-6"
+            className="rounded-full text-xs font-bold bg-brand-blue text-white hover:bg-brand-blue/90 px-6 cursor-pointer"
           >
-            {isPending ? "Placing Hold..." : "Confirm Hold Request"}
+            {isPending ? t("placingHold") : t("confirmHoldRequest")}
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </DialogPanel>
     </Dialog>
   );
 }

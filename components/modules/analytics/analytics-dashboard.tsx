@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import type { AnalyticsData } from "@/lib/services/analytics-service";
 import { AnalyticsTimeframe } from "@/lib/schemas/analytics-schema";
 import { getAnalyticsDataAction } from "@/app/actions/analytics-actions";
+import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 interface AnalyticsDashboardProps {
@@ -33,6 +34,7 @@ interface AnalyticsDashboardProps {
 }
 
 export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
+  const { t, language } = useLanguage();
   const [data, setData] = useState<AnalyticsData>(initialData);
   const [timeframe, setTimeframe] = useState<AnalyticsTimeframe>(initialData.timeframe);
   const [isPending, startTransition] = useTransition();
@@ -48,11 +50,11 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
   };
 
   const timeframeLabels: Record<AnalyticsTimeframe, string> = {
-    "30d": "30 Days",
-    "90d": "90 Days",
-    "6m": "6 Months",
-    "1y": "1 Year",
-    all: "All Time",
+    "30d": t("timeframe30d"),
+    "90d": t("timeframe90d"),
+    "6m": t("timeframe6m"),
+    "1y": t("timeframe1y"),
+    all: t("timeframeAll"),
   };
 
   // Find max borrow volume for relative bar height calculations
@@ -64,73 +66,43 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-yellow text-black flex items-center gap-1.5 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5" />
-              Live Telemetry
-            </span>
-            <span className="text-xs text-muted-foreground font-mono">
-              Updated {format(new Date(data.generatedAt), "hh:mm:ss a")}
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground mt-2 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm">
-              <BarChart3 className="h-5 w-5" />
-            </div>
-            Collection Growth &amp; Circulation Analytics
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-3">
+          <Link href="/admin">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+              title="Back to Admin"
+              aria-label="Back to Admin"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold font-display text-foreground">
+            Analytics
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Real-time aggregate data on library circulation, volume trends, overdue ratios, and reader cohorts.
-          </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 self-start md:self-auto">
-          {/* Timeframe Filter Selector */}
-          <div className="flex items-center gap-1.5 bg-card border border-border p-1 rounded-2xl shadow-sm overflow-x-auto max-w-full">
-            {(["30d", "90d", "6m", "1y", "all"] as AnalyticsTimeframe[]).map((tf) => (
-              <Button
-                key={tf}
-                variant={timeframe === tf ? "default" : "ghost"}
-                size="sm"
-                disabled={isPending}
-                onClick={() => handleTimeframeChange(tf)}
-                className={cn(
-                  "rounded-xl text-xs font-semibold px-3 py-1.5 h-8 transition-all whitespace-nowrap",
-                  timeframe === tf
-                    ? "bg-brand-blue text-white shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {timeframeLabels[tf]}
-              </Button>
-            ))}
-          </div>
-
-          {/* Exit Navigation Buttons */}
-          <div className="flex items-center gap-2">
-            <Link href="/admin">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full gap-1.5 text-xs font-semibold hover:bg-accent border-border"
-              >
-                <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-                <span>Admin Hub</span>
-              </Button>
-            </Link>
-            <Link href="/catalog">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full gap-1.5 text-xs font-semibold hover:bg-accent border-border"
-              >
-                <LogOut className="w-4 h-4 text-muted-foreground" />
-                <span>Exit Admin</span>
-              </Button>
-            </Link>
-          </div>
+        {/* Timeframe Filter Selector */}
+        <div className="flex items-center gap-1.5 bg-card border border-border p-1 rounded-2xl shadow-2xs overflow-x-auto max-w-full">
+          {(["30d", "90d", "6m", "1y", "all"] as AnalyticsTimeframe[]).map((tf) => (
+            <Button
+              key={tf}
+              variant={timeframe === tf ? "default" : "ghost"}
+              size="sm"
+              disabled={isPending}
+              onClick={() => handleTimeframeChange(tf)}
+              className={cn(
+                "rounded-xl text-xs font-semibold px-3 py-1.5 h-8 transition-all whitespace-nowrap cursor-pointer",
+                timeframe === tf
+                  ? "bg-brand-blue text-white shadow-2xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {timeframeLabels[tf]}
+            </Button>
+          ))}
         </div>
       </div>
 

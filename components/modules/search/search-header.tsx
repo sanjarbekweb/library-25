@@ -163,9 +163,9 @@ export function SearchHeader({
             className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-card/98 backdrop-blur-md shadow-2xl max-h-[75vh] overflow-y-auto overscroll-contain p-2 space-y-1"
           >
             {/* Header metadata pill */}
-            <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/60 text-[11px] font-mono text-muted-foreground">
+            <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/60 text-[11px] font-medium text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3 w-3 text-brand-yellow" />
+                <Sparkles className="h-3 w-3 text-brand-blue" />
                 <span>
                   {source === "meilisearch"
                     ? "Meilisearch Search Engine"
@@ -186,7 +186,7 @@ export function SearchHeader({
             {isLoading ? (
               <div className="p-6 text-center space-y-2">
                 <Loader2 className="h-6 w-6 animate-spin text-brand-blue mx-auto" />
-                <p className="text-xs text-muted-foreground font-mono">
+                <p className="text-xs text-muted-foreground font-medium">
                   Searching collection...
                 </p>
               </div>
@@ -231,7 +231,7 @@ export function SearchHeader({
                         <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand-blue transition-colors">
                           {book.title}
                         </h4>
-                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-accent text-foreground border border-border shrink-0">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent text-foreground border border-border shrink-0">
                           {book.category}
                         </span>
                       </div>
@@ -243,12 +243,12 @@ export function SearchHeader({
                     {/* Availability status dot */}
                     <div className="shrink-0">
                       {book.availableCopiesCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-[10px] text-brand-blue dark:text-blue-400 font-semibold bg-brand-blue/10 px-2 py-0.5 rounded-full border border-brand-blue/20">
                           <CheckCircle2 className="h-3 w-3" />
                           Avail
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground font-semibold bg-muted px-2 py-0.5 rounded-full border border-border">
                           On Hold
                         </span>
                       )}

@@ -25,6 +25,8 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/components/providers/language-provider";
+import { UserPresenceAvatar } from "@/components/animate-ui/components/community/user-presence-avatar";
 import {
   Dialog,
   DialogContent,
@@ -91,6 +93,7 @@ export function UserManagement({
   currentRole,
   currentStatus,
 }: UserManagementProps) {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -231,14 +234,14 @@ export function UserManagement({
     switch (role) {
       case "ADMIN":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-yellow/20 text-amber-900 border border-brand-yellow/40 dark:text-brand-yellow dark:bg-brand-yellow/10">
-            <ShieldAlert className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/15 text-brand-blue border border-brand-blue/30">
+            <ShieldAlert className="w-3 h-3 text-brand-blue" />
             <span>Admin</span>
           </span>
         );
       case "ASSISTANT":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue border border-brand-blue/20 dark:text-blue-300">
             <ShieldCheck className="w-3 h-3" />
             <span>Assistant</span>
           </span>
@@ -246,7 +249,7 @@ export function UserManagement({
       case "STUDENT":
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent text-muted-foreground border border-border">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
             <UserCheck className="w-3 h-3" />
             <span>Student</span>
           </span>
@@ -257,15 +260,15 @@ export function UserManagement({
   const getStatusBadge = (isActive: boolean) => {
     if (isActive) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
           <span>Active</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-        <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
+        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
         <span>Deactivated</span>
       </span>
     );
@@ -276,16 +279,17 @@ export function UserManagement({
       {/* Alert Notification */}
       {actionAlert && (
         <div
-          className={`p-4 rounded-2xl border flex items-center justify-between text-xs sm:text-sm ${actionAlert.type === "success"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
-              : "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300"
-            }`}
+          className={`p-4 rounded-2xl border flex items-center justify-between text-xs sm:text-sm ${
+            actionAlert.type === "success"
+              ? "bg-brand-blue/10 border-brand-blue/30 text-brand-blue dark:text-blue-400"
+              : "bg-destructive/10 border-destructive/30 text-destructive"
+          }`}
         >
           <div className="flex items-center gap-2">
             {actionAlert.type === "success" ? (
-              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-brand-blue" />
             ) : (
-              <AlertCircle className="h-5 w-5 shrink-0 text-rose-500" />
+              <AlertCircle className="h-5 w-5 shrink-0 text-destructive" />
             )}
             <span>{actionAlert.message}</span>
           </div>
@@ -340,12 +344,12 @@ export function UserManagement({
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Admins</p>
-              <p className="text-2xl font-extrabold font-mono mt-1 text-amber-700 dark:text-brand-yellow">
+              <p className="text-2xl font-extrabold font-mono mt-1 text-foreground">
                 {stats.adminCount}
               </p>
             </div>
-            <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
-              <ShieldAlert className="h-5 w-5" />
+            <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-foreground flex items-center justify-center border border-brand-blue/20">
+              <ShieldAlert className="h-5 w-5 text-brand-blue" />
             </div>
           </CardContent>
         </Card>
@@ -354,16 +358,31 @@ export function UserManagement({
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Deactivated</p>
-              <p className="text-2xl font-extrabold font-mono mt-1 text-rose-600 dark:text-rose-400">
+              <p className="text-2xl font-extrabold font-mono mt-1 text-foreground">
                 {stats.inactiveCount}
               </p>
             </div>
-            <div className="h-10 w-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center border border-rose-500/20">
+            <div className="h-10 w-10 rounded-2xl bg-muted text-muted-foreground flex items-center justify-center border border-border">
               <UserX className="h-5 w-5" />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Live Campus Presence Widget */}
+      <Card className="border border-border bg-card shadow-2xs rounded-2xl p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-display font-bold text-sm text-foreground">
+              Live Patron Presence
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Online students &amp; circulation assistants active on the campus platform.
+            </p>
+          </div>
+          <UserPresenceAvatar />
+        </div>
+      </Card>
 
       {/* Search & Filtering Bar */}
       <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">

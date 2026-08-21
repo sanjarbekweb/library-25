@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquareQuote, ShieldAlert, Users, BarChart3, ArrowRight, BookOpen, LogOut } from "lucide-react";
+import { MessageSquareQuote, Users, BarChart3, ArrowRight, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -12,26 +12,22 @@ export default function AdminDashboardPage() {
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 shadow-xs">
-              <ShieldAlert className="h-5 w-5" />
-            </div>
-            Admin Control Console
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            System administration tools for review moderation, user RBAC permissions, and library intelligence.
-          </p>
-        </div>
-
-        <div>
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-3">
           <Link href="/catalog">
-            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border hover:border-foreground/20">
-              <LogOut className="w-4 h-4 text-muted-foreground" />
-              <span>Exit Admin Console</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+              title="Exit Admin Console"
+              aria-label="Exit Admin Console"
+            >
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
+          <h1 className="text-2xl font-bold font-display text-foreground">
+            Admin Console
+          </h1>
         </div>
       </div>
 

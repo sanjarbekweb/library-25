@@ -1,15 +1,13 @@
-import { Navbar } from "@/components/shared/navbar";
+import { AppShellLayout } from "@/components/shared/app-shell-layout";
 
 export default function StudentReservationsLoading() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-
-      <main className="flex-1 container max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <AppShellLayout>
+      <div className="space-y-6 max-w-5xl">
         {/* Header Breadcrumb & Title Skeleton */}
         <div className="space-y-3">
           <div className="h-4 w-32 skeleton-shimmer rounded-md" />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
             <div className="space-y-2">
               <div className="h-8 w-64 skeleton-shimmer rounded-xl" />
               <div className="h-4 w-80 skeleton-shimmer rounded-md" />
@@ -22,7 +20,7 @@ export default function StudentReservationsLoading() {
         <div className="h-20 w-full skeleton-shimmer rounded-3xl" />
 
         {/* Active Holds Section Skeleton */}
-        <div className="space-y-4">
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
           <div className="h-6 w-40 skeleton-shimmer rounded-lg" />
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -46,7 +44,7 @@ export default function StudentReservationsLoading() {
             ))}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShellLayout>
   );
 }

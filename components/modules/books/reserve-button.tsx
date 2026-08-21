@@ -8,7 +8,7 @@ import { Bookmark, Clock, CheckCircle2, AlertCircle, Loader2, X } from "lucide-r
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { requestReservationAction, cancelReservationAction } from "@/app/actions/reservation-actions";
-
+import { useLanguage } from "@/components/providers/language-provider";
 import { ReserveHoldModal } from "./reserve-hold-modal";
 
 interface ReserveButtonProps {
@@ -26,6 +26,7 @@ export function ReserveButton({
   isSignedIn,
   bookTitle,
 }: ReserveButtonProps) {
+  const { t, language } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeReservationId, setActiveReservationId] = useState<string | null>(
@@ -43,11 +44,15 @@ export function ReserveButton({
       const res = await requestReservationAction(bookId, holdDays, holdUntilDate);
       if (res.ok && res.data) {
         setActiveReservationId(res.data.reservationId);
-        const msg = "Hold placed successfully! Pick up your book copy at the circulation desk before expiration.";
+        const msg = language === "uz"
+          ? "Kitob muvaffaqiyatli band qilindi! Belgilangan muddatgacha ijara stolidan olib keting."
+          : language === "ru"
+          ? "Бронь успешно оформлена! Заберите книгу на стойке выдачи до истечения срока."
+          : "Hold placed successfully! Pick up your book copy at the circulation desk before expiration.";
         setFeedback({ type: "success", message: msg });
         toast.success(msg);
       } else {
-        const errMsg = res.error?.message || "Failed to place reservation hold.";
+        const errMsg = res.error?.message || (language === "uz" ? "Band qilishda xatolik yuz berdi." : language === "ru" ? "Ошибка при оформлении брони." : "Failed to place reservation hold.");
         setFeedback({ type: "error", message: errMsg });
         toast.error(errMsg);
       }
@@ -61,23 +66,27 @@ export function ReserveButton({
       const res = await cancelReservationAction(activeReservationId, bookId);
       if (res.ok) {
         setActiveReservationId(null);
-        const msg = "Reservation hold cancelled successfully.";
+        const msg = language === "uz" ? "Bandlik muvaffaqiyatli bekor qilindi." : language === "ru" ? "Бронирование успешно отменено." : "Reservation hold cancelled successfully.";
         setFeedback({ type: "success", message: msg });
         toast.info(msg);
       } else {
-        const errMsg = res.error?.message || "Failed to cancel reservation.";
+        const errMsg = res.error?.message || (language === "uz" ? "Bekor qilishda xatolik." : language === "ru" ? "Ошибка при отмене брони." : "Failed to cancel reservation.");
         setFeedback({ type: "error", message: errMsg });
         toast.error(errMsg);
       }
     });
   };
 
+  const signInToReserveText = language === "uz" ? "Band qilish uchun tizimga kiring" : language === "ru" ? "Войдите для бронирования" : "Sign In to Reserve Book";
+  const activeHoldSubtext = language === "uz" ? "Kitob nusxasi ijara stolida 48 soatgacha saqlanadi." : language === "ru" ? "Экземпляр зарезервирован на стойке выдачи на 48ч." : "Physical copy held at circulation desk for 48h pickup.";
+  const noAvailableText = language === "uz" ? "Band qilish uchun bo'sh nusxa yo'q" : language === "ru" ? "Нет доступных экземпляров для брони" : "No Available Copies for Hold";
+
   if (!isSignedIn) {
     return (
       <SignInButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
         <Button size="lg" className="w-full sm:w-auto rounded-full gap-2 font-bold px-6 bg-brand-yellow text-black hover:bg-brand-yellow/90">
           <Bookmark className="h-5 w-5" />
-          Sign In to Reserve Book
+          {signInToReserveText}
         </Button>
       </SignInButton>
     );
@@ -87,18 +96,18 @@ export function ReserveButton({
     <div className="space-y-3 w-full sm:w-auto">
       {activeReservationId ? (
         <div className="space-y-2">
-          <div className="flex items-center gap-2 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
+          <div className="flex items-center gap-2 p-3 rounded-2xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue dark:text-blue-400">
             <Clock className="h-5 w-5 shrink-0" />
             <div className="text-xs">
-              <span className="font-bold block text-sm">Active Hold Pending</span>
-              <span>Physical copy held at circulation desk for 48h pickup.</span>
+              <span className="font-bold block text-sm">{t("holdPending")}</span>
+              <span>{activeHoldSubtext}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Link href="/reservations" className="flex-1">
               <Button variant="outline" size="sm" className="w-full rounded-full gap-1.5 text-xs font-semibold">
-                <Clock className="h-4 w-4" /> View My Holds
+                <Clock className="h-4 w-4" /> {t("myHolds")}
               </Button>
             </Link>
             <Button
@@ -113,7 +122,7 @@ export function ReserveButton({
               ) : (
                 <X className="h-4 w-4" />
               )}
-              Cancel Hold
+              {t("cancelHold")}
             </Button>
           </div>
         </div>
@@ -122,17 +131,17 @@ export function ReserveButton({
           size="lg"
           onClick={() => setIsModalOpen(true)}
           disabled={isPending}
-          className="w-full sm:w-auto rounded-full gap-2 font-bold px-8 bg-brand-yellow text-black hover:bg-brand-yellow/90 shadow-sm"
+          className="w-full sm:w-auto rounded-full gap-2 font-bold px-8 bg-brand-blue text-white hover:bg-brand-blue/90 shadow-sm cursor-pointer"
         >
           {isPending ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Placing Hold...
+              {t("placingHold")}
             </>
           ) : (
             <>
               <Bookmark className="h-5 w-5 fill-current" />
-              Reserve Book for Pickup
+              {t("reserveBook")}
             </>
           )}
         </Button>
@@ -143,7 +152,7 @@ export function ReserveButton({
           className="w-full sm:w-auto rounded-full gap-2 font-semibold px-8 bg-muted text-muted-foreground border border-border"
         >
           <AlertCircle className="h-5 w-5" />
-          No Available Copies for Hold
+          {noAvailableText}
         </Button>
       )}
 
@@ -151,7 +160,7 @@ export function ReserveButton({
         <div
           className={
             feedback.type === "success"
-              ? "p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-start gap-2"
+              ? "p-3 rounded-2xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue dark:text-blue-400 text-xs flex items-start gap-2"
               : "p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2"
           }
         >

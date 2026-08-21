@@ -1,22 +1,20 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
 import { format } from "date-fns";
 import {
   ArrowLeft,
-  BookOpen,
   Calendar,
   Barcode,
-  Layers,
-  BookmarkCheck,
   Building2,
-  Clock,
 } from "lucide-react";
 import { BookDetails } from "@/lib/services/book-service";
 import { ReserveButton } from "./reserve-button";
 import { CopyAvailabilityBadge } from "@/components/modules/catalog/copy-availability-badge";
 import { ReviewsList } from "./reviews-list";
-import { Button } from "@/components/ui/button";
 import { ImageWithLoader } from "@/components/shared/image-with-loader";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/providers/language-provider";
 
 interface BookDetailViewProps {
   book: BookDetails;
@@ -31,18 +29,36 @@ export function BookDetailView({
   existingReservationId,
   eligibleLoanIdForFeedback,
 }: BookDetailViewProps) {
+  const { t, language } = useLanguage();
   const isAvailable = book.copyBreakdown.available > 0;
+
+  const authorPrefix = language === "uz" ? "Muallif:" : language === "ru" ? "Автор:" : "By";
+  const deskPickupNote = language === "uz"
+    ? "Kutubxona ish vaqtida ijara stolidan olib ketish mumkin."
+    : language === "ru"
+    ? "Самовывоз на стойке выдачи в рабочие часы библиотеки."
+    : "In-person pickup available at Circulation Desk during library hours.";
+
+  const nextScheduleTitle = language === "uz"
+    ? "Kutilayotgan qaytarish va keyingi mavjudlik jadvali"
+    : language === "ru"
+    ? "Ожидаемый возврат и график доступности"
+    : "Expected Return & Next Availability Schedule";
 
   return (
     <div className="space-y-8 pb-12">
       {/* Back to Catalog */}
       <div>
-        <Link
-          href="/catalog"
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
-        >
-          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Catalog
+        <Link href="/catalog">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+            title={t("backToCatalog")}
+            aria-label={t("backToCatalog")}
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
         </Link>
       </div>
 
@@ -81,13 +97,13 @@ export function BookDetailView({
                   {book.category}
                 </span>
                 {book.isbn && (
-                  <span className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground px-2.5 py-0.5 rounded-full bg-muted border border-border">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground px-2.5 py-0.5 rounded-full bg-muted border border-border">
                     <Barcode className="h-3.5 w-3.5" />
                     ISBN: {book.isbn}
                   </span>
                 )}
                 {book.publicationYear && (
-                  <span className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground px-2.5 py-0.5 rounded-full bg-muted border border-border">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground px-2.5 py-0.5 rounded-full bg-muted border border-border">
                     <Calendar className="h-3.5 w-3.5" />
                     {book.publicationYear}
                   </span>
@@ -100,7 +116,7 @@ export function BookDetailView({
                   {book.title}
                 </h1>
                 <p className="text-base sm:text-lg font-medium text-muted-foreground mt-1">
-                  By <span className="text-foreground">{book.author}</span>
+                  {authorPrefix} <span className="text-foreground">{book.author}</span>
                 </p>
               </div>
 
@@ -110,22 +126,22 @@ export function BookDetailView({
                 </div>
               ) : (
                 <p className="text-sm italic text-muted-foreground">
-                  No synopsis available for this title.
+                  {t("noReviewsYet")}
                 </p>
               )}
 
               {/* Next Availability Schedule Banner */}
               {!isAvailable && book.nextAvailableDate && (
-                <div className="p-4 rounded-2xl border border-amber-300 bg-amber-50/70 text-amber-950 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white font-bold shadow-xs">
+                <div className="p-4 rounded-2xl border border-brand-blue/30 bg-brand-blue/5 text-foreground text-xs sm:text-sm flex items-center gap-3 shadow-2xs">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-xs">
                     <Calendar className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold font-display text-amber-950 dark:text-amber-200">
-                      Expected Return & Next Availability Schedule
+                    <p className="font-bold font-display text-foreground">
+                      {nextScheduleTitle}
                     </p>
-                    <p className="text-xs text-amber-900/80 dark:text-amber-300 mt-0.5 font-mono">
-                      Earliest physical copy is scheduled to be available on <strong>{format(new Date(book.nextAvailableDate), "EEEE, MMMM d, yyyy")}</strong>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {format(new Date(book.nextAvailableDate), "EEEE, MMMM d, yyyy")}
                     </p>
                   </div>
                 </div>
@@ -144,68 +160,38 @@ export function BookDetailView({
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium px-3 py-2 rounded-xl bg-muted/50 border border-border/50">
                 <Building2 className="h-4 w-4 text-brand-blue shrink-0" />
-                <span>
-                  In-person pickup available at Circulation Desk during library hours.
-                </span>
+                <span>{deskPickupNote}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Copy Inventory Telemetry Breakdown Grid */}
-      <div className="space-y-3">
-        <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-          <Layers className="h-5 w-5 text-brand-yellow" />
-          Physical Inventory & Copy Telemetry
-        </h2>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col items-center text-center">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Total Copies
-            </span>
-            <span className="font-mono text-2xl font-bold text-foreground mt-1">
-              {book.copyBreakdown.total}
-            </span>
-          </div>
-
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex flex-col items-center text-center">
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-              Available
-            </span>
-            <span className="font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-              {book.copyBreakdown.available}
-            </span>
-          </div>
-
-          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col items-center text-center">
-            <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-              Reserved
-            </span>
-            <span className="font-mono text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
-              {book.copyBreakdown.reserved}
-            </span>
-          </div>
-
-          <div className="rounded-2xl border border-blue-500/30 bg-blue-500/5 p-4 flex flex-col items-center text-center">
-            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-              On Loan
-            </span>
-            <span className="font-mono text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
-              {book.copyBreakdown.borrowed}
-            </span>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col items-center text-center col-span-2 sm:col-span-1">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Maintenance
-            </span>
-            <span className="font-mono text-2xl font-bold text-foreground mt-1">
-              {book.copyBreakdown.maintenance}
-            </span>
-          </div>
+      {/* Compact Inventory Status Bar */}
+      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl border border-border bg-card shadow-2xs text-xs">
+        <span className="font-semibold text-foreground px-2 py-1">{t("inventorySummary")}:</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-foreground">
+          <span className="text-muted-foreground">{t("totalCopies")}:</span>
+          <span className="font-bold">{book.copyBreakdown.total}</span>
         </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+          <span className="font-medium">{t("availableCopies")}:</span>
+          <span className="font-bold">{book.copyBreakdown.available}</span>
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+          <span>{t("reservedCopies")}:</span>
+          <span className="font-semibold text-foreground">{book.copyBreakdown.reserved}</span>
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+          <span>{t("borrowedCopies")}:</span>
+          <span className="font-semibold text-foreground">{book.copyBreakdown.borrowed}</span>
+        </div>
+        {book.copyBreakdown.maintenance > 0 && (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+            <span>{t("maintenanceCopies")}:</span>
+            <span className="font-semibold text-foreground">{book.copyBreakdown.maintenance}</span>
+          </div>
+        )}
       </div>
 
       {/* Verified Student Reviews */}

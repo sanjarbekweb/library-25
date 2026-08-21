@@ -37,35 +37,22 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-            <Link href="/admin" className="hover:underline flex items-center gap-1">
-              <ArrowLeft className="w-3 h-3" />
-              <span>Admin Console</span>
-            </Link>
-            <span>/</span>
-            <span className="text-foreground font-medium">User Management</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 shadow-sm">
-              <Users className="h-5 w-5" />
-            </div>
-            User &amp; Role Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Administrative console for account activation, role elevations (Assistant/Admin), and RBAC sync.
-          </p>
-        </div>
-
-        <div>
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-3">
           <Link href="/admin">
-            <Button variant="outline" size="sm" className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border">
-              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-              <span>Back to Admin Hub</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+              title="Back to Admin"
+              aria-label="Back to Admin"
+            >
+              <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
+          <h1 className="text-2xl font-bold font-display text-foreground">
+            User Management
+          </h1>
         </div>
       </div>
 

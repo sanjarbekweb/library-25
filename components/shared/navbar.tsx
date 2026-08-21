@@ -189,7 +189,7 @@ export function Navbar() {
                               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                           )}
                         >
-                          <BookOpen className="h-4 w-4 text-emerald-500" />
+                          <BookOpen className="h-4 w-4 text-brand-blue" />
                           {t("manageBooks")}
                         </Link>
 
@@ -295,7 +295,7 @@ export function Navbar() {
                   </Button>
                 </SignInButton>
                 <SignUpButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
-                  <Button size="sm" variant="gradient" className="rounded-full font-semibold px-4 text-xs">
+                  <Button size="sm" variant="default" className="rounded-full font-semibold px-4 text-xs bg-brand-blue text-white hover:bg-brand-blue/90 cursor-pointer">
                     Sign up
                   </Button>
                 </SignUpButton>
@@ -424,7 +424,7 @@ export function Navbar() {
                               : "text-muted-foreground hover:bg-accent/50"
                           )}
                         >
-                          <BookOpen className="h-4 w-4 text-emerald-500" />
+                          <BookOpen className="h-4 w-4 text-brand-blue" />
                           {t("manageBooks")}
                         </Link>
 

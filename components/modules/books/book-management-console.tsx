@@ -24,6 +24,9 @@ import {
   Clock,
   ShieldCheck,
   ArrowRight,
+  SlidersHorizontal,
+  Check,
+  X,
 } from "lucide-react";
 import type { ManageableBookItem } from "@/lib/services/book-management-service";
 import {
@@ -32,6 +35,15 @@ import {
 } from "@/app/actions/book-management-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/components/providers/language-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 
 interface BookManagementConsoleProps {
@@ -50,10 +62,16 @@ const CATEGORY_PRESETS = [
 ];
 
 export function BookManagementConsole({ initialBooks }: BookManagementConsoleProps) {
+  const { t, language } = useLanguage();
   const [books, setBooks] = useState<ManageableBookItem[]>(initialBooks);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [categorySearchQuery, setCategorySearchQuery] = useState("");
   const [expandedBookId, setExpandedBookId] = useState<string | null>(null);
+
+  const availableCategories = Array.from(
+    new Set([...CATEGORY_PRESETS, ...books.map((b) => b.category).filter(Boolean)])
+  );
 
   // Create Book Modal state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -204,25 +222,17 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
   return (
     <div className="space-y-8">
       {/* Top Banner & Control Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-xs">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            Book Catalog Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Register new book titles, manage physical copies, generate barcodes, and link cover imagery.
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <h1 className="text-2xl font-bold font-display text-foreground">
+          {t("manageBooks")}
+        </h1>
 
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-semibold px-5 gap-2 text-xs shadow-xs"
+          className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2 cursor-pointer"
         >
           <PlusCircle className="h-4 w-4" />
-          <span>Add New Book Title</span>
+          <span>{language === "uz" ? "Yangi kitob qo'shish" : language === "ru" ? "Добавить книгу" : "Add New Book"}</span>
         </Button>
       </div>
 
@@ -231,37 +241,135 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by title, author, or ISBN..."
+            placeholder={t("searchCatalogTypo")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 rounded-full text-xs"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => setSelectedCategory("all")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
-              selectedCategory === "all"
-                ? "bg-foreground text-background font-semibold"
-                : "bg-accent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            All Categories ({books.length})
-          </button>
-          {CATEGORY_PRESETS.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors shrink-0 ${
-                selectedCategory === cat
-                  ? "bg-foreground text-background font-semibold"
-                  : "bg-accent text-muted-foreground hover:text-foreground"
-              }`}
+        {/* Aesthetic Category / Theme Filter Dropdown */}
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-10 rounded-full px-4 text-xs font-semibold gap-2 border bg-card transition-all duration-200 cursor-pointer shadow-2xs hover:border-foreground/30",
+                  selectedCategory !== "all"
+                    ? "border-brand-blue/50 bg-brand-blue/10 text-brand-blue dark:text-blue-400 font-bold ring-2 ring-brand-blue/15"
+                    : "border-border text-foreground hover:bg-accent"
+                )}
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate max-w-[140px] sm:max-w-[180px]">
+                  {selectedCategory !== "all" ? selectedCategory : t("allCategories")}
+                </span>
+                {selectedCategory !== "all" && (
+                  <span className="flex h-2 w-2 rounded-full bg-brand-blue shrink-0 animate-pulse" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="w-64 max-h-80 overflow-y-auto rounded-2xl p-1.5 shadow-xl border-border bg-card/95 backdrop-blur-md space-y-1"
             >
-              {cat}
-            </button>
-          ))}
+              <div className="px-2 py-1.5 flex items-center justify-between text-xs font-semibold text-muted-foreground border-b border-border/60">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-brand-yellow" />
+                  <span>{t("filterByCategory")}</span>
+                </span>
+                {selectedCategory !== "all" && (
+                  <button
+                    onClick={() => {
+                      setSelectedCategory("all");
+                      setCategorySearchQuery("");
+                    }}
+                    className="text-[11px] font-semibold text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+                  >
+                    {t("reset")}
+                  </button>
+                )}
+              </div>
+
+              {/* Quick Search inside Categories list */}
+              {availableCategories.length > 5 && (
+                <div className="px-1 pt-1 pb-1">
+                  <input
+                    type="text"
+                    placeholder={t("searchCategories")}
+                    value={categorySearchQuery}
+                    onChange={(e) => setCategorySearchQuery(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full h-8 px-2.5 rounded-lg border border-border bg-background text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+              )}
+
+              {/* All Categories Option */}
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setCategorySearchQuery("");
+                }}
+                className={cn(
+                  "flex items-center justify-between text-xs py-2 px-2.5 rounded-xl cursor-pointer font-medium transition-colors",
+                  selectedCategory === "all"
+                    ? "bg-foreground text-background font-semibold"
+                    : "text-foreground hover:bg-accent"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                  <span>{t("allCategories")} ({books.length})</span>
+                </div>
+                {selectedCategory === "all" && <Check className="h-3.5 w-3.5 shrink-0" />}
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className="bg-border/60 my-1" />
+
+              {/* Category List */}
+              {availableCategories
+                .filter((cat) =>
+                  cat.toLowerCase().includes(categorySearchQuery.toLowerCase())
+                )
+                .map((cat) => {
+                  const isSelected = selectedCategory === cat;
+                  const countForCat = books.filter((b) => b.category === cat).length;
+                  return (
+                    <DropdownMenuItem
+                      key={cat}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setCategorySearchQuery("");
+                      }}
+                      className={cn(
+                        "flex items-center justify-between text-xs py-2 px-2.5 rounded-xl cursor-pointer font-medium transition-colors",
+                        isSelected
+                          ? "bg-brand-blue text-white font-semibold"
+                          : "text-foreground hover:bg-accent"
+                      )}
+                    >
+                      <span className="truncate">{cat}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={cn(
+                            "text-[10px] px-1.5 py-0.5 rounded-md",
+                            isSelected
+                              ? "bg-white/20 text-white"
+                              : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {countForCat}
+                        </span>
+                        {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -270,23 +378,23 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
         {filteredBooks.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-            <p className="text-sm font-medium text-foreground">No matching book titles found</p>
+            <p className="text-sm font-medium text-foreground">{t("noBooksFound")}</p>
             <p className="text-xs text-muted-foreground">
-              Click &ldquo;Add New Book Title&rdquo; to add a title to the library catalog.
+              {t("noBooksFoundSubtitle")}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-mono">
+              <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
-                  <th className="p-4">Book Title &amp; Author</th>
-                  <th className="p-4">Category</th>
-                  <th className="p-4">ISBN</th>
-                  <th className="p-4">Total Copies</th>
-                  <th className="p-4">Available</th>
-                  <th className="p-4">Borrowed</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="p-4">{language === "uz" ? "Kitob nomi & Muallif" : language === "ru" ? "Название и автор" : "Book Title & Author"}</th>
+                  <th className="p-4">{t("category")}</th>
+                  <th className="p-4">{t("isbn")}</th>
+                  <th className="p-4">{t("totalCopies")}</th>
+                  <th className="p-4">{t("availableCopies")}</th>
+                  <th className="p-4">{t("borrowedCopies")}</th>
+                  <th className="p-4 text-right">{language === "uz" ? "Amallar" : language === "ru" ? "Действия" : "Actions"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -329,7 +437,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                                   className="object-cover"
                                 />
                               ) : (
-                                <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                                <div className="h-full w-full flex items-center justify-center bg-brand-blue/15 text-brand-blue">
                                   <BookOpen className="h-4 w-4" />
                                 </div>
                               )}
@@ -347,10 +455,10 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                           </div>
                         </td>
                         <td className="p-4 font-medium">{b.category}</td>
-                        <td className="p-4 font-mono text-[11px] text-muted-foreground">
+                        <td className="p-4 font-medium text-[11px] text-muted-foreground">
                           {b.isbn || "—"}
                         </td>
-                        <td className="p-4 font-mono font-bold text-foreground">
+                        <td className="p-4 font-bold text-foreground">
                           <button
                             type="button"
                             onClick={(e) => {
@@ -368,12 +476,12 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                           </button>
                         </td>
                         <td className="p-4">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold font-mono text-[11px]">
+                          <span className="px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 font-semibold text-[11px]">
                             {b.availableCopies} free
                           </span>
                         </td>
                         <td className="p-4">
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold font-mono text-[11px]">
+                          <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border font-semibold text-[11px]">
                             {b.borrowedCopies} out
                           </span>
                         </td>
@@ -439,11 +547,11 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                                     >
                                       <div className="space-y-1.5">
                                         <div className="flex items-center justify-between gap-2">
-                                          <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-muted text-foreground border border-border flex items-center gap-1.5">
+                                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-muted text-foreground border border-border flex items-center gap-1.5">
                                             <Barcode className="h-3.5 w-3.5 text-brand-blue shrink-0" />
                                             {copy.barcode}
                                           </span>
-                                          <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-accent border text-muted-foreground">
+                                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-accent border text-muted-foreground">
                                             {copy.condition}
                                           </span>
                                         </div>
@@ -453,26 +561,26 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                                             Copy Status:
                                           </span>
                                           {copy.status === "AVAILABLE" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
                                               Available on Shelf
                                             </span>
                                           )}
                                           {copy.status === "BORROWED" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
-                                              <UserCheck className="w-3 h-3 text-blue-500 shrink-0" />
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
+                                              <UserCheck className="w-3 h-3 text-brand-blue shrink-0" />
                                               Book In Hand
                                             </span>
                                           )}
                                           {copy.status === "RESERVED" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                                              <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                                              <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                                               Reserved Hold
                                             </span>
                                           )}
                                         </div>
 
                                         {copy.currentHolderName && (
-                                          <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 pt-1 flex items-center gap-1">
+                                          <p className="text-xs font-semibold text-brand-blue dark:text-blue-400 pt-1 flex items-center gap-1">
                                             <UserCheck className="w-3.5 h-3.5 shrink-0" /> 👤 Holder: {copy.currentHolderName}
                                           </p>
                                         )}
@@ -510,7 +618,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div>
                 <h2 className="font-display font-bold text-xl text-foreground flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-brand-yellow" />
+                  <Sparkles className="h-5 w-5 text-brand-blue" />
                   Add New Book Title to Catalog
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -533,7 +641,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
             )}
 
             {modalSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue dark:text-blue-400 text-xs flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>{modalSuccess}</span>
               </div>
@@ -586,7 +694,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                     placeholder="e.g. 978-0061120084"
                     value={isbn}
                     onChange={(e) => setIsbn(e.target.value)}
-                    className="text-xs rounded-xl font-mono"
+                    className="text-xs rounded-xl"
                   />
                 </div>
 
@@ -596,7 +704,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                     type="number"
                     value={publicationYear || ""}
                     onChange={(e) => setPublicationYear(e.target.value ? Number(e.target.value) : undefined)}
-                    className="text-xs rounded-xl font-mono"
+                    className="text-xs rounded-xl"
                   />
                 </div>
               </div>
@@ -616,7 +724,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
               <div className="space-y-2 border-t border-border pt-3">
                 <label className="text-xs font-semibold text-foreground flex items-center justify-between">
                   <span>Cover Image (Cloudflare R2 Upload or Image URL)</span>
-                  {coverImageUrl && <span className="text-[10px] text-emerald-500 font-mono">✓ Image Linked</span>}
+                  {coverImageUrl && <span className="text-[10px] text-brand-blue font-semibold">✓ Image Linked</span>}
                 </label>
 
                 <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -657,7 +765,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                     max={50}
                     value={initialCopyCount}
                     onChange={(e) => setInitialCopyCount(Number(e.target.value))}
-                    className="text-xs rounded-xl font-mono"
+                    className="text-xs rounded-xl"
                   />
                 </div>
 
@@ -731,14 +839,14 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
             </div>
 
             {modalError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{modalError}</span>
               </div>
             )}
 
             {modalSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue dark:text-blue-400 text-xs flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>{modalSuccess}</span>
               </div>
@@ -753,7 +861,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                   placeholder="e.g. BC-849201-1"
                   value={customBarcode}
                   onChange={(e) => setCustomBarcode(e.target.value)}
-                  className="text-xs rounded-xl font-mono"
+                  className="text-xs rounded-xl"
                 />
               </div>
 

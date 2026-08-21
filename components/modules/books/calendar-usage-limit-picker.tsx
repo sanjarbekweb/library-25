@@ -138,19 +138,19 @@ export function CalendarUsageLimitPicker({
 
       {/* Selected Usage Info Banner */}
       {error ? (
-        <div className="p-3 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
-          <ShieldAlert className="h-4 w-4 shrink-0 text-rose-600" />
+        <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-xs font-medium flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4 shrink-0 text-destructive" />
           <span>{error}</span>
         </div>
       ) : (
-        <div className="p-3 rounded-xl border border-emerald-300/50 bg-emerald-50/50 text-emerald-900 dark:bg-emerald-950/30 dark:border-emerald-800/50 dark:text-emerald-300 text-xs flex items-center justify-between gap-2">
+        <div className="p-3 rounded-xl border border-brand-blue/30 bg-brand-blue/10 text-brand-blue dark:text-blue-300 text-xs flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="h-4 w-4 text-brand-blue shrink-0" />
             <span>
               Return due by <strong className="font-semibold">{format(selectedDate, "EEEE, MMMM d, yyyy")}</strong>
             </span>
           </div>
-          <span className="font-mono text-[11px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 px-2 py-0.5 rounded">
+          <span className="font-mono text-[11px] bg-brand-blue/20 text-brand-blue dark:text-blue-200 px-2 py-0.5 rounded font-bold">
             {selectedDays} Days
           </span>
         </div>

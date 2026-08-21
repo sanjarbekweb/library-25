@@ -12,14 +12,10 @@ import {
   CheckCircle2,
   BookOpen,
   Calendar,
-  UserCheck,
-  QrCode,
-  ArrowRight,
   ShieldAlert,
-  Bookmark,
   Star,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -31,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import type { StudentLoansOverview, StudentLoanItem } from "@/lib/services/history-service";
 import { SubmitFeedbackModal } from "@/components/modules/feedback/submit-feedback-modal";
+import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 interface StudentLoansViewProps {
@@ -38,54 +35,56 @@ interface StudentLoansViewProps {
 }
 
 export function StudentLoansView({ overview }: StudentLoansViewProps) {
-  const { stats, activeLoans, historicalLoans, user } = overview;
+  const { t, language } = useLanguage();
+  const { stats, activeLoans, historicalLoans } = overview;
   const [selectedLoanForFeedback, setSelectedLoanForFeedback] = useState<StudentLoanItem | null>(null);
+
+  const activeLoansSubtext = language === "uz" ? "Hozirda qo'ldagi kitoblar" : language === "ru" ? "Книги на руках" : "Currently checked out";
+  const overdueSubtext = language === "uz" ? "Qaytarish muddati o'tgan" : language === "ru" ? "Просрочен срок возврата" : "Past due return deadline";
+  const returnedSubtext = language === "uz" ? "Qaytarilgan kitoblar" : language === "ru" ? "Возвращено в библиотеку" : "Completed returns";
+  const totalBorrowedSubtext = language === "uz" ? "Jami olingan kitoblar" : language === "ru" ? "Всего выдано за все время" : "Lifetime checkouts";
+
+  const attentionBannerTitle = language === "uz"
+    ? `Diqqat: Sizda ${stats.overdueLoansCount} ta muddati o'tgan kitob mavjud!`
+    : language === "ru"
+    ? `Внимание: У вас ${stats.overdueLoansCount} просроченных книг!`
+    : `Attention: You have ${stats.overdueLoansCount} overdue book copy${stats.overdueLoansCount > 1 ? "s" : ""}!`;
+
+  const attentionBannerText = language === "uz"
+    ? "Iltimos, kechikish to'lovlari yoki hisob cheklanishini oldini olish uchun kitoblarni zudlik bilan kutubxona ijara stoliga qaytaring."
+    : language === "ru"
+    ? "Пожалуйста, верните просроченные книги на стойку выдачи как можно скорее во избежание штрафов и блокировки."
+    : "Please return your overdue books to the Circulation Desk as soon as possible to avoid late fees or account suspension.";
+
+  const noActiveCheckoutsTitle = language === "uz" ? "Faol ijaradagi kitoblar yo'q" : language === "ru" ? "Нет книг на руках" : "No Active Checkouts";
+  const noActiveCheckoutsSubtitle = language === "uz"
+    ? "Hozirda sizda olingan kitoblar mavjud emas. Katalogdan kitob tanlab band qilishingiz mumkin."
+    : language === "ru"
+    ? "В данный момент у вас нет книг на руках. Выберите книгу в каталоге для бронирования."
+    : "You do not have any physical books checked out at the moment. Browse the library catalog to reserve available titles.";
 
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-foreground flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-yellow/20 text-foreground border border-brand-yellow/30 shadow-sm">
-              <BookMarked className="h-5 w-5 text-foreground" />
-            </div>
-            My Borrowed Loans & History
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Track your active checkouts, return due dates, overdue alerts, and reading history.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link href="/reservations">
-            <Button variant="outline" size="sm" className="rounded-full gap-2">
-              <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
-              <span>View My Holds</span>
-            </Button>
-          </Link>
-          <Link href="/catalog">
-            <Button size="sm" className="rounded-full gap-2 bg-brand-blue text-white hover:bg-brand-blue/90 font-medium">
-              <BookOpen className="h-4 w-4" />
-              <span>Browse Catalog</span>
-            </Button>
-          </Link>
-        </div>
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <h1 className="text-2xl font-bold font-display text-foreground">
+          {t("myLoans")}
+        </h1>
       </div>
 
       {/* Overview Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase text-muted-foreground">
-              Active Loans
+            <span className="text-xs font-semibold uppercase text-muted-foreground">
+              {t("activeLoans")}
             </span>
             <BookMarked className="h-4 w-4 text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.activeLoansCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Currently checked out</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{activeLoansSubtext}</p>
         </Card>
 
         <Card className={cn(
@@ -94,10 +93,10 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
         )}>
           <div className="flex items-center justify-between">
             <span className={cn(
-              "text-xs font-mono uppercase text-muted-foreground",
+              "text-xs font-semibold uppercase text-muted-foreground",
               stats.overdueLoansCount > 0 && "text-rose-700 dark:text-rose-300 font-semibold"
             )}>
-              Overdue
+              {t("overdue")}
             </span>
             <AlertTriangle className={cn(
               "h-4 w-4 text-amber-500",
@@ -110,48 +109,48 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
           )}>
             {stats.overdueLoansCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Past due return deadline</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{overdueSubtext}</p>
         </Card>
 
         <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase text-muted-foreground">
-              Returned
+            <span className="text-xs font-semibold uppercase text-muted-foreground">
+              {t("returnedLoans")}
             </span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <CheckCircle2 className="h-4 w-4 text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.returnedLoansCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Completed returns</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{returnedSubtext}</p>
         </Card>
 
         <Card className="border-border bg-card shadow-sm rounded-2xl p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase text-muted-foreground">
-              Total Borrowed
+            <span className="text-xs font-semibold uppercase text-muted-foreground">
+              {language === "uz" ? "Jami ijaralar" : language === "ru" ? "Всего выдач" : "Total Borrowed"}
             </span>
             <BookOpen className="h-4 w-4 text-brand-blue" />
           </div>
           <p className="text-2xl font-bold font-display mt-2 text-foreground">
             {stats.totalLoansCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Lifetime checkouts</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{totalBorrowedSubtext}</p>
         </Card>
       </div>
 
       {/* Overdue High Priority Banner */}
       {stats.overdueLoansCount > 0 && (
-        <div className="rounded-2xl border border-rose-300 bg-rose-50 p-5 text-rose-900 dark:bg-rose-950/50 dark:border-rose-800 dark:text-rose-200 shadow-sm flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-white font-bold shadow-sm">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-destructive shadow-sm flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive text-destructive-foreground font-bold shadow-sm">
             <ShieldAlert className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-base font-bold font-display">
-              Attention: You have {stats.overdueLoansCount} overdue book copy{stats.overdueLoansCount > 1 ? "s" : ""}!
+              {attentionBannerTitle}
             </h3>
-            <p className="text-xs mt-1 text-rose-800 dark:text-rose-300 leading-relaxed">
-              Please return your overdue books to the Circulation Desk as soon as possible to avoid late fees or account suspension. Contact library staff if you need assistance.
+            <p className="text-xs mt-1 opacity-90 leading-relaxed">
+              {attentionBannerText}
             </p>
           </div>
         </div>
@@ -162,7 +161,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
             <Clock className="h-5 w-5 text-brand-blue" />
-            Active Checkouts ({activeLoans.length})
+            {t("activeLoans")} ({activeLoans.length})
           </h2>
         </div>
 
@@ -173,11 +172,11 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                 key={loan.id}
                 className={cn(
                   "border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-border/80",
-                  loan.isOverdue && "border-rose-300 dark:border-rose-800 ring-1 ring-rose-300 dark:ring-rose-800"
+                  loan.isOverdue && "border-destructive/40 ring-1 ring-destructive/30"
                 )}
               >
                 <CardContent className="p-5 flex gap-4">
-                  {/* Book Cover / Thumbnail Placeholder */}
+                  {/* Book Cover */}
                   <div className="relative w-20 h-28 rounded-xl bg-muted shrink-0 overflow-hidden border border-border shadow-xs flex items-center justify-center text-muted-foreground">
                     {loan.coverImageUrl ? (
                       <Image
@@ -196,10 +195,10 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between gap-2">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium uppercase bg-accent text-accent-foreground border">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase bg-accent text-accent-foreground border border-border">
                           {loan.category}
                         </span>
-                        <span className="font-mono text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded">
                           {loan.copyBarcode}
                         </span>
                       </div>
@@ -218,28 +217,28 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                       <div className="text-[11px] text-muted-foreground space-y-0.5">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          <span>Borrowed: {formatTashkentDate(loan.borrowedAt)}</span>
+                          <span>{t("borrowedDate")}: {formatTashkentDate(loan.borrowedAt)}</span>
                         </div>
                         <div className="flex items-center gap-1 font-semibold text-foreground">
                           <Clock className="h-3 w-3 text-brand-blue" />
-                          <span>Due: {formatTashkentDate(loan.dueDate)}</span>
+                          <span>{t("dueDate")}: {formatTashkentDate(loan.dueDate)}</span>
                         </div>
                       </div>
 
                       {loan.isOverdue ? (
-                        <div className="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200 border border-rose-300 dark:border-rose-800 flex items-center gap-1 animate-pulse">
+                        <div className="px-3 py-1 rounded-full text-xs font-bold bg-destructive/10 text-destructive border border-destructive/20 flex items-center gap-1 animate-pulse">
                           <AlertTriangle className="h-3.5 w-3.5" />
-                          <span>{loan.daysOverdue} Day{loan.daysOverdue > 1 ? "s" : ""} Overdue</span>
+                          <span>{loan.daysOverdue} {t("daysOverdue")}</span>
                         </div>
                       ) : loan.daysRemaining <= 3 ? (
-                        <div className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-800 flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5 text-amber-600" />
-                          <span>Due Soon ({loan.daysRemaining} day{loan.daysRemaining === 1 ? "" : "s"} left)</span>
+                        <div className="px-3 py-1 rounded-full text-xs font-bold bg-muted text-foreground border border-border flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5 text-brand-blue" />
+                          <span>{loan.daysRemaining} {t("daysLeft")}</span>
                         </div>
                       ) : (
-                        <div className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                          <span>Active ({loan.daysRemaining} days left)</span>
+                        <div className="px-3 py-1 rounded-full text-xs font-medium bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 flex items-center gap-1">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>{t("onTime")} ({loan.daysRemaining} {t("daysLeft")})</span>
                         </div>
                       )}
                     </div>
@@ -252,15 +251,15 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
           <Card className="border-border bg-card shadow-sm rounded-2xl p-8 text-center">
             <BookMarked className="h-10 w-10 mx-auto text-muted-foreground/50 mb-2" />
             <h3 className="font-display font-bold text-base text-foreground">
-              No Active Checkouts
+              {noActiveCheckoutsTitle}
             </h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
-              You do not have any physical books checked out at the moment. Browse the library catalog to reserve available titles.
+              {noActiveCheckoutsSubtitle}
             </p>
             <div className="mt-4">
               <Link href="/catalog">
                 <Button size="sm" className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90">
-                  Browse Catalog
+                  {t("browseCatalog")}
                 </Button>
               </Link>
             </div>
@@ -272,8 +271,8 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
       <div className="space-y-4 pt-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-            Past Return History ({historicalLoans.length})
+            <CheckCircle2 className="h-5 w-5 text-brand-blue" />
+            {t("returnedLoans")} ({historicalLoans.length})
           </h2>
         </div>
 
@@ -282,12 +281,12 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
             <Table>
               <TableHeader className="bg-muted/40">
                 <TableRow>
-                  <TableHead className="font-mono text-xs uppercase">Book Title</TableHead>
-                  <TableHead className="font-mono text-xs uppercase">Barcode</TableHead>
-                  <TableHead className="font-mono text-xs uppercase">Borrowed On</TableHead>
-                  <TableHead className="font-mono text-xs uppercase">Returned On</TableHead>
-                  <TableHead className="font-mono text-xs uppercase">Condition</TableHead>
-                  <TableHead className="font-mono text-xs uppercase text-right">Review / Feedback</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase">{language === "uz" ? "Kitob nomi" : language === "ru" ? "Название книги" : "Book Title"}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase">{language === "uz" ? "Shtrix-kod" : language === "ru" ? "Штрих-код" : "Barcode"}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase">{t("borrowedDate")}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase">{language === "uz" ? "Qaytarilgan sana" : language === "ru" ? "Дата возврата" : "Returned On"}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase">{language === "uz" ? "Holati" : language === "ru" ? "Состояние" : "Condition"}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase text-right">{t("reviewsAndRatings")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -299,41 +298,35 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                       </Link>
                       <p className="text-xs text-muted-foreground font-normal">by {loan.bookAuthor}</p>
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    <TableCell className="text-xs font-semibold text-muted-foreground">
                       {loan.copyBarcode}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    <TableCell className="text-xs text-muted-foreground">
                       {format(new Date(loan.borrowedAt), "MMM d, yyyy")}
                     </TableCell>
-                    <TableCell className="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                      {loan.returnedAt ? format(new Date(loan.returnedAt), "MMM d, yyyy") : "Returned"}
+                    <TableCell className="text-xs font-semibold text-foreground">
+                      {loan.returnedAt ? format(new Date(loan.returnedAt), "MMM d, yyyy") : (language === "uz" ? "Qaytarilgan" : language === "ru" ? "Возвращено" : "Returned")}
                     </TableCell>
                     <TableCell>
-                      <span className={cn(
-                        "px-2 py-0.5 rounded-full text-[11px] font-mono border",
-                        loan.condition === "MINT" && "bg-emerald-50 text-emerald-700 border-emerald-200",
-                        loan.condition === "GOOD" && "bg-blue-50 text-blue-700 border-blue-200",
-                        loan.condition === "FAIR" && "bg-amber-50 text-amber-700 border-amber-200",
-                        loan.condition === "DAMAGED" && "bg-rose-50 text-rose-700 border-rose-200"
-                      )}>
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold border border-border bg-muted text-foreground">
                         {loan.condition}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
                       {loan.feedback ? (
-                        <div className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                          <span>{loan.feedback.rating} / 5 Stars</span>
+                        <div className="inline-flex items-center gap-1 text-xs font-semibold text-foreground bg-accent px-2.5 py-1 rounded-full border border-border">
+                          <Star className="h-3.5 w-3.5 fill-brand-blue text-brand-blue" />
+                          <span>{loan.feedback.rating} / 5</span>
                         </div>
                       ) : (
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setSelectedLoanForFeedback(loan)}
-                          className="rounded-full text-xs font-medium gap-1.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-400/30 hover:bg-amber-500/20"
+                          className="rounded-full text-xs font-medium gap-1.5 border-border hover:bg-accent text-foreground cursor-pointer"
                         >
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                          <span>Write Review</span>
+                          <Star className="h-3.5 w-3.5 fill-brand-blue text-brand-blue" />
+                          <span>{t("leaveReview")}</span>
                         </Button>
                       )}
                     </TableCell>
@@ -345,7 +338,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
         ) : (
           <Card className="border-border bg-card shadow-sm rounded-2xl p-6 text-center">
             <p className="text-xs text-muted-foreground italic">
-              No historical returns logged yet. Your returned loans will be listed here.
+              {language === "uz" ? "Qaytarilgan kitoblar tarixi hozircha bo'sh." : language === "ru" ? "История возвратов пока пуста." : "No historical returns logged yet. Your returned loans will be listed here."}
             </p>
           </Card>
         )}

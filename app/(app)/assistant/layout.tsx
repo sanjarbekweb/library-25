@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getUserByClerkId } from "@/lib/services/user-service";
+import { AppShellLayout } from "@/components/shared/app-shell-layout";
 
 export default async function AssistantLayout({
   children,
@@ -24,5 +25,5 @@ export default async function AssistantLayout({
     redirect("/");
   }
 
-  return <>{children}</>;
+  return <AppShellLayout>{children}</AppShellLayout>;
 }

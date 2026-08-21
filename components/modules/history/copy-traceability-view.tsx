@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
 import {
   QrCode,
@@ -142,14 +143,26 @@ export function CopyTraceabilityView({
       <Card className="border-border bg-card shadow-sm rounded-2xl relative z-40 overflow-visible">
         <CardHeader className="bg-muted/40 pb-4 border-b border-border rounded-t-2xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-xl font-bold font-display flex items-center gap-2">
-                <QrCode className="h-5 w-5 text-brand-blue" />
-                Physical Copy Traceability Inspector
-              </CardTitle>
-              <CardDescription className="text-sm text-muted-foreground mt-1">
-                Search by book name, title, author, or physical copy barcode to inspect full audit history and status.
-              </CardDescription>
+            <div className="flex items-center gap-3">
+              <Link href="/assistant/desk">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+                  title="Back to Circulation Desk"
+                  aria-label="Back to Circulation Desk"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
+              <div>
+                <CardTitle className="text-xl font-bold font-display flex items-center gap-2">
+                  Physical Copy Traceability Inspector
+                </CardTitle>
+                <CardDescription className="text-sm text-muted-foreground mt-1">
+                  Search by book name, title, author, or physical copy barcode to inspect full audit history and status.
+                </CardDescription>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -251,17 +264,17 @@ export function CopyTraceabilityView({
                           {c.barcode}
                         </span>
                         {c.status === "BORROWED" && c.currentHolderName ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30">
-                            <User className="w-3 h-3 text-blue-500 shrink-0" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
+                            <User className="w-3 h-3 text-brand-blue shrink-0" />
                             In Hand: {c.currentHolderName}
                           </span>
                         ) : c.status === "RESERVED" && c.currentHolderName ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                            <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                            <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                             Reserved: {c.currentHolderName}
                           </span>
                         ) : (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
                             Available on Shelf
                           </span>
                         )}
@@ -317,10 +330,10 @@ export function CopyTraceabilityView({
                   <span
                     className={cn(
                       "px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase font-mono border",
-                      detail.status === "AVAILABLE" && "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300",
-                      detail.status === "BORROWED" && "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300",
-                      detail.status === "RESERVED" && "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300",
-                      (detail.status === "MAINTENANCE" || detail.status === "LOST") && "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300"
+                      detail.status === "AVAILABLE" && "bg-brand-blue/10 text-brand-blue border-brand-blue/20 dark:text-blue-300",
+                      detail.status === "BORROWED" && "bg-muted text-foreground border-border",
+                      detail.status === "RESERVED" && "bg-muted text-muted-foreground border-border",
+                      (detail.status === "MAINTENANCE" || detail.status === "LOST") && "bg-destructive/10 text-destructive border-destructive/20"
                     )}
                   >
                     {detail.status}
@@ -331,15 +344,7 @@ export function CopyTraceabilityView({
                   <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
                     Physical Condition
                   </span>
-                  <span
-                    className={cn(
-                      "px-2.5 py-0.5 rounded-full text-xs font-medium font-mono border",
-                      detail.condition === "MINT" && "bg-emerald-50 text-emerald-700 border-emerald-200",
-                      detail.condition === "GOOD" && "bg-blue-50 text-blue-700 border-blue-200",
-                      detail.condition === "FAIR" && "bg-amber-50 text-amber-700 border-amber-200",
-                      detail.condition === "DAMAGED" && "bg-rose-50 text-rose-700 border-rose-200"
-                    )}
-                  >
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium font-mono border border-border bg-muted text-foreground">
                     {detail.condition}
                   </span>
                 </div>

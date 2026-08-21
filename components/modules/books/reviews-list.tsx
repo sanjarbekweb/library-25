@@ -75,20 +75,20 @@ export function ReviewsList({
     <div className="space-y-6">
       {/* Verified Student Review Prompt Banner */}
       {eligibleLoanId && (
-        <div className="rounded-2xl border border-amber-300 bg-amber-50/60 dark:bg-amber-950/40 dark:border-amber-800 p-5 text-amber-900 dark:text-amber-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="rounded-2xl border border-brand-blue/20 bg-brand-blue/5 p-5 text-foreground shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h4 className="font-display font-bold text-base flex items-center gap-2">
-              <Star className="h-5 w-5 fill-amber-400 text-amber-500" />
+              <Star className="h-5 w-5 fill-brand-blue text-brand-blue" />
               You completed a loan for this title!
             </h4>
-            <p className="text-xs text-amber-800 dark:text-amber-300">
+            <p className="text-xs text-muted-foreground">
               Share your reading experience and help other students discover
               great books.
             </p>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="rounded-full bg-amber-500 text-white hover:bg-amber-600 font-semibold text-xs gap-1.5 shrink-0"
+            className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-semibold text-xs gap-1.5 shrink-0 cursor-pointer"
           >
             <Star className="h-4 w-4 fill-current" />
             Write Verified Review
@@ -109,7 +109,7 @@ export function ReviewsList({
                 key={star}
                 className={`h-5 w-5 ${
                   averageRating && star <= Math.round(averageRating)
-                    ? "fill-amber-400 text-amber-400"
+                    ? "fill-brand-blue text-brand-blue"
                     : "fill-muted text-muted"
                 }`}
               />
@@ -137,11 +137,11 @@ export function ReviewsList({
               >
                 <span className="w-12 font-medium flex items-center gap-1 text-muted-foreground">
                   {ratingKey}{" "}
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <Star className="h-3 w-3 fill-brand-blue text-brand-blue" />
                 </span>
                 <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                   <div
-                    className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                    className="h-full bg-brand-blue rounded-full transition-all duration-500"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
@@ -167,9 +167,9 @@ export function ReviewsList({
               onClick={() => setIsDirectModalOpen(true)}
               size="sm"
               variant="outline"
-              className="rounded-full text-xs font-semibold gap-1.5 border-border hover:bg-accent"
+              className="rounded-full text-xs font-semibold gap-1.5 border-border hover:bg-accent cursor-pointer"
             >
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 fill-brand-blue text-brand-blue" />
               <span>Write a Review</span>
             </Button>
           )}
@@ -197,7 +197,7 @@ export function ReviewsList({
                     <span className="font-semibold text-sm text-foreground">
                       {item.studentName}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-brand-blue dark:text-blue-400 bg-brand-blue/10 px-2 py-0.5 rounded-full border border-brand-blue/20">
                       <CheckCircle2 className="h-3 w-3" />
                       Student Reader
                     </span>
@@ -215,7 +215,7 @@ export function ReviewsList({
                       key={star}
                       className={`h-3.5 w-3.5 ${
                         star <= item.rating
-                          ? "fill-amber-400 text-amber-400"
+                          ? "fill-brand-blue text-brand-blue"
                           : "fill-muted text-muted"
                       }`}
                     />
@@ -253,7 +253,7 @@ export function ReviewsList({
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <h3 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-                  <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                  <Star className="h-5 w-5 fill-brand-blue text-brand-blue" />
                   Rate and Review Book
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -264,7 +264,7 @@ export function ReviewsList({
               <button
                 type="button"
                 onClick={() => setIsDirectModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-lg font-bold p-1.5 rounded-full min-w-[32px] min-h-[32px] flex items-center justify-center"
+                className="text-muted-foreground hover:text-foreground text-lg font-bold p-1.5 rounded-full min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer"
                 aria-label="Close review modal"
               >
                 ✕
@@ -272,14 +272,14 @@ export function ReviewsList({
             </div>
 
             {directError && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
                 <span>{directError}</span>
               </div>
             )}
 
             {directSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-xs flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>{directSuccess}</span>
               </div>
@@ -297,19 +297,19 @@ export function ReviewsList({
                       key={star}
                       type="button"
                       onClick={() => setDirectRating(star)}
-                      className="p-1.5 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
+                      className="p-1.5 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
                     >
                       <Star
                         className={`h-8 w-8 ${
                           star <= directRating
-                            ? "fill-amber-400 text-amber-400"
+                            ? "fill-brand-blue text-brand-blue"
                             : "fill-muted text-muted-foreground/30"
                         }`}
                       />
                     </button>
                   ))}
                 </div>
-                <span className="text-xs font-mono text-amber-600 dark:text-amber-400 font-bold block pt-1">
+                <span className="text-xs font-mono text-brand-blue font-bold block pt-1">
                   {directRating} out of 5 Stars
                 </span>
               </div>
@@ -337,14 +337,14 @@ export function ReviewsList({
                   type="button"
                   variant="outline"
                   onClick={() => setIsDirectModalOpen(false)}
-                  className="rounded-full text-xs"
+                  className="rounded-full text-xs cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmittingDirect}
-                  className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 text-xs font-semibold gap-2"
+                  className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 text-xs font-semibold gap-2 cursor-pointer"
                 >
                   {isSubmittingDirect ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
