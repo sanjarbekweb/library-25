@@ -296,7 +296,7 @@ export function Navbar() {
                 </SignInButton>
                 <SignUpButton mode="modal" fallbackRedirectUrl="/catalog" forceRedirectUrl="/catalog">
                   <Button size="sm" variant="gradient" className="rounded-full font-semibold px-4 text-xs">
-                    Request a Demo
+                    Sign up
                   </Button>
                 </SignUpButton>
               </div>

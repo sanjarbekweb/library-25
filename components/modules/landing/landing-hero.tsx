@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
   Sparkles,
   ArrowRight,
   BookOpen,
-  Lightbulb,
-  ShieldAlert,
-  MessageSquare,
   Fingerprint,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -24,7 +20,6 @@ import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function LandingHero() {
-  const [activeState, setActiveState] = useState<1 | 2>(1);
   const { t } = useLanguage();
   const { isSignedIn, isLoaded, user } = useUser();
   const userRole = user?.publicMetadata?.role as string | undefined;
@@ -37,49 +32,14 @@ export function LandingHero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-gradient-to-tr from-brand-blue/15 via-brand-yellow/10 to-brand-blue/15 blur-[90px] pointer-events-none -z-0" />
 
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center space-y-5 sm:space-y-6 my-auto">
-          {/* Eyebrow / State Selector Badge */}
-          <div data-aos="fade-down" className="inline-flex items-center gap-2 p-1 pr-3 rounded-full bg-card border border-hairline shadow-soft-floating text-xs font-medium">
-            <button
-              onClick={() => setActiveState(1)}
-              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out text-xs font-bold ${activeState === 1
-                  ? "bg-brand-yellow text-black shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              Library System
-            </button>
-            <button
-              onClick={() => setActiveState(2)}
-              className={`px-3 py-1 rounded-full transition-all duration-300 ease-out text-xs font-bold ${activeState === 2
-                  ? "bg-brand-blue text-white shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              Smart Circulation
-            </button>
-          </div>
-
-          {/* Dynamic State Headlines */}
+          {/* Headlines */}
           <div data-aos="fade-up" data-aos-delay="100" className="space-y-3 max-w-4xl mx-auto">
-            {activeState === 1 ? (
-              <>
-                <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-foreground tracking-tight leading-[1.1]">
-                  {t("heroTitle")}
-                </h1>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  {t("heroSubtitle")}
-                </p>
-              </>
-            ) : (
-              <>
-                <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-foreground tracking-tight leading-[1.1]">
-                  Smart Circulation &amp; Holds
-                </h1>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  Streamline circulation desk transactions in one centralized console, enhancing book availability and campus transparency.
-                </p>
-              </>
-            )}
+            <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-foreground tracking-tight leading-[1.1]">
+              {t("heroTitle")}
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              {t("heroSubtitle")}
+            </p>
           </div>
 
           {/* Call to Action Buttons */}
@@ -207,3 +167,4 @@ export function LandingHero() {
     </TooltipProvider>
   );
 }
+
