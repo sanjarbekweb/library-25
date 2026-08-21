@@ -1,12 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { Star, BookOpen, Calendar } from "lucide-react";
 import { CatalogBookItem } from "@/lib/services/book-service";
-import { CopyAvailabilityBadge } from "./copy-availability-badge";
-import { Badge } from "@/components/ui/badge";
 import { ImageWithLoader } from "@/components/shared/image-with-loader";
 
 interface BookCardProps {
@@ -17,7 +13,7 @@ interface BookCardProps {
 export function BookCard({ book, priority = false }: BookCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -3, scale: 1.015 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
@@ -26,82 +22,31 @@ export function BookCard({ book, priority = false }: BookCardProps) {
       <Link
         href={`/books/${book.id}`}
         aria-label={`View details for ${book.title}`}
-        className="group flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all duration-300 transform-gpu"
+        className="group flex flex-col h-full rounded-2xl bg-card hover:shadow-md transition-all duration-300 transform-gpu"
       >
-        {/* Cover Image Container */}
-        <div className="relative aspect-[3/4] w-full bg-muted overflow-hidden flex items-center justify-center">
+        {/* Cover Image */}
+        <div className="relative aspect-[3/4] w-full bg-muted rounded-2xl overflow-hidden">
           <ImageWithLoader
             src={book.coverImageUrl || ""}
-            alt={`Book cover image for "${book.title}" by ${book.author}`}
+            alt={`${book.title} by ${book.author}`}
             fill
             priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
           />
-
-          {/* Category Pill Tag Overlay */}
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <Badge variant="secondary" className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-background/90 backdrop-blur text-foreground border border-border shadow-xs">
-              {book.category}
-            </Badge>
-          </div>
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col flex-1 p-3 sm:p-4">
-          {/* Availability Badge */}
-          <div className="mb-2">
-            <CopyAvailabilityBadge
-              availableCount={book.availableCopiesCount}
-              totalCount={book.totalCopiesCount}
-              nextAvailableDate={book.nextAvailableDate}
-              className="text-[10px] sm:text-xs px-2 py-0.5"
-            />
-          </div>
-
-          {/* Title */}
-          <h3 className="font-display font-bold text-xs sm:text-base text-foreground line-clamp-2 sm:line-clamp-1 group-hover:text-brand-blue transition-colors">
+        {/* Title & Author */}
+        <div className="pt-2.5 pb-2 px-1 space-y-0.5">
+          <h3 className="font-display font-bold text-sm text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
             {book.title}
           </h3>
-
-          {/* Author & Year */}
-          <div className="flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground mt-1 gap-1">
-            <span className="line-clamp-1">{book.author}</span>
-            {book.publicationYear && (
-              <span className="hidden sm:flex items-center gap-1 font-mono text-[11px] shrink-0">
-                <Calendar className="h-3 w-3" />
-                {book.publicationYear}
-              </span>
-            )}
-          </div>
-
-          {/* Description snippet */}
-          {book.description && (
-            <p className="hidden sm:block text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
-              {book.description}
-            </p>
-          )}
-
-          {/* Footer Rating */}
-          <div className="mt-auto pt-2.5 sm:pt-3 flex items-center justify-between border-t border-border/60 text-[10px] sm:text-xs">
-            <div className="flex items-center gap-1">
-              <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-400 text-amber-400 shrink-0" />
-              <span className="font-semibold text-foreground">
-                {book.averageRating ? book.averageRating.toFixed(1) : "New"}
-              </span>
-              {book.reviewsCount > 0 && (
-                <span className="text-muted-foreground font-mono text-[10px] sm:text-[11px]">
-                  ({book.reviewsCount})
-                </span>
-              )}
-            </div>
-
-            <span className="text-[10px] sm:text-[11px] font-medium text-brand-blue group-hover:underline shrink-0">
-              Details &rarr;
-            </span>
-          </div>
+          <p className="text-xs text-muted-foreground line-clamp-1">
+            {book.author}
+          </p>
         </div>
       </Link>
     </motion.div>
   );
 }
+
