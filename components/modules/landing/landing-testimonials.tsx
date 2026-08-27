@@ -117,17 +117,22 @@ export function LandingTestimonials() {
           }
 
           // Header reveal
-          gsap.from(".testimonials-header", {
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top 82%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 30,
-            duration: 0.8,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".testimonials-header",
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
 
           // Horizontal scroll scrub for desktop & tablet
           if (slideRef.current && containerRef.current) {

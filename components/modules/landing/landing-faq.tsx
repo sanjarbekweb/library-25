@@ -127,35 +127,46 @@ export function LandingFaq() {
 
           if (reduceMotion) {
             gsap.set([".faq-header", ".faq-card"], {
-              autoAlpha: 1,
+              opacity: 1,
+              visibility: "visible",
               y: 0,
             });
             return;
           }
 
-          gsap.from(".faq-header", {
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 82%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 30,
-            duration: 0.8,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".faq-header",
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
 
-          gsap.from(".faq-card", {
-            scrollTrigger: {
-              trigger: ".faq-card",
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 35,
-            duration: 0.8,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".faq-card",
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
         }
       );
     },

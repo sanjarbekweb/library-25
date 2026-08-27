@@ -43,47 +43,56 @@ export function LandingBentoGrid() {
 
       mm.add(
         {
-          isDesktop: "(min-width: 1024px)",
           reduceMotion: "(prefers-reduced-motion: reduce)",
         },
         (context) => {
           const { reduceMotion } = context.conditions as { reduceMotion: boolean };
 
           if (reduceMotion) {
-            gsap.set([".bento-header", ".bento-card", ".bar-chart-bar"], {
-              autoAlpha: 1,
+            gsap.set([".bento-header", ".bento-card"], {
+              opacity: 1,
+              visibility: "visible",
               y: 0,
-              scaleY: 1,
             });
             return;
           }
 
           // Header scroll reveal
-          gsap.from(".bento-header", {
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 30,
-            duration: 0.8,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".bento-header",
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
 
           // Bento cards staggered entrance
-          gsap.from(".bento-card", {
-            scrollTrigger: {
-              trigger: ".bento-grid-wrapper",
-              start: "top 78%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 35,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".bento-card",
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              stagger: 0.08,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
         }
       );
     },

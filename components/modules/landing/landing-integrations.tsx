@@ -66,7 +66,8 @@ export function LandingIntegrations() {
 
           if (reduceMotion) {
             gsap.set([".integrations-header", ".integration-card"], {
-              autoAlpha: 1,
+              opacity: 1,
+              visibility: "visible",
               y: 0,
               scale: 1,
             });
@@ -74,32 +75,42 @@ export function LandingIntegrations() {
           }
 
           // Header entrance
-          gsap.from(".integrations-header", {
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 82%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            y: 30,
-            duration: 0.8,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".integrations-header",
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
 
           // Cards staggered entrance
-          gsap.from(".integration-card", {
-            scrollTrigger: {
-              trigger: ".integrations-grid",
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-            autoAlpha: 0,
-            scale: 0.92,
-            y: 30,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            ".integration-card",
+            { opacity: 0, y: 24, scale: 0.96 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.6,
+              stagger: 0.06,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
         }
       );
     },
