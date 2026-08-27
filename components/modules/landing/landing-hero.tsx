@@ -68,15 +68,16 @@ export function LandingHero() {
   return (
     <section
       id="product"
-      className="relative min-h-[calc(100vh-4rem)] flex items-center bg-slate-100/70 dark:bg-[#07090D] border-b border-border/80 dark:border-white/10 py-12 lg:py-20 overflow-hidden text-foreground dark:text-white transition-colors duration-300"
+      className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center bg-slate-100/70 dark:bg-[#07090D] border-b border-border/80 dark:border-white/10 py-12 lg:py-20 overflow-hidden text-foreground dark:text-white transition-colors duration-300"
     >
       <ClickSpark
-        sparkColor="#1D61FF"
-        sparkSize={12}
-        sparkRadius={24}
-        sparkCount={8}
-        duration={450}
+        sparkColor="#3B82F6"
+        sparkSize={22}
+        sparkRadius={38}
+        sparkCount={10}
+        duration={500}
         extraScale={1.2}
+        className="flex flex-col justify-center py-6 sm:py-12"
       >
         {/* Background Radial Ambiance */}
         <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-brand-blue/10 dark:bg-brand-blue/15 rounded-full blur-[120px] pointer-events-none -z-0" />
