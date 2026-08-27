@@ -1,16 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  BookOpen,
-  MapPin,
-  Clock,
-  Send,
-  ShieldCheck,
-  Cpu,
-  Database,
-  Radio,
-} from "lucide-react";
+import { BookOpen, MapPin, Clock, Send } from "lucide-react";
 
 export function LandingFooter() {
   const currentYear = new Date().getFullYear();
@@ -207,39 +198,6 @@ export function LandingFooter() {
                   </a>
                 </li>
               </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Ecosystem & Trust Badges Strip */}
-        <div className="border-t border-border/70 pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-3 rounded-2xl border border-border/70 bg-card/60 dark:bg-zinc-900/50 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-brand-blue flex items-center justify-center shrink-0 font-bold">
-              <Database className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold text-foreground truncate">MARC21 Standardized</div>
-              <div className="text-[10px] text-muted-foreground truncate">OPAC &amp; Z39.50 catalog schema</div>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-2xl border border-border/70 bg-card/60 dark:bg-zinc-900/50 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 font-bold">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold text-foreground truncate">SSO &amp; Role Access</div>
-              <div className="text-[10px] text-muted-foreground truncate">OIDC authentication with Clerk</div>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-2xl border border-border/70 bg-card/60 dark:bg-zinc-900/50 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 font-bold">
-              <Cpu className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-bold text-foreground truncate">Sub-10s Circulation</div>
-              <div className="text-[10px] text-muted-foreground truncate">Instant barcode &amp; hold checkout</div>
             </div>
           </div>
         </div>
