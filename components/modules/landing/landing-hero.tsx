@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { useLanguage } from "@/components/providers/language-provider";
 import { ClickSpark } from "@/components/ui/click-spark";
+import { UserPresenceAvatar } from "@/components/animate-ui/components/community/user-presence-avatar";
 import heroImg from "@/public/hero.png";
 
 export function LandingHero() {
@@ -151,11 +152,11 @@ export function LandingHero() {
                 </Link>
               </div>
 
-              {/* Social Proof & Metrics (500K / Avatars) */}
+              {/* Social Proof & Metrics (50K / Live Presence Avatars) */}
               <div
                 data-aos="fade-up"
                 data-aos-delay="300"
-                className="pt-6 sm:pt-8 flex items-center gap-6 max-w-md border-t border-border/80 dark:border-white/10"
+                className="pt-6 sm:pt-8 flex flex-wrap items-center gap-5 sm:gap-6 max-w-xl border-t border-border/80 dark:border-white/10"
               >
                 <div className="space-y-0.5">
                   <div className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-white tracking-tight font-display">
@@ -166,23 +167,8 @@ export function LandingHero() {
                   </div>
                 </div>
 
-                {/* Overlapping Circular User Photos */}
-                <div className="flex -space-x-2.5 items-center">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                    alt="Student Patron"
-                    className="w-10 h-10 rounded-full border-2 border-background dark:border-[#07090D] object-cover shadow-2xs"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80"
-                    alt="Student Patron"
-                    className="w-10 h-10 rounded-full border-2 border-background dark:border-[#07090D] object-cover shadow-2xs"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
-                    alt="Student Patron"
-                    className="w-10 h-10 rounded-full border-2 border-background dark:border-[#07090D] object-cover shadow-2xs"
-                  />
+                <div className="py-1">
+                  <UserPresenceAvatar size="default" />
                 </div>
               </div>
             </div>

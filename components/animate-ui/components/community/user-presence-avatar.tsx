@@ -73,7 +73,12 @@ const GROUP_CONTAINER_TRANSITION = {
   damping: 20,
 } as const;
 
-function UserPresenceAvatar() {
+interface UserPresenceAvatarProps {
+  className?: string;
+  size?: 'sm' | 'default';
+}
+
+function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarProps) {
   const [users, setUsers] = React.useState(USERS);
   const [togglingGroup, setTogglingGroup] = React.useState<
     'online' | 'offline' | null
@@ -101,22 +106,25 @@ function UserPresenceAvatar() {
     setTimeout(() => setTogglingGroup(null), 500);
   };
 
+  const avatarSizeClass = size === 'sm' ? 'size-9.5 sm:size-10' : 'size-10 sm:size-12';
+  const containerHeightClass = size === 'sm' ? 'h-10' : 'h-11 sm:h-12';
+
   return (
-    <div className="flex items-center gap-5">
+    <div className={cn("flex flex-wrap items-center gap-3 sm:gap-4", className)}>
       <LayoutGroup>
         <TooltipProvider>
           {online.length > 0 && (
             <motion.div
               layout
               className={cn(
-                'bg-neutral-300 dark:bg-neutral-700 p-0.5 rounded-full',
+                'bg-slate-200/90 dark:bg-zinc-800 p-0.5 rounded-full shadow-2xs',
                 togglingGroup === 'online' ? 'z-5' : 'z-10',
               )}
               transition={GROUP_CONTAINER_TRANSITION}
             >
               <div
                 key={online.map((u) => u.id).join('_') + '-online'}
-                className="flex items-center h-12 -space-x-3"
+                className={cn("flex items-center -space-x-2.5 sm:-space-x-3", containerHeightClass)}
               >
                 {online.map((user) => (
                   <Tooltip key={user.id}>
@@ -133,9 +141,9 @@ function UserPresenceAvatar() {
                         title="Click to go offline"
                         initial={false}
                       >
-                        <Avatar className="size-12 border-3 border-neutral-300 dark:border-neutral-700">
-                          <AvatarImage src={user.src} />
-                          <AvatarFallback>{user.fallback}</AvatarFallback>
+                        <Avatar className={cn("border-2 sm:border-3 border-slate-200/90 dark:border-zinc-800", avatarSizeClass)}>
+                          <AvatarImage src={user.src} alt={user.tooltip} />
+                          <AvatarFallback className="font-bold text-xs bg-brand-blue text-white">{user.fallback}</AvatarFallback>
                           <TooltipContent>
                             <p>{user.tooltip}</p>
                           </TooltipContent>
@@ -152,14 +160,14 @@ function UserPresenceAvatar() {
             <motion.div
               layout
               className={cn(
-                'bg-neutral-300 dark:bg-neutral-700 p-0.5 rounded-full',
+                'bg-slate-200/90 dark:bg-zinc-800 p-0.5 rounded-full shadow-2xs',
                 togglingGroup === 'offline' ? 'z-5' : 'z-10',
               )}
               transition={GROUP_CONTAINER_TRANSITION}
             >
               <div
                 key={offline.map((u) => u.id).join('_') + '-offline'}
-                className="flex items-center h-12 -space-x-3"
+                className={cn("flex items-center -space-x-2.5 sm:-space-x-3", containerHeightClass)}
               >
                 {offline.map((user) => (
                   <Tooltip key={user.id}>
@@ -176,9 +184,9 @@ function UserPresenceAvatar() {
                         title="Click to go online"
                         initial={false}
                       >
-                        <Avatar className="size-12 border-3 border-neutral-300 dark:border-neutral-700">
-                          <AvatarImage src={user.src} />
-                          <AvatarFallback>{user.fallback}</AvatarFallback>
+                        <Avatar className={cn("border-2 sm:border-3 border-slate-200/90 dark:border-zinc-800", avatarSizeClass)}>
+                          <AvatarImage src={user.src} alt={user.tooltip} />
+                          <AvatarFallback className="font-bold text-xs bg-muted text-muted-foreground">{user.fallback}</AvatarFallback>
                           <TooltipContent>
                             <p>{user.tooltip}</p>
                           </TooltipContent>

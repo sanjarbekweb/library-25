@@ -1,5 +1,7 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { ServiceError } from "@/lib/errors";
+import { CACHE_TAGS, CACHE_TTL } from "@/lib/cache/tags";
 import {
   CopyHistoryQuerySchema,
   BarcodeLookupSchema,
@@ -267,12 +269,9 @@ export async function getCopyTraceabilityByBarcode(
   };
 }
 
-/**
- * Fetch personal active checkouts, historical returns, and due date metrics for a student.
- */
-export async function getUserLoansAndHistory(clerkUserId: string): Promise<StudentLoansOverview> {
+async function fetchRawUserLoansAndHistory(userId: string): Promise<StudentLoansOverview> {
   const user = await prisma.user.findUnique({
-    where: { clerkId: clerkUserId },
+    where: { id: userId },
     select: {
       id: true,
       firstName: true,
@@ -375,6 +374,32 @@ export async function getUserLoansAndHistory(clerkUserId: string): Promise<Stude
     activeLoans,
     historicalLoans,
   };
+}
+
+/**
+ * Fetch personal active checkouts, historical returns, and due date metrics for a student.
+ * Cached with Next.js unstable_cache tagged by authenticated user ID for data isolation.
+ */
+export async function getUserLoansAndHistory(clerkUserId: string): Promise<StudentLoansOverview> {
+  const user = await prisma.user.findUnique({
+    where: { clerkId: clerkUserId },
+    select: { id: true },
+  });
+
+  if (!user) {
+    throw new ServiceError("USER_NOT_FOUND", "User profile not found", 404);
+  }
+
+  const getCachedUserLoans = unstable_cache(
+    async (uId: string) => fetchRawUserLoansAndHistory(uId),
+    [`user-loans-${user.id}`],
+    {
+      revalidate: CACHE_TTL.SHORT,
+      tags: [CACHE_TAGS.USER_LOANS(user.id)],
+    }
+  );
+
+  return getCachedUserLoans(user.id);
 }
 
 /**

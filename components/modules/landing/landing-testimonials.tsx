@@ -1,84 +1,183 @@
-import { Star, Quote } from "lucide-react";
+"use client";
+
+import { useRef } from "react";
+import { Star, Quote, Sparkles } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+interface TestimonialItem {
+  quote: string;
+  name: string;
+  role: string;
+  campus: string;
+  avatar: string;
+  bg: string;
+  rating: string;
+}
+
+const TESTIMONIALS: TestimonialItem[] = [
+  {
+    quote:
+      "libra25 has transformed our campus operations. Desk checkout times dropped to under 10 seconds, and students love reserving physical copies directly from their phones.",
+    name: "Dr. Bakhtiyor Arisov",
+    role: "Head University Librarian",
+    campus: "Central Campus Library",
+    avatar: "BA",
+    bg: "bg-brand-blue text-white",
+    rating: "5.0",
+  },
+  {
+    quote:
+      "Finding course textbooks and tracking hold availability is effortless. The catalog search is lightning fast, accurate, and displays exact physical shelf availability.",
+    name: "Malika Akhmedova",
+    role: "Senior Student & Researcher",
+    campus: "Faculty of Computer Science",
+    avatar: "MA",
+    bg: "bg-indigo-600 text-white",
+    rating: "5.0",
+  },
+  {
+    quote:
+      "The barcode scanning and automatic overdue telemetry eliminated manual logbooks. Managing thousands of book copies across departments has never been this smooth.",
+    name: "Jasur Nematov",
+    role: "Circulation Desk Assistant",
+    campus: "Engineering Library Desk",
+    avatar: "JN",
+    bg: "bg-emerald-600 text-white",
+    rating: "5.0",
+  },
+  {
+    quote:
+      "Being able to review books, check real-time return dates, and renew holds in one click makes studying for finals much less stressful.",
+    name: "Elena Rostova",
+    role: "Graduate Student",
+    campus: "Department of Mathematics",
+    avatar: "ER",
+    bg: "bg-amber-600 text-white",
+    rating: "5.0",
+  },
+  {
+    quote:
+      "As department chair, the collection intelligence reports show us which textbooks need more copies before the semester even begins.",
+    name: "Prof. Alisher Qodirov",
+    role: "Dean of Academic Affairs",
+    campus: "Campus Faculty Board",
+    avatar: "AQ",
+    bg: "bg-violet-600 text-white",
+    rating: "5.0",
+  },
+  {
+    quote:
+      "Zero-latency search with typo tolerance and instant pickup notifications makes libra25 the gold standard for campus library platforms.",
+    name: "Sardor Karimov",
+    role: "IT & Systems Administrator",
+    campus: "Campus Digital Services",
+    avatar: "SK",
+    bg: "bg-cyan-600 text-white",
+    rating: "5.0",
+  },
+];
 
 export function LandingTestimonials() {
-  const testimonials = [
-    {
-      name: "Dr. Arisov B.",
-      role: "Head Librarian at Central Campus Library",
-      rating: "5.0",
-      quote:
-        "libra25 has revolutionized our campus library operations. Desk checkout times dropped to under 10 seconds, and students love reserving physical titles directly from their phones.",
-      avatar: "AB",
-      bg: "bg-brand-blue text-white",
+  const containerRef = useRef<HTMLElement>(null);
+  const slideRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (!slideRef.current || !containerRef.current) return;
+
+      gsap.to(slideRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: 1.2,
+        },
+        x: "-45%",
+        ease: "none",
+      });
     },
-    {
-      name: "Malika Akhmedova",
-      role: "Senior Student & Research Assistant",
-      rating: "5.0",
-      quote:
-        "Finding textbooks for course research and tracking hold availability is effortless. The catalog search is fast, accurate, and always displays real-time copy stock.",
-      avatar: "MA",
-      bg: "bg-brand-blue text-white font-bold",
-    },
-  ];
+    { scope: containerRef }
+  );
 
   return (
-    <section id="resources" className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+    <section
+      id="resources"
+      ref={containerRef}
+      className="py-24 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80 overflow-hidden relative"
+    >
+      {/* Background radial glow */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[450px] h-[450px] bg-brand-blue/5 dark:bg-brand-blue/10 rounded-full blur-[120px] pointer-events-none -z-0" />
+
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12 relative z-10">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
           <Badge variant="outline" className="px-3 py-1 font-mono text-xs border-border/80 bg-card">
+            <Sparkles className="h-3 w-3 mr-1 text-brand-blue" />
             Library Stories
           </Badge>
-          <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
+          <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-foreground tracking-tight">
             Trusted by Librarians &amp; Students
           </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
             Discover how libra25 simplifies catalog discovery, hold fulfillment, and circulation desk transactions.
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {testimonials.map((item, idx) => (
-            <Card
-              key={idx}
-              data-aos="fade-up"
-              data-aos-delay={100 * (idx + 1)}
-              className="p-8 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-6 hover-scale-card"
-            >
-              <CardHeader className="p-0 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                    <span className="text-xs font-mono font-bold text-foreground ml-1.5">{item.rating}</span>
+        {/* GSAP Scrubbed Horizontal Slides Container */}
+        <div className="pt-4 overflow-visible">
+          <div
+            ref={slideRef}
+            className="scrub-slide flex items-stretch gap-6 w-max will-change-transform"
+          >
+            {TESTIMONIALS.map((item, idx) => (
+              <Card
+                key={idx}
+                className="w-[320px] sm:w-[380px] lg:w-[420px] p-7 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-6 hover-scale-card shrink-0 transition-transform duration-300"
+              >
+                <CardHeader className="p-0 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-amber-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
+                      ))}
+                      <span className="text-xs font-mono font-bold text-foreground ml-1.5">
+                        {item.rating}
+                      </span>
+                    </div>
+                    <Quote className="h-6 w-6 text-muted-foreground/30" />
                   </div>
-                  <Quote className="h-6 w-6 text-muted-foreground/30" />
-                </div>
 
-                <p className="text-sm sm:text-base text-foreground leading-relaxed italic">
-                  &ldquo;{item.quote}&rdquo;
-                </p>
-              </CardHeader>
+                  <p className="text-sm sm:text-base text-foreground leading-relaxed italic line-clamp-4">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                </CardHeader>
 
-              <CardContent className="p-0 flex items-center gap-3 border-t border-border/70 pt-4">
-                <Avatar className="h-11 w-11 shrink-0">
-                  <AvatarFallback className={`${item.bg} font-bold text-sm`}>
-                    {item.avatar}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="font-display font-bold text-sm text-foreground">{item.name}</h3>
-                  <p className="text-xs text-muted-foreground">{item.role}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                <CardContent className="p-0 flex items-center gap-3 border-t border-border/70 pt-4">
+                  <Avatar className="h-11 w-11 shrink-0 border border-border/60 shadow-2xs">
+                    <AvatarFallback className={`${item.bg} font-bold text-sm`}>
+                      {item.avatar}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <h3 className="font-display font-bold text-sm text-foreground truncate">
+                      {item.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground truncate">{item.role}</p>
+                    <p className="text-[11px] text-brand-blue font-medium truncate">{item.campus}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { syncBookToSearchIndex } from "@/lib/search/sync";
+import { invalidateBookCache, invalidateUserLoansCache } from "@/lib/cache/invalidation";
 import { ServiceError } from "@/lib/errors";
 import {
   CheckoutSchema,
@@ -216,8 +217,28 @@ export async function checkoutBookCopy(
   const now = new Date();
   const dueDate = addDays(now, parsed.dueDays);
 
-  // 5. Atomic Prisma Transaction
+  // 5. Atomic Prisma Transaction with Concurrency Lock
   const transactionResult = await prisma.$transaction(async (tx) => {
+    // Atomic copy claim: only succeeds if copy is not already BORROWED
+    const claimedCopy = await tx.bookCopy.updateMany({
+      where: {
+        id: copy.id,
+        status: { in: [CopyStatus.AVAILABLE, CopyStatus.RESERVED] },
+      },
+      data: {
+        status: CopyStatus.BORROWED,
+        currentHolderId: student.id,
+      },
+    });
+
+    if (claimedCopy.count === 0) {
+      throw new ServiceError(
+        "COPY_ALREADY_BORROWED",
+        `Physical copy ${copy.barcode} was concurrently acquired by another checkout session`,
+        409
+      );
+    }
+
     // Create Active Loan
     const loan = await tx.loan.create({
       data: {
@@ -227,15 +248,6 @@ export async function checkoutBookCopy(
         borrowedAt: now,
         dueDate,
         status: "ACTIVE",
-      },
-    });
-
-    // Update BookCopy status and holder
-    await tx.bookCopy.update({
-      where: { id: copy.id },
-      data: {
-        status: "BORROWED",
-        currentHolderId: student.id,
       },
     });
 
@@ -267,8 +279,10 @@ export async function checkoutBookCopy(
     return loan;
   });
 
-  // 6. Search Cache Synchronization (Post-commit)
+  // 6. Search Cache & Server Cache Synchronization (Post-commit)
   await syncBookToSearchIndex(copy.bookId);
+  invalidateBookCache(copy.bookId);
+  invalidateUserLoansCache(student.id);
 
   return {
     loanId: transactionResult.id,
@@ -396,8 +410,10 @@ export async function checkinBookCopy(
     });
   });
 
-  // 4. Search Cache Synchronization (Post-commit)
+  // 4. Search Cache & Server Cache Synchronization (Post-commit)
   await syncBookToSearchIndex(copy.bookId);
+  invalidateBookCache(copy.bookId);
+  invalidateUserLoansCache(activeLoan.student.id);
 
   return {
     loanId: activeLoan.id,
@@ -421,9 +437,20 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
       where: { role: "STUDENT", isActive: true },
       take: 8,
       orderBy: { createdAt: "desc" },
-      include: {
-        loans: { where: { status: "ACTIVE" } },
-        reservations: { where: { status: "PENDING" } },
+      select: {
+        id: true,
+        clerkId: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isActive: true,
+        _count: {
+          select: {
+            loans: { where: { status: "ACTIVE" } },
+            reservations: { where: { status: "PENDING" } },
+          },
+        },
       },
     });
 
@@ -435,8 +462,8 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
       lastName: s.lastName,
       role: s.role,
       isActive: s.isActive,
-      activeLoansCount: s.loans.length,
-      activeReservationsCount: s.reservations.length,
+      activeLoansCount: s._count.loans,
+      activeReservationsCount: s._count.reservations,
     }));
   }
 
@@ -452,9 +479,20 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
       ],
     },
     take: 10,
-    include: {
-      loans: { where: { status: "ACTIVE" } },
-      reservations: { where: { status: "PENDING" } },
+    select: {
+      id: true,
+      clerkId: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+      isActive: true,
+      _count: {
+        select: {
+          loans: { where: { status: "ACTIVE" } },
+          reservations: { where: { status: "PENDING" } },
+        },
+      },
     },
   });
 
@@ -466,8 +504,8 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
     lastName: s.lastName,
     role: s.role,
     isActive: s.isActive,
-    activeLoansCount: s.loans.length,
-    activeReservationsCount: s.reservations.length,
+    activeLoansCount: s._count.loans,
+    activeReservationsCount: s._count.reservations,
   }));
 }
 

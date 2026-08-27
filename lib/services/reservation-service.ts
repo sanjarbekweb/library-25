@@ -1,5 +1,8 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { syncBookToSearchIndex } from "@/lib/search/sync";
+import { invalidateBookCache, invalidateUserReservationsCache } from "@/lib/cache/invalidation";
+import { CACHE_TAGS, CACHE_TTL } from "@/lib/cache/tags";
 import { ServiceError } from "@/lib/errors";
 import {
   CreateReservationSchema,
@@ -136,8 +139,10 @@ export async function requestBookReservation(
     return { reservation, updatedCopy };
   });
 
-  // 5. Post-commit search cache synchronization
+  // 5. Post-commit search cache & server cache synchronization
   await syncBookToSearchIndex(bookId);
+  invalidateBookCache(bookId);
+  invalidateUserReservationsCache(user.id);
 
   return result.reservation;
 }
@@ -219,21 +224,61 @@ export async function cancelReservation(
     return updatedReservation;
   });
 
-  // Sync search cache post-commit
+  // Sync search cache and server cache post-commit
   await syncBookToSearchIndex(reservation.bookId);
+  invalidateBookCache(reservation.bookId);
+  invalidateUserReservationsCache(user.id);
 
   return result;
+}
+
+async function fetchRawStudentReservations(userId: string): Promise<StudentReservationItem[]> {
+  const reservations = await prisma.reservation.findMany({
+    where: { studentId: userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      book: {
+        select: {
+          id: true,
+          title: true,
+          author: true,
+          category: true,
+          coverImageUrl: true,
+        },
+      },
+      bookCopy: {
+        select: {
+          barcode: true,
+        },
+      },
+    },
+  });
+
+  return reservations.map((r) => ({
+    id: r.id,
+    bookId: r.book.id,
+    bookTitle: r.book.title,
+    bookAuthor: r.book.author,
+    category: r.book.category,
+    coverImageUrl: r.book.coverImageUrl,
+    copyBarcode: r.bookCopy?.barcode ?? null,
+    status: r.status,
+    expiresAt: r.expiresAt,
+    createdAt: r.createdAt,
+  }));
 }
 
 /**
  * Fetch all reservations for the authenticated student.
  * Automatically checks and updates expired reservations.
+ * Cached with Next.js unstable_cache tagged by authenticated user ID.
  */
 export async function getStudentReservations(
   userClerkId: string
 ): Promise<StudentReservationItem[]> {
   const user = await prisma.user.findUnique({
     where: { clerkId: userClerkId },
+    select: { id: true },
   });
 
   if (!user) {
@@ -276,42 +321,21 @@ export async function getStudentReservations(
     });
 
     await syncBookToSearchIndex(expRes.bookId);
+    invalidateBookCache(expRes.bookId);
+    invalidateUserReservationsCache(user.id);
   }
 
-  // 2. Query all student reservations sorted by newest first
-  const reservations = await prisma.reservation.findMany({
-    where: { studentId: user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      book: {
-        select: {
-          id: true,
-          title: true,
-          author: true,
-          category: true,
-          coverImageUrl: true,
-        },
-      },
-      bookCopy: {
-        select: {
-          barcode: true,
-        },
-      },
-    },
-  });
+  // 2. Fetch cached student reservations
+  const getCachedReservations = unstable_cache(
+    async (uId: string) => fetchRawStudentReservations(uId),
+    [`user-reservations-${user.id}`],
+    {
+      revalidate: CACHE_TTL.SHORT,
+      tags: [CACHE_TAGS.USER_RESERVATIONS(user.id)],
+    }
+  );
 
-  return reservations.map((r) => ({
-    id: r.id,
-    bookId: r.book.id,
-    bookTitle: r.book.title,
-    bookAuthor: r.book.author,
-    category: r.book.category,
-    coverImageUrl: r.book.coverImageUrl,
-    copyBarcode: r.bookCopy?.barcode ?? null,
-    status: r.status,
-    expiresAt: r.expiresAt,
-    createdAt: r.createdAt,
-  }));
+  return getCachedReservations(user.id);
 }
 
 /**

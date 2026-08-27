@@ -13,6 +13,7 @@ import {
   AdminFeedbackQueryInput,
 } from "@/lib/schemas/feedback-schema";
 import { syncBookToSearchIndex } from "@/lib/search/sync";
+import { invalidateBookCache } from "@/lib/cache/invalidation";
 import { Prisma } from "@prisma/client";
 
 export interface AdminFeedbackItem {
@@ -139,6 +140,10 @@ export async function submitBookFeedback(
       },
     },
   });
+
+  // Post-commit search cache and server cache synchronization
+  await syncBookToSearchIndex(loan.bookCopy.bookId);
+  invalidateBookCache(loan.bookCopy.bookId);
 
   return {
     id: feedback.id,
@@ -287,6 +292,10 @@ export async function toggleFeedbackModeration(rawInput: ModerateFeedbackInput) 
     data: { isModerated: input.isModerated },
   });
 
+  // Invalidate cache post-commit
+  await syncBookToSearchIndex(existing.bookId);
+  invalidateBookCache(existing.bookId);
+
   return {
     id: updated.id,
     bookId: updated.bookId,
@@ -312,6 +321,10 @@ export async function deleteFeedback(rawInput: DeleteFeedbackInput) {
   await prisma.feedback.delete({
     where: { id: input.feedbackId },
   });
+
+  // Invalidate cache post-commit
+  await syncBookToSearchIndex(existing.bookId);
+  invalidateBookCache(existing.bookId);
 
   return { success: true, deletedId: input.feedbackId, bookId: existing.bookId };
 }
@@ -401,8 +414,9 @@ export async function submitDirectBookReview(
     });
   }
 
-  // Post-commit search index sync
+  // Post-commit search index and server cache sync
   await syncBookToSearchIndex(input.bookId);
+  invalidateBookCache(input.bookId);
 
   return feedbackRecord;
 }

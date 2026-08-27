@@ -1,5 +1,7 @@
+import { unstable_cache } from "next/cache";
 import Fuse, { IFuseOptions } from "fuse.js";
 import { prisma } from "@/lib/prisma";
+import { CACHE_TAGS, CACHE_TTL } from "@/lib/cache/tags";
 
 export interface BookFuzzyDocument {
   id: string;
@@ -27,8 +29,56 @@ const fuseOptions: IFuseOptions<BookFuzzyDocument> = {
 };
 
 /**
+ * Fetch and format catalog books into search documents.
+ * Cached in Next.js Server Cache (60s TTL) with instant tag-based invalidation.
+ */
+const getFuzzySearchIndexDocuments = unstable_cache(
+  async (): Promise<BookFuzzyDocument[]> => {
+    const books = await prisma.book.findMany({
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        isbn: true,
+        category: true,
+        description: true,
+        coverImageUrl: true,
+        publicationYear: true,
+        copies: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    });
+
+    return books.map((book) => {
+      const availableCopiesCount = book.copies.filter(
+        (copy) => copy.status === "AVAILABLE"
+      ).length;
+      const totalCopiesCount = book.copies.length;
+
+      return {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        isbn: book.isbn,
+        category: book.category,
+        description: book.description,
+        coverImageUrl: book.coverImageUrl,
+        publicationYear: book.publicationYear,
+        availableCopiesCount,
+        totalCopiesCount,
+      };
+    });
+  },
+  ["fuzzy-search-documents"],
+  { revalidate: CACHE_TTL.SHORT, tags: [CACHE_TAGS.CATALOG] }
+);
+
+/**
  * Execute in-process typo-tolerant fuzzy search over catalog books using Fuse.js.
- * Requires 0 external binaries, daemons, or background services.
+ * Zero database query latency when documents are warm in server cache.
  */
 export async function performFuzzySearch(
   query: string,
@@ -36,36 +86,7 @@ export async function performFuzzySearch(
   limit: number = 10,
   offset: number = 0
 ): Promise<{ hits: BookFuzzyDocument[]; totalHits: number }> {
-  // Fetch all books with live copy availability
-  const books = await prisma.book.findMany({
-    include: {
-      copies: {
-        select: {
-          status: true,
-        },
-      },
-    },
-  });
-
-  let docs: BookFuzzyDocument[] = books.map((book) => {
-    const availableCopiesCount = book.copies.filter(
-      (copy) => copy.status === "AVAILABLE"
-    ).length;
-    const totalCopiesCount = book.copies.length;
-
-    return {
-      id: book.id,
-      title: book.title,
-      author: book.author,
-      isbn: book.isbn,
-      category: book.category,
-      description: book.description,
-      coverImageUrl: book.coverImageUrl,
-      publicationYear: book.publicationYear,
-      availableCopiesCount,
-      totalCopiesCount,
-    };
-  });
+  let docs = await getFuzzySearchIndexDocuments();
 
   // Filter by category if specified
   if (category && category.toLowerCase() !== "all") {

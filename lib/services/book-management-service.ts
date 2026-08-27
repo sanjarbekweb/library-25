@@ -6,6 +6,7 @@ import {
   AddBookCopyInput,
 } from "@/lib/schemas/book-management-schema";
 import { syncBookToSearchIndex } from "@/lib/search/sync";
+import { invalidateBookCache, invalidateCategoriesCache } from "@/lib/cache/invalidation";
 import { CopyStatus, LoanStatus, ReservationStatus } from "@prisma/client";
 
 export interface ManageableBookItem {
@@ -179,8 +180,10 @@ export async function createBookWithCopies(
       return { book, copiesCount: createdCopies.length };
     });
 
-    // 3. Post-commit search index sync
+    // 3. Post-commit search index & server cache sync
     await syncBookToSearchIndex(result.book.id);
+    invalidateBookCache(result.book.id);
+    invalidateCategoriesCache();
 
     return result;
   } catch (error: any) {
@@ -260,6 +263,7 @@ export async function addPhysicalCopy(
     });
 
     await syncBookToSearchIndex(bookId);
+    invalidateBookCache(bookId);
 
     return result;
   } catch (error: any) {

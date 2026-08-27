@@ -14,6 +14,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserPresenceAvatar } from "@/components/animate-ui/components/community/user-presence-avatar";
 import {
   Table,
   TableHeader,
@@ -245,7 +246,7 @@ export function LandingBentoGrid() {
             </CardContent>
           </Card>
 
-          {/* Card 5: Students & Researchers */}
+          {/* Card 5: Students & Borrowers */}
           <Card data-aos="fade-up" data-aos-delay="500" className="flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
@@ -253,28 +254,15 @@ export function LandingBentoGrid() {
               </div>
               <CardTitle className="text-xl font-bold">For Students &amp; Borrowers</CardTitle>
               <CardDescription>
-                Know physical copy availability on shelf, receive pickup alerts, and manage active holds.
+                Live campus reader presence, instant hold queues, and pickup notifications.
               </CardDescription>
             </CardHeader>
 
-            {/* Widget UI: Circular Patron Roster with Shadcn Avatar */}
+            {/* Widget UI: Interactive User Presence Avatars */}
             <CardContent className="p-0 pt-6 space-y-3">
-              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 flex items-center justify-between shadow-2xs">
-                <div className="flex -space-x-2 overflow-hidden">
-                  <Avatar className="h-9 w-9 bg-brand-blue/80 text-white border-2 border-card">
-                    <AvatarFallback className="bg-brand-blue/80 text-white font-bold text-xs">AG</AvatarFallback>
-                  </Avatar>
-                  <Avatar className="h-9 w-9 bg-brand-blue text-white border-2 border-card">
-                    <AvatarFallback className="bg-brand-blue text-white font-bold text-xs">ER</AvatarFallback>
-                  </Avatar>
-                  <Avatar className="h-9 w-9 bg-emerald-500 text-white border-2 border-card">
-                    <AvatarFallback className="bg-emerald-500 text-white font-bold text-xs">DR</AvatarFallback>
-                  </Avatar>
-                  <Avatar className="h-9 w-9 bg-violet-600 text-white border-2 border-card">
-                    <AvatarFallback className="bg-violet-600 text-white font-bold text-xs">+15</AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className="text-right">
+              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+                <UserPresenceAvatar size="sm" />
+                <div className="text-right shrink-0">
                   <div className="text-xs font-bold text-emerald-500 flex items-center gap-1 justify-end">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                     18 Active Holds

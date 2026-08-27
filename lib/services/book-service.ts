@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { meiliClient, BOOKS_INDEX, BookSearchDocument } from "@/lib/search/client";
 import { performFuzzySearch } from "@/lib/search/fuzzy";
+import { CACHE_TAGS, CACHE_TTL } from "@/lib/cache/tags";
 import {
   GetCatalogBooksSchema,
   BookIdParamSchema,
@@ -157,7 +158,7 @@ const getDefaultCatalogBooks = unstable_cache(
     };
   },
   ["default-catalog-page-1"],
-  { revalidate: 60, tags: ["catalog-books"] }
+  { revalidate: CACHE_TTL.SHORT, tags: [CACHE_TAGS.CATALOG] }
 );
 
 /**
@@ -401,17 +402,12 @@ export async function getCatalogBooks(
 }
 
 /**
- * Service function to retrieve detailed book metadata, per-copy availability breakdown, and verified reviews.
- * Validates book ID parameter using Zod.
+/**
+ * Internal raw fetcher for book details metadata, copy breakdown, and reviews.
  */
-export async function getBookDetails(id: string): Promise<BookDetails | null> {
-  const parsedId = BookIdParamSchema.safeParse(id);
-  if (!parsedId.success) {
-    return null;
-  }
-
+async function fetchRawBookDetails(id: string): Promise<BookDetails | null> {
   const book = await prisma.book.findUnique({
-    where: { id: parsedId.data },
+    where: { id },
     include: {
       copies: {
         select: {
@@ -531,6 +527,29 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
 }
 
 /**
+ * Service function to retrieve detailed book metadata, per-copy availability breakdown, and verified reviews.
+ * Cached with Next.js unstable_cache and tagged per book ID for instant loads & targeted invalidation.
+ */
+export async function getBookDetails(id: string): Promise<BookDetails | null> {
+  const parsedId = BookIdParamSchema.safeParse(id);
+  if (!parsedId.success) {
+    return null;
+  }
+
+  const bookId = parsedId.data;
+  const getCachedBook = unstable_cache(
+    async (bId: string) => fetchRawBookDetails(bId),
+    [`book-details-${bookId}`],
+    {
+      revalidate: CACHE_TTL.SHORT,
+      tags: [CACHE_TAGS.BOOK(bookId)],
+    }
+  );
+
+  return getCachedBook(bookId);
+}
+
+/**
  * Service function to retrieve distinct catalog categories.
  * Cached using Next.js unstable_cache with 300s TTL and 'catalog-categories' tag.
  */
@@ -544,8 +563,8 @@ export const getCategories = unstable_cache(
 
     return categories.map((c) => c.category);
   },
-  ["catalog-categories"],
-  { revalidate: 300, tags: ["catalog-categories"] }
+  [CACHE_TAGS.CATEGORIES],
+  { revalidate: CACHE_TTL.LONG, tags: [CACHE_TAGS.CATEGORIES] }
 );
 
 /**
@@ -593,6 +612,6 @@ export const getTopDemandBooks = unstable_cache(
       };
     });
   },
-  ["top-demand-books"],
-  { revalidate: 60, tags: ["top-demand-books"] }
+  [CACHE_TAGS.TOP_DEMAND],
+  { revalidate: CACHE_TTL.SHORT, tags: [CACHE_TAGS.TOP_DEMAND] }
 );

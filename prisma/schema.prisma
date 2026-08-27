@@ -139,6 +139,7 @@ model BookCopy {
   @@index([status])
   @@index([barcode])
   @@index([currentHolderId])
+  @@index([bookId, status])
   @@map("book_copies")
 }
 
@@ -168,6 +169,7 @@ model Loan {
   @@index([dueDate])
   @@index([studentId, status])
   @@index([status, dueDate])
+  @@index([studentId, status, dueDate])
   @@map("loans")
 }
 
@@ -191,6 +193,7 @@ model BookHistory {
   @@index([actorId])
   @@index([action])
   @@index([createdAt])
+  @@index([bookCopyId, createdAt])
   @@map("book_history")
 }
 
@@ -239,5 +242,6 @@ model Feedback {
   @@index([bookId])
   @@index([studentId])
   @@index([rating])
+  @@index([bookId, isModerated])
   @@map("feedbacks")
 }
