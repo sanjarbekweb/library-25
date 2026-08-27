@@ -64,7 +64,7 @@ export function BookDetailView({
 
       {/* Main Hero Card */}
       <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-xs">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 p-4 sm:p-6 md:p-8">
           {/* Left Column: Cover Showcase */}
           <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
             <div className="relative aspect-[3/4] w-full max-w-[260px] rounded-2xl bg-muted overflow-hidden border border-border shadow-md">
@@ -168,26 +168,27 @@ export function BookDetailView({
       </div>
 
       {/* Compact Inventory Status Bar */}
-      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl border border-border bg-card shadow-2xs text-xs">
+      <div className="flex flex-wrap items-center gap-2 p-2.5 sm:p-3 rounded-2xl border border-border bg-card shadow-2xs text-xs">
         <span className="font-semibold text-foreground px-2 py-1">{t("inventorySummary")}:</span>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-foreground">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-foreground border border-border">
           <span className="text-muted-foreground">{t("totalCopies")}:</span>
           <span className="font-bold">{book.copyBreakdown.total}</span>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20 dark:text-blue-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
           <span className="font-medium">{t("availableCopies")}:</span>
           <span className="font-bold">{book.copyBreakdown.available}</span>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground border border-border">
           <span>{t("reservedCopies")}:</span>
           <span className="font-semibold text-foreground">{book.copyBreakdown.reserved}</span>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground border border-border">
           <span>{t("borrowedCopies")}:</span>
           <span className="font-semibold text-foreground">{book.copyBreakdown.borrowed}</span>
         </div>
         {book.copyBreakdown.maintenance > 0 && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-muted text-muted-foreground">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground border border-border">
             <span>{t("maintenanceCopies")}:</span>
             <span className="font-semibold text-foreground">{book.copyBreakdown.maintenance}</span>
           </div>

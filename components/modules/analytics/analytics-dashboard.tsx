@@ -18,7 +18,6 @@ import {
   RefreshCw,
   BookMarked,
   Sparkles,
-  LogOut,
   ArrowLeft,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -64,7 +63,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
   );
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-3">
@@ -531,7 +530,7 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
 
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[600px]">
               <thead className="bg-muted/40 border-y border-border text-muted-foreground uppercase text-[10px] font-semibold tracking-wider">
                 <tr>
                   <th className="py-3 px-4">Title &amp; Author</th>
@@ -558,22 +557,32 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
                         {book.category}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-center font-bold text-foreground font-mono text-sm">
+                    <td className="py-3 px-4 text-center font-bold text-foreground text-sm">
                       {book.loanCount}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-muted-foreground">
+                    <td className="py-3 px-4 text-center text-muted-foreground font-medium">
                       {book.totalCopies}
                     </td>
-                    <td className="py-3 px-4 text-right font-mono">
+                    <td className="py-3 px-4 text-right">
                       <span
                         className={cn(
-                          "px-2 py-0.5 rounded-full text-[10px] font-bold border",
+                          "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs",
                           book.availableCopies > 0
-                            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                            : "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                            ? "bg-brand-blue/10 text-brand-blue border-brand-blue/20 dark:text-blue-400"
+                            : "bg-muted text-muted-foreground border-border"
                         )}
                       >
-                        {book.availableCopies} available
+                        <span
+                          className={cn(
+                            "h-1.5 w-1.5 rounded-full shrink-0",
+                            book.availableCopies > 0 ? "bg-brand-blue" : "bg-muted-foreground/60"
+                          )}
+                        />
+                        <span>
+                          {book.availableCopies > 0
+                            ? `${book.availableCopies} Available`
+                            : "Out of Stock"}
+                        </span>
                       </span>
                     </td>
                   </tr>
@@ -590,34 +599,6 @@ export function AnalyticsDashboard({ initialData }: AnalyticsDashboardProps) {
           </div>
         </CardContent>
       </Card>
-
-      {/* Bottom Exit Navigation Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border pt-6 pb-2">
-        <p className="text-xs text-muted-foreground">
-          Viewing collection growth &amp; circulation analytics dashboard.
-        </p>
-        <div className="flex items-center gap-3">
-          <Link href="/admin">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full gap-2 text-xs font-semibold hover:bg-accent border-border"
-            >
-              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-              <span>Back to Admin Hub</span>
-            </Button>
-          </Link>
-          <Link href="/catalog">
-            <Button
-              size="sm"
-              className="rounded-full gap-2 text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue/90"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Exit Admin Console</span>
-            </Button>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

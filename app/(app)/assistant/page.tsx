@@ -23,10 +23,10 @@ async function DeskContent() {
 
 export default function AssistantDeskPage() {
   return (
-    <main className="container max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto">
       <Suspense fallback={<CirculationDeskSkeleton />}>
         <DeskContent />
       </Suspense>
-    </main>
+    </div>
   );
 }

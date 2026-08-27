@@ -1,54 +1,68 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function CirculationDeskSkeleton() {
   return (
-    <div className="space-y-8 animate-pulse">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto animate-pulse">
       {/* Header Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div className="space-y-2">
-          <div className="h-8 w-64 bg-muted rounded-lg skeleton-shimmer" />
-          <div className="h-4 w-96 bg-muted rounded-md skeleton-shimmer" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="space-y-1.5">
+          <div className="h-7 w-64 rounded-xl bg-muted/80" />
+          <div className="h-3.5 w-96 rounded-md bg-muted/50" />
         </div>
         <div className="flex items-center gap-3">
-          <div className="h-10 w-32 bg-muted rounded-full skeleton-shimmer" />
-          <div className="h-10 w-36 bg-muted rounded-full skeleton-shimmer" />
+          <div className="h-9 w-32 rounded-full bg-muted/60" />
+          <div className="h-9 w-36 rounded-full bg-brand-blue/30" />
         </div>
       </div>
 
-      {/* Metric Cards Skeleton */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i} className="rounded-2xl border border-border shadow-sm">
-            <CardHeader className="p-4 pb-2">
-              <div className="h-4 w-24 bg-muted rounded skeleton-shimmer" />
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="h-8 w-16 bg-muted rounded-lg mt-1 skeleton-shimmer" />
-            </CardContent>
-          </Card>
+      {/* 4 Compact Metric Cards Bar Skeleton */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border border-border bg-card shadow-2xs"
+          >
+            <div className="h-3.5 w-24 rounded bg-muted/60" />
+            <div className="h-6 w-8 rounded bg-muted/80" />
+          </div>
         ))}
       </div>
 
-      {/* Main Tabs Console Skeleton */}
-      <div className="space-y-6">
-        <div className="flex border-b border-border gap-4 pb-2">
-          <div className="h-9 w-32 bg-muted rounded-full skeleton-shimmer" />
-          <div className="h-9 w-32 bg-muted rounded-full skeleton-shimmer" />
-          <div className="h-9 w-40 bg-muted rounded-full skeleton-shimmer" />
-          <div className="h-9 w-36 bg-muted rounded-full skeleton-shimmer" />
+      {/* Navigation Tabs Bar Skeleton */}
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 sm:pb-0 sm:flex-wrap border-b border-border">
+        <div className="h-10 w-36 rounded-full bg-brand-blue/20 shrink-0" />
+        <div className="h-10 w-36 rounded-full bg-muted/60 shrink-0" />
+        <div className="h-10 w-32 rounded-full bg-muted/60 shrink-0" />
+        <div className="h-10 w-36 rounded-full bg-muted/60 shrink-0" />
+        <div className="h-10 w-44 rounded-full bg-muted/60 shrink-0" />
+      </div>
+
+      {/* Main Tab Active Console Card Skeleton */}
+      <Card className="rounded-2xl border border-border bg-card shadow-sm p-6 space-y-6">
+        <div className="flex items-center justify-between border-b border-border/60 pb-4">
+          <div className="space-y-1">
+            <div className="h-5 w-48 rounded-lg bg-muted/80" />
+            <div className="h-3.5 w-80 rounded-md bg-muted/50" />
+          </div>
+          <div className="h-7 w-28 rounded-full bg-muted/60" />
         </div>
 
-        <Card className="rounded-2xl border border-border">
-          <CardContent className="p-6 space-y-4">
-            <div className="h-6 w-48 bg-muted rounded skeleton-shimmer" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="h-12 bg-muted rounded-xl skeleton-shimmer" />
-              <div className="h-12 bg-muted rounded-xl skeleton-shimmer" />
-            </div>
-            <div className="h-12 w-full bg-muted rounded-xl skeleton-shimmer mt-4" />
-          </CardContent>
-        </Card>
-      </div>
+        {/* Dual Form Selector Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <div className="h-3 w-32 rounded bg-muted/60" />
+            <div className="h-11 w-full rounded-xl bg-muted/40" />
+          </div>
+          <div className="space-y-3">
+            <div className="h-3 w-36 rounded bg-muted/60" />
+            <div className="h-11 w-full rounded-xl bg-muted/40" />
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-border flex justify-end">
+          <div className="h-11 w-48 rounded-full bg-brand-blue/30" />
+        </div>
+      </Card>
     </div>
   );
 }

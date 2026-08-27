@@ -129,7 +129,7 @@ export function AdminFeedbackModeration({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-3">
@@ -144,56 +144,56 @@ export function AdminFeedbackModeration({
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold font-display text-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground">
             {t("feedbackModeration")}
           </h1>
         </div>
       </div>
 
       {/* Overview Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-3.5 sm:p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs uppercase font-semibold">{t("totalReviews")}</span>
-            <MessageSquareQuote className="h-4 w-4 text-brand-blue" />
+            <span className="text-[11px] sm:text-xs uppercase font-semibold">{t("totalReviews")}</span>
+            <MessageSquareQuote className="h-4 w-4 text-brand-blue shrink-0" />
           </div>
-          <p className="text-2xl font-bold font-display mt-2 text-foreground">
+          <p className="text-xl sm:text-2xl font-bold font-display mt-2 text-foreground">
             {stats.totalCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Tizimdagi barcha sharhlar" : language === "ru" ? "Всего отзывов в системе" : "Submitted across system"}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{language === "uz" ? "Tizimdagi barcha sharhlar" : language === "ru" ? "Всего отзывов в системе" : "Submitted across system"}</p>
         </Card>
 
-        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-3.5 sm:p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs uppercase font-semibold">{t("publishedPublic")}</span>
-            <CheckCircle2 className="h-4 w-4 text-brand-blue" />
+            <span className="text-[11px] sm:text-xs uppercase font-semibold">{t("publishedPublic")}</span>
+            <CheckCircle2 className="h-4 w-4 text-brand-blue shrink-0" />
           </div>
-          <p className="text-2xl font-bold font-display mt-2 text-foreground">
+          <p className="text-xl sm:text-2xl font-bold font-display mt-2 text-foreground">
             {stats.publishedCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Katalogda ko'rinadigan" : language === "ru" ? "Отображаются в каталоге" : "Visible on catalog detail"}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{language === "uz" ? "Katalogda ko'rinadigan" : language === "ru" ? "Отображаются в каталоге" : "Visible on catalog detail"}</p>
         </Card>
 
-        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-3.5 sm:p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs uppercase font-semibold">{t("moderatedHidden")}</span>
-            <EyeOff className="h-4 w-4 text-muted-foreground" />
+            <span className="text-[11px] sm:text-xs uppercase font-semibold">{t("moderatedHidden")}</span>
+            <EyeOff className="h-4 w-4 text-muted-foreground shrink-0" />
           </div>
-          <p className="text-2xl font-bold font-display mt-2 text-foreground">
+          <p className="text-xl sm:text-2xl font-bold font-display mt-2 text-foreground">
             {stats.moderatedCount}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "Katalogdan yashirilgan" : language === "ru" ? "Скрыто из каталога" : "Hidden from public catalog"}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{language === "uz" ? "Katalogdan yashirilgan" : language === "ru" ? "Скрыто из каталога" : "Hidden from public catalog"}</p>
         </Card>
 
-        <Card className="border border-border bg-card shadow-sm rounded-2xl p-4 hover:border-foreground/20 transition-all">
+        <Card className="border border-border bg-card shadow-sm rounded-2xl p-3.5 sm:p-4 hover:border-foreground/20 transition-all">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs uppercase font-semibold">{t("systemAvgRating")}</span>
-            <Star className="h-4 w-4 fill-brand-blue text-brand-blue" />
+            <span className="text-[11px] sm:text-xs uppercase font-semibold">{t("systemAvgRating")}</span>
+            <Star className="h-4 w-4 fill-brand-blue text-brand-blue shrink-0" />
           </div>
-          <p className="text-2xl font-bold font-display mt-2 text-foreground">
+          <p className="text-xl sm:text-2xl font-bold font-display mt-2 text-foreground">
             {stats.averageRating ? `${stats.averageRating} / 5` : "N/A"}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{language === "uz" ? "O'rtacha baho" : language === "ru" ? "Средний балл" : "Verified loan average"}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 truncate">{language === "uz" ? "O'rtacha baho" : language === "ru" ? "Средний балл" : "Verified loan average"}</p>
         </Card>
       </div>
 
@@ -206,14 +206,14 @@ export function AdminFeedbackModeration({
       )}
 
       {/* Search & Filter Controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-foreground/20 transition-all">
-        {/* Status Tab Filters */}
-        <div className="flex items-center gap-1 bg-muted p-1 rounded-xl">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 bg-card p-3.5 sm:p-4 rounded-2xl border border-border shadow-sm hover:border-foreground/20 transition-all">
+        {/* Status Tab Filters (Horizontal scroll on mobile) */}
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-xl overflow-x-auto scrollbar-none shrink-0">
           <button
             type="button"
             onClick={() => handleFilterStatus("all")}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[32px]",
               currentStatus === "all"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -225,7 +225,7 @@ export function AdminFeedbackModeration({
             type="button"
             onClick={() => handleFilterStatus("published")}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[32px]",
               currentStatus === "published"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -237,7 +237,7 @@ export function AdminFeedbackModeration({
             type="button"
             onClick={() => handleFilterStatus("moderated")}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[32px]",
               currentStatus === "moderated"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -259,7 +259,7 @@ export function AdminFeedbackModeration({
               className="pl-8 text-xs rounded-xl h-9"
             />
           </div>
-          <Button type="submit" size="sm" variant="outline" className="rounded-xl text-xs">
+          <Button type="submit" size="sm" variant="outline" className="rounded-xl text-xs min-h-[36px] px-3.5">
             <Filter className="h-3.5 w-3.5 mr-1" />
             Filter
           </Button>
@@ -371,14 +371,14 @@ export function AdminFeedbackModeration({
                   </div>
 
                   {/* Right Column: Moderation Actions */}
-                  <div className="flex md:flex-col items-center justify-end gap-2 shrink-0 md:border-l md:border-border md:pl-5">
+                  <div className="flex flex-row md:flex-col items-center justify-end gap-2 shrink-0 md:border-l md:border-border md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-border/60">
                     <Button
                       size="sm"
                       variant={item.isModerated ? "default" : "outline"}
                       disabled={isPending}
                       onClick={() => handleToggleModeration(item)}
                       className={cn(
-                        "rounded-xl text-xs gap-1.5 w-full sm:w-auto",
+                        "rounded-xl text-xs gap-1.5 flex-1 sm:flex-none min-h-[36px]",
                         item.isModerated
                           ? "bg-brand-blue text-white hover:bg-brand-blue/90 font-semibold"
                           : "border-border text-foreground hover:bg-accent"
@@ -402,7 +402,7 @@ export function AdminFeedbackModeration({
                       variant="outline"
                       disabled={isPending}
                       onClick={() => setFeedbackToDelete(item)}
-                      className="rounded-xl text-xs gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 w-full sm:w-auto"
+                      className="rounded-xl text-xs gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 flex-1 sm:flex-none min-h-[36px]"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       <span>Delete</span>

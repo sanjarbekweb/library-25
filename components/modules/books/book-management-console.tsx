@@ -226,36 +226,36 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Top Banner & Control Action */}
-      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
-        <h1 className="text-2xl font-bold font-display text-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+        <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground">
           {t("manageBooks")}
         </h1>
 
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2 cursor-pointer"
+          className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 font-medium text-xs gap-2 cursor-pointer min-h-[38px] px-5 w-full sm:w-auto"
         >
-          <PlusCircle className="h-4 w-4" />
+          <PlusCircle className="h-4 w-4 shrink-0" />
           <span>{language === "uz" ? "Yangi kitob qo'shish" : language === "ru" ? "Добавить книгу" : "Add New Book"}</span>
         </Button>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-3.5 sm:p-4 rounded-2xl border border-border">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={t("searchCatalogTypo")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 rounded-full text-xs"
+            className="pl-9 rounded-full text-xs min-h-[38px]"
           />
         </div>
 
         {/* Aesthetic Category / Theme Filter Dropdown */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -391,16 +391,16 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[720px]">
               <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-semibold">
                 <tr>
-                  <th className="p-4">{language === "uz" ? "Kitob nomi & Muallif" : language === "ru" ? "Название и автор" : "Book Title & Author"}</th>
-                  <th className="p-4">{t("category")}</th>
-                  <th className="p-4">{t("isbn")}</th>
-                  <th className="p-4">{t("totalCopies")}</th>
-                  <th className="p-4">{t("availableCopies")}</th>
-                  <th className="p-4">{t("borrowedCopies")}</th>
-                  <th className="p-4 text-right">{language === "uz" ? "Amallar" : language === "ru" ? "Действия" : "Actions"}</th>
+                  <th className="p-3.5 sm:p-4">{language === "uz" ? "Kitob nomi & Muallif" : language === "ru" ? "Название и автор" : "Book Title & Author"}</th>
+                  <th className="p-3.5 sm:p-4">{t("category")}</th>
+                  <th className="p-3.5 sm:p-4">{t("isbn")}</th>
+                  <th className="p-3.5 sm:p-4">{t("totalCopies")}</th>
+                  <th className="p-3.5 sm:p-4">{t("availableCopies")}</th>
+                  <th className="p-3.5 sm:p-4">{t("borrowedCopies")}</th>
+                  <th className="p-3.5 sm:p-4 text-right">{language === "uz" ? "Amallar" : language === "ru" ? "Действия" : "Actions"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -481,14 +481,16 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                             )}
                           </button>
                         </td>
-                        <td className="p-4">
-                          <span className="px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 font-semibold text-[11px]">
-                            {b.availableCopies} free
+                        <td className="p-3.5 sm:p-4">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 font-semibold text-xs whitespace-nowrap shadow-2xs">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
+                            {b.availableCopies} Available
                           </span>
                         </td>
-                        <td className="p-4">
-                          <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border font-semibold text-[11px]">
-                            {b.borrowedCopies} out
+                        <td className="p-3.5 sm:p-4">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border font-semibold text-xs whitespace-nowrap shadow-2xs">
+                            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
+                            {b.borrowedCopies} On Loan
                           </span>
                         </td>
                         <td className="p-4 text-right">
@@ -567,18 +569,19 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                                             Copy Status:
                                           </span>
                                           {copy.status === "AVAILABLE" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
+                                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 shadow-2xs">
+                                              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
                                               Available on Shelf
                                             </span>
                                           )}
                                           {copy.status === "BORROWED" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
+                                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-foreground border border-border shadow-2xs">
                                               <UserCheck className="w-3 h-3 text-brand-blue shrink-0" />
                                               Book In Hand
                                             </span>
                                           )}
                                           {copy.status === "RESERVED" && (
-                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border shadow-2xs">
                                               <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                                               Reserved Hold
                                             </span>

@@ -24,9 +24,9 @@ export function CopyAvailabilityBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-tight transition-colors shadow-2xs border",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap tracking-tight transition-colors shadow-2xs border",
         isAvailable
-          ? "bg-card text-foreground border-border"
+          ? "bg-brand-blue/10 text-brand-blue border-brand-blue/20 dark:text-blue-400"
           : "bg-muted text-muted-foreground border-border",
         className
       )}
@@ -43,7 +43,7 @@ export function CopyAvailabilityBadge({
           <span className="sm:hidden">{availableCount}/{totalCount}</span>
         </span>
       ) : nextAvailableDate ? (
-        <span className="truncate flex items-center gap-1 font-mono text-[11px]">
+        <span className="truncate flex items-center gap-1 text-xs">
           <Calendar className="h-3 w-3 shrink-0" />
           <span>{format(new Date(nextAvailableDate), "MMM d")}</span>
         </span>

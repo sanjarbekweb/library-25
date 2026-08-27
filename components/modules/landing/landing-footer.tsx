@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { BookOpen, MapPin, Clock } from "lucide-react";
+import { AppLogo } from "@/components/shared/app-logo";
 
 export function LandingFooter() {
   const currentYear = new Date().getFullYear();
@@ -33,19 +34,9 @@ export function LandingFooter() {
           <div className="md:col-span-5 space-y-5 text-left">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 group transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-brand-blue rounded-xl"
+              className="inline-flex items-center group focus-visible:ring-2 focus-visible:ring-brand-blue rounded-xl"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-xs transition-shadow group-hover:shadow-md">
-                <BookOpen className="h-5 w-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display text-xl font-extrabold tracking-tight text-foreground">
-                  libra25
-                </span>
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground -mt-1">
-                  Campus Library System
-                </span>
-              </div>
+              <AppLogo size="lg" labelSubtitle="Campus Library System" />
             </Link>
 
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md">

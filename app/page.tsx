@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { BookOpen } from "lucide-react";
 import { Navbar } from "@/components/shared/navbar";
 import { LandingHero } from "@/components/modules/landing/landing-hero";
 import { LandingBentoGrid } from "@/components/modules/landing/landing-bento-grid";

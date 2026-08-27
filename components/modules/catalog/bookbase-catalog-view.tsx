@@ -42,7 +42,7 @@ export function BookbaseCatalogView({
     <AppShellLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* CATEGORIES & CATALOG GRID WIDGET */}
-        <section className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
+        <section className="rounded-3xl border border-border/80 bg-card p-4 sm:p-6 shadow-xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h2 className="font-display font-bold text-lg text-foreground">
               {currentSearch ? searchResultsLabel : categoriesLabel}
@@ -50,20 +50,20 @@ export function BookbaseCatalogView({
 
             {currentSearch && (
               <Link href="/catalog">
-                <Button variant="outline" size="sm" className="rounded-full text-xs">
+                <Button variant="outline" size="sm" className="rounded-full text-xs min-h-[36px] px-4">
                   {clearFilterLabel}
                 </Button>
               </Link>
             )}
           </div>
 
-          {/* Category Filter Pills */}
+          {/* Category Filter Pills (Scrollable on mobile, wrapping on desktop) */}
           {!currentSearch && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1.5 sm:pb-0 sm:flex-wrap -mx-1 px-1 sm:mx-0 sm:px-0 scrollbar-none">
               <Link
                 href="/catalog?category=all"
                 className={cn(
-                  "px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200",
+                  "px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all duration-200 min-h-[36px] flex items-center justify-center",
                   currentCategory === "all" || !currentCategory
                     ? "bg-brand-blue text-white shadow-sm shadow-brand-blue/20"
                     : "bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground"
@@ -79,7 +79,7 @@ export function BookbaseCatalogView({
                     key={cat}
                     href={`/catalog?category=${encodeURIComponent(cat)}`}
                     className={cn(
-                      "px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200",
+                      "px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all duration-200 min-h-[36px] flex items-center justify-center",
                       isActive
                         ? "bg-brand-blue text-white shadow-sm shadow-brand-blue/20"
                         : "bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground"
@@ -92,7 +92,7 @@ export function BookbaseCatalogView({
             </div>
           )}
 
-          {/* Stable Books Grid (Cards maintain uniform size during sidebar collapse/expand) */}
+          {/* Stable Books Grid (Cards maintain uniform size across mobile & desktop) */}
           {categoryBooks.length === 0 ? (
             <div className="py-12 text-center space-y-3">
               <AlertCircle className="h-8 w-8 mx-auto text-muted-foreground/60" />
@@ -101,18 +101,18 @@ export function BookbaseCatalogView({
                 {t("noBooksFoundSubtitle")}
               </p>
               <Link href="/catalog">
-                <Button variant="outline" size="sm" className="rounded-full text-xs mt-2">
+                <Button variant="outline" size="sm" className="rounded-full text-xs mt-2 min-h-[36px] px-4">
                   {t("allCategories")}
                 </Button>
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 sm:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
               {categoryBooks.map((book) => (
                 <Link
                   key={book.id}
                   href={`/books/${book.id}`}
-                  className="group cursor-pointer rounded-2xl p-2.5 transition-all duration-200 hover:bg-accent/40 block"
+                  className="group cursor-pointer rounded-2xl p-2 sm:p-2.5 transition-all duration-200 hover:bg-accent/40 block"
                 >
                   <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-xs group-hover:shadow-md transition-all group-hover:-translate-y-1">
                     <ImageWithLoader
@@ -120,11 +120,11 @@ export function BookbaseCatalogView({
                       alt={`Cover image for ${book.title}`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 180px"
+                      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 180px"
                     />
                   </div>
-                  <div className="pt-2.5 space-y-0.5">
-                    <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
+                  <div className="pt-2 sm:pt-2.5 space-y-0.5">
+                    <h4 className="font-display font-bold text-xs sm:text-sm text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
                       {book.title}
                     </h4>
                     <p className="text-[11px] text-muted-foreground truncate">
@@ -138,19 +138,19 @@ export function BookbaseCatalogView({
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
-              <div>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pt-4 text-xs text-muted-foreground">
+              <div className="text-center sm:text-left">
                 <span className="font-semibold text-foreground">{currentPage}</span> /{" "}
                 <span className="font-semibold text-foreground">{totalPages}</span> ({totalCount} {language === "uz" ? "ta kitob" : language === "ru" ? "книг" : "books"})
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
                 <Button
                   variant="outline"
                   size="sm"
                   disabled={currentPage <= 1}
                   asChild={currentPage > 1}
-                  className="rounded-full text-xs h-8 px-3 gap-1"
+                  className="rounded-full text-xs h-9 px-4 gap-1 min-h-[36px]"
                 >
                   {currentPage > 1 ? (
                     <Link
@@ -174,7 +174,7 @@ export function BookbaseCatalogView({
                   size="sm"
                   disabled={currentPage >= totalPages}
                   asChild={currentPage < totalPages}
-                  className="rounded-full text-xs h-8 px-3 gap-1"
+                  className="rounded-full text-xs h-9 px-4 gap-1 min-h-[36px]"
                 >
                   {currentPage < totalPages ? (
                     <Link

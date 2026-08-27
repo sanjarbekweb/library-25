@@ -48,33 +48,33 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
 
   return (
     <AppShellLayout>
-      <div className="space-y-6 max-w-5xl">
+      <div className="space-y-6 max-w-5xl mx-auto">
         {/* Header Title */}
         <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
-          <h1 className="font-display font-bold text-2xl text-foreground">
+          <h1 className="font-display font-bold text-xl sm:text-2xl text-foreground">
             {headerTitle}
           </h1>
-          <span className="text-xs px-3 py-1 rounded-full bg-accent text-foreground border border-border">
+          <span className="text-xs px-3 py-1 rounded-full bg-accent text-foreground border border-border font-medium">
             {activeCountLabel}
           </span>
         </div>
 
         {/* Active Reservations Section */}
-        <section className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
-          <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-            <Clock className="h-5 w-5 text-brand-blue" />
+        <section className="rounded-3xl border border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
+          <h2 className="font-display font-bold text-base sm:text-lg text-foreground flex items-center gap-2">
+            <Clock className="h-5 w-5 text-brand-blue shrink-0" />
             {t("activeHoldCount")} ({activeReservations.length})
           </h2>
 
           {activeReservations.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-card space-y-3">
+            <div className="rounded-2xl border border-dashed border-border p-6 sm:p-8 text-center bg-card space-y-3">
               <BookOpen className="h-8 w-8 text-muted-foreground/40 mx-auto" />
               <p className="text-sm font-medium text-foreground">{noHoldsText}</p>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
                 {exploreCatalogSubtitle}
               </p>
               <Link href="/catalog">
-                <button className="text-xs font-bold text-brand-blue hover:underline pt-2 cursor-pointer inline-flex items-center gap-1">
+                <button className="text-xs font-bold text-brand-blue hover:underline pt-2 cursor-pointer inline-flex items-center gap-1 min-h-[36px]">
                   {browseCatalogText}
                 </button>
               </Link>
@@ -88,11 +88,11 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
                 return (
                   <div
                     key={item.id}
-                    className="rounded-2xl border border-border bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs"
+                    className="rounded-2xl border border-border bg-card p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs"
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
                       {/* Cover Thumbnail */}
-                      <div className="relative h-16 w-12 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
+                      <div className="relative h-16 w-12 rounded-lg bg-muted overflow-hidden shrink-0 border border-border shadow-2xs">
                         {item.coverImageUrl ? (
                           <Image
                             src={item.coverImageUrl}
@@ -108,19 +108,19 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
                         )}
                       </div>
 
-                      {/* Details (Preserved dynamic title/author) */}
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-accent text-foreground border border-border">
+                      {/* Details */}
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-accent text-foreground border border-border inline-block">
                           {item.category}
                         </span>
-                        <h3 className="font-display font-bold text-base text-foreground leading-snug">
+                        <h3 className="font-display font-bold text-sm sm:text-base text-foreground leading-snug truncate">
                           <Link href={`/books/${item.bookId}`} className="hover:text-brand-blue transition-colors">
                             {item.bookTitle}
                           </Link>
                         </h3>
-                        <p className="text-xs text-muted-foreground">by {item.bookAuthor}</p>
+                        <p className="text-xs text-muted-foreground truncate">by {item.bookAuthor}</p>
                         {item.copyBarcode && (
-                          <p className="text-[11px] text-muted-foreground">
+                          <p className="text-[11px] text-muted-foreground font-mono">
                             Barcode: <span className="font-semibold text-foreground">{item.copyBarcode}</span>
                           </p>
                         )}
@@ -128,15 +128,15 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
                     </div>
 
                     {/* Expiration & Cancellation */}
-                    <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto shrink-0 border-t sm:border-t-0 border-border pt-3 sm:pt-0">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-                        <Clock className="h-3.5 w-3.5 text-brand-blue" />
+                    <div className="flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-end justify-between gap-2.5 w-full md:w-auto shrink-0 border-t md:border-t-0 border-border/80 pt-3 md:pt-0">
+                      <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+                        <Clock className="h-3.5 w-3.5 text-brand-blue shrink-0" />
                         <span>{t("expirationDate")}: {expiresDate.toLocaleDateString()} {expiresDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
 
                       {isNearingExpiry && (
                         <span className="text-[11px] text-foreground flex items-center gap-1">
-                          <AlertTriangle className="h-3 w-3 text-brand-blue" />
+                          <AlertTriangle className="h-3 w-3 text-brand-blue shrink-0" />
                           {language === "uz" ? "Olib ketish muddati tugamoqda" : language === "ru" ? "Срок выдачи скоро истечет" : "Pickup window expiring soon"}
                         </span>
                       )}
@@ -152,26 +152,26 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
 
         {/* Past Reservation History */}
         {pastReservations.length > 0 && (
-          <section className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
-            <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-muted-foreground" />
+          <section className="rounded-3xl border border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
+            <h2 className="font-display font-bold text-base sm:text-lg text-foreground flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-muted-foreground shrink-0" />
               {historyHeading}
             </h2>
 
             <div className="rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60">
               {pastReservations.map((item) => (
-                <div key={item.id} className="p-4 flex items-center justify-between gap-4 text-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="space-y-0.5">
-                      <Link href={`/books/${item.bookId}`} className="font-bold text-foreground hover:underline">
+                <div key={item.id} className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="space-y-0.5 min-w-0">
+                      <Link href={`/books/${item.bookId}`} className="font-bold text-foreground hover:underline truncate block">
                         {item.bookTitle}
                       </Link>
-                      <p className="text-muted-foreground">by {item.bookAuthor}</p>
+                      <p className="text-muted-foreground truncate">by {item.bookAuthor}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                    <span className="text-[11px] text-muted-foreground">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>
 

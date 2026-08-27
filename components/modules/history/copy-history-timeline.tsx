@@ -137,21 +137,21 @@ export function CopyHistoryTimeline({ history, compact = false }: CopyHistoryTim
                 <div className="flex items-center gap-2">
                   <span
                     className={cn(
-                      "px-2.5 py-0.5 rounded-full text-xs font-semibold border tracking-wide uppercase font-mono",
+                      "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border tracking-wide uppercase shadow-2xs",
                       config.bgClass,
                       config.colorClass
                     )}
                   >
                     {config.label}
                   </span>
-                  <span className="text-xs text-muted-foreground font-mono">
+                  <span className="text-xs text-muted-foreground">
                     {formatTashkentDateTime(log.createdAt)}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="font-medium text-foreground">{log.actorName}</span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] uppercase font-mono bg-accent text-accent-foreground">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] uppercase font-semibold bg-accent text-accent-foreground border border-border">
                     {log.actorRole}
                   </span>
                 </div>
@@ -159,9 +159,9 @@ export function CopyHistoryTimeline({ history, compact = false }: CopyHistoryTim
 
               {/* State Transitions */}
               {(log.previousState || log.newState) && (
-                <div className="flex items-center gap-2 text-xs font-mono my-2 px-3 py-1.5 rounded-lg bg-muted/40 border border-border/50">
+                <div className="flex items-center gap-2 text-xs font-semibold my-2 px-3 py-1.5 rounded-xl bg-muted/40 border border-border/50">
                   {log.previousState && (
-                    <span className="px-2 py-0.5 rounded bg-background border text-muted-foreground">
+                    <span className="px-2 py-0.5 rounded-full bg-background border border-border text-muted-foreground text-xs">
                       {log.previousState}
                     </span>
                   )}
@@ -169,7 +169,7 @@ export function CopyHistoryTimeline({ history, compact = false }: CopyHistoryTim
                     <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" />
                   )}
                   {log.newState && (
-                    <span className="px-2 py-0.5 rounded bg-brand-yellow/20 text-foreground border border-brand-yellow/30 font-semibold">
+                    <span className="px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20 font-semibold text-xs">
                       {log.newState}
                     </span>
                   )}

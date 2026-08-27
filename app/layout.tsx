@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   },
   description:
     "libra25 is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
+  icons: {
+    icon: "/images/logo.jpg",
+    shortcut: "/images/logo.jpg",
+    apple: "/images/logo.jpg",
+  },
 };
 
 export default function RootLayout({

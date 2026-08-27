@@ -19,6 +19,7 @@ import { LanguageToggle } from "@/components/shared/language-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSidebar } from "@/components/providers/sidebar-provider";
 import { cn } from "@/lib/utils";
+import { AppLogo } from "@/components/shared/app-logo";
 
 interface AppSidebarProps {
   mobileOpen?: boolean;
@@ -124,27 +125,22 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
               <button
                 type="button"
                 onClick={sidebar.toggleCollapse}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform hover:scale-105 cursor-pointer"
+                className="flex shrink-0 items-center justify-center transition-transform hover:scale-105 cursor-pointer"
                 title={t("expandSidebar")}
                 aria-label={t("expandSidebar")}
               >
-                <BookOpen className="h-5 w-5" />
+                <AppLogo size="lg" showLabel={false} />
               </button>
             ) : (
               /* When expanded: logo links to home/catalog, collapse button is on the top right */
               <>
                 <Link
                   href={isSignedIn ? "/catalog" : "/"}
-                  className="flex items-center gap-3 group min-w-0"
+                  className="flex items-center min-w-0"
                   onClick={handleCloseMobile}
                   title="libra25"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform group-hover:scale-105">
-                    <BookOpen className="h-5 w-5" />
-                  </div>
-                  <span className="font-display text-xl font-bold tracking-tight text-foreground whitespace-nowrap overflow-hidden transition-all duration-300">
-                    libra25
-                  </span>
+                  <AppLogo size="lg" showLabel={true} />
                 </Link>
 
                 {/* Desktop collapse button */}
@@ -206,15 +202,15 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
             {/* Staff Navigation Links */}
             {staffItems.length > 0 && (
               <div className="pt-2 space-y-1">
-                {isCollapsed ? (
+                {isCollapsed && (
                   <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
-                ) : (
-                  <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
-                    {t("deskAndStaff")}
-                  </p>
                 )}
-                {/* Mobile header always visible */}
-                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
+                <p
+                  className={cn(
+                    "px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate",
+                    isCollapsed ? "md:hidden" : "block"
+                  )}
+                >
                   {t("deskAndStaff")}
                 </p>
 
@@ -253,15 +249,15 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
             {/* Admin Section */}
             {adminItems.length > 0 && (
               <div className="pt-2 space-y-1">
-                {isCollapsed ? (
+                {isCollapsed && (
                   <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
-                ) : (
-                  <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
-                    {t("management")}
-                  </p>
                 )}
-                {/* Mobile header always visible */}
-                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
+                <p
+                  className={cn(
+                    "px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate",
+                    isCollapsed ? "md:hidden" : "block"
+                  )}
+                >
                   {t("management")}
                 </p>
 
@@ -299,15 +295,15 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
 
             {/* Preferences Group */}
             <div className="pt-2 space-y-1">
-              {isCollapsed ? (
+              {isCollapsed && (
                 <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
-              ) : (
-                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
-                  {t("preferences")}
-                </p>
               )}
-              {/* Mobile header always visible */}
-              <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
+              <p
+                className={cn(
+                  "px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate",
+                  isCollapsed ? "md:hidden" : "block"
+                )}
+              >
                 {t("preferences")}
               </p>
 
@@ -320,14 +316,23 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
         {/* Bottom User Profile Section */}
         <div className="mt-auto border-t border-border/60 pt-3">
           {isLoaded && isSignedIn ? (
-            isCollapsed ? (
-              <div className="hidden md:flex items-center justify-center py-1">
-                <div className="flex h-8 w-8 items-center justify-center">
-                  <UserButton />
+            <>
+              {/* Desktop Collapsed Avatar */}
+              {isCollapsed && (
+                <div className="hidden md:flex items-center justify-center py-1">
+                  <div className="flex h-8 w-8 items-center justify-center">
+                    <UserButton />
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60">
+              )}
+
+              {/* Full User Profile Card (Desktop expanded or Mobile drawer) */}
+              <div
+                className={cn(
+                  "p-2.5 rounded-2xl bg-accent/40 border border-border/60",
+                  isCollapsed ? "md:hidden" : "block"
+                )}
+              >
                 <div className="flex items-center gap-2.5">
                   <UserButton />
                   <div className="flex flex-col min-w-0 flex-1 text-left">
@@ -340,7 +345,7 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
                   </div>
                 </div>
               </div>
-            )
+            </>
           ) : (
             <div className="pt-1">
               <Link
@@ -357,23 +362,6 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
                 <LogIn className={cn("h-4 w-4 shrink-0", !isCollapsed && "mr-1.5", isCollapsed && "md:mr-0")} />
                 <span className={cn(isCollapsed && "md:hidden")}>{t("signIn")}</span>
               </Link>
-            </div>
-          )}
-
-          {/* Always show full user profile on mobile */}
-          {isLoaded && isSignedIn && isCollapsed && (
-            <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 md:hidden">
-              <div className="flex items-center gap-2.5">
-                <UserButton />
-                <div className="flex flex-col min-w-0 flex-1 text-left">
-                  <span className="text-xs font-bold text-foreground truncate leading-tight">
-                    {user?.fullName || user?.firstName || t("patron")}
-                  </span>
-                  <span className="text-[10px] font-medium text-muted-foreground capitalize">
-                    {localizedRole}
-                  </span>
-                </div>
-              </div>
             </div>
           )}
         </div>

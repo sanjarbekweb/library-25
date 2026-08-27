@@ -5,6 +5,7 @@ import { BookCard } from "./book-card";
 import { CatalogBookItem } from "@/lib/services/book-service";
 import { ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { AppLogo } from "@/components/shared/app-logo";
 
 interface CatalogShellProps {
   categories: string[];
@@ -32,14 +33,9 @@ export function CatalogShell({
       {/* Top Header Bar */}
       <header className="sticky top-0 z-30 h-16 border-b border-border bg-card/90 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-blue text-white font-bold">
-              <BookOpen className="h-4 w-4" />
-            </div>
-            <span className="font-display font-extrabold text-base text-foreground">
-              libra25
-            </span>
-          </div>
+          <Link href="/catalog" className="flex items-center">
+            <AppLogo size="sm" showLabel={true} />
+          </Link>
           <span className="hidden sm:inline-block text-xs font-mono text-muted-foreground">
             {total} Book{total === 1 ? "" : "s"} in Collection
           </span>

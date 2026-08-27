@@ -275,7 +275,7 @@ export function UserManagement({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Alert Notification */}
       {actionAlert && (
         <div
@@ -303,15 +303,15 @@ export function UserManagement({
       )}
 
       {/* Metrics Summary Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <Card className="border-border bg-card shadow-sm rounded-2xl">
-          <CardContent className="p-4 flex items-center justify-between">
+          <CardContent className="p-3.5 sm:p-4 flex items-center justify-between">
             <div>
-              <p className="text-xs text-muted-foreground font-medium">Total Registered</p>
-              <p className="text-2xl font-extrabold font-mono mt-1 text-foreground">{stats.totalCount}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">Total Registered</p>
+              <p className="text-xl sm:text-2xl font-extrabold font-mono mt-1 text-foreground">{stats.totalCount}</p>
             </div>
-            <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center border border-brand-blue/20">
-              <Users className="h-5 w-5" />
+            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center border border-brand-blue/20 shrink-0">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
           </CardContent>
         </Card>
@@ -462,15 +462,15 @@ export function UserManagement({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[640px]">
               <thead className="bg-muted/50 text-muted-foreground font-semibold border-b border-border">
                 <tr>
-                  <th className="p-4 pl-6">User / Account</th>
-                  <th className="p-4">Role</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4 hidden md:table-cell">Loans &amp; Holds</th>
-                  <th className="p-4 hidden lg:table-cell">Joined Date</th>
-                  <th className="p-4 pr-6 text-right">Actions</th>
+                  <th className="p-3.5 sm:p-4 pl-4 sm:pl-6">User / Account</th>
+                  <th className="p-3.5 sm:p-4">Role</th>
+                  <th className="p-3.5 sm:p-4">Status</th>
+                  <th className="p-3.5 sm:p-4 hidden md:table-cell">Loans &amp; Holds</th>
+                  <th className="p-3.5 sm:p-4 hidden lg:table-cell">Joined Date</th>
+                  <th className="p-3.5 sm:p-4 pr-4 sm:pr-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

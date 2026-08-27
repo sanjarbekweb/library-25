@@ -269,12 +269,13 @@ export function CopyTraceabilityView({
                             In Hand: {c.currentHolderName}
                           </span>
                         ) : c.status === "RESERVED" && c.currentHolderName ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border shadow-2xs">
                             <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                             Reserved: {c.currentHolderName}
                           </span>
                         ) : (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 shadow-2xs">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
                             Available on Shelf
                           </span>
                         )}
@@ -287,7 +288,7 @@ export function CopyTraceabilityView({
                   </div>
 
                   <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs">
-                    <span className="text-[11px] text-muted-foreground font-mono">
+                    <span className="text-[11px] text-muted-foreground">
                       Category: <strong className="text-foreground">{c.category}</strong>
                     </span>
                     <span className="text-xs text-brand-blue font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -315,7 +316,7 @@ export function CopyTraceabilityView({
               </CardHeader>
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-border/50">
-                  <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                     Barcode ID
                   </span>
                   <span className="font-mono text-sm font-bold bg-accent px-2.5 py-1 rounded-full border border-border">
@@ -324,18 +325,24 @@ export function CopyTraceabilityView({
                 </div>
 
                 <div className="flex items-center justify-between pb-3 border-b border-border/50">
-                  <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                     Copy Status
                   </span>
                   <span
                     className={cn(
-                      "px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase font-mono border",
+                      "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase border shadow-2xs",
                       detail.status === "AVAILABLE" && "bg-brand-blue/10 text-brand-blue border-brand-blue/20 dark:text-blue-300",
                       detail.status === "BORROWED" && "bg-muted text-foreground border-border",
                       detail.status === "RESERVED" && "bg-muted text-muted-foreground border-border",
                       (detail.status === "MAINTENANCE" || detail.status === "LOST") && "bg-destructive/10 text-destructive border-destructive/20"
                     )}
                   >
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full shrink-0",
+                        detail.status === "AVAILABLE" ? "bg-brand-blue" : "bg-muted-foreground/60"
+                      )}
+                    />
                     {detail.status}
                   </span>
                 </div>

@@ -22,6 +22,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { cn } from "@/lib/utils";
 import { formatTashkentDate, formatTashkentDateTime } from "@/lib/utils/tashkent-time";
 import { CopyTraceabilityView } from "@/components/modules/history/copy-traceability-view";
 import { CalendarUsageLimitPicker } from "@/components/modules/books/calendar-usage-limit-picker";
@@ -356,83 +357,83 @@ export function CirculationDesk({
       )}
 
       {/* Compact Metric Bar */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+        <div className="flex items-center justify-between px-3 sm:px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue shrink-0">
               <BookOpen className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-semibold text-muted-foreground">{t("activeLoans")}</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground truncate">{t("activeLoans")}</span>
           </div>
-          <span className="text-base font-bold font-display text-foreground">{summary.activeLoansCount}</span>
+          <span className="text-sm sm:text-base font-bold font-display text-foreground shrink-0">{summary.activeLoansCount}</span>
         </div>
 
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue">
+        <div className="flex items-center justify-between px-3 sm:px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue shrink-0">
               <Clock className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-semibold text-muted-foreground">{t("holds")}</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground truncate">{t("holds")}</span>
           </div>
-          <span className="text-base font-bold font-display text-foreground">{summary.pendingReservationsCount}</span>
+          <span className="text-sm sm:text-base font-bold font-display text-foreground shrink-0">{summary.pendingReservationsCount}</span>
         </div>
 
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-border/80 transition-colors">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-destructive/10 text-destructive">
+        <div className="flex items-center justify-between px-3 sm:px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-border/80 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-destructive/10 text-destructive shrink-0">
               <AlertTriangle className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-semibold text-muted-foreground">{t("overdueCopies")}</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground truncate">{t("overdueCopies")}</span>
           </div>
-          <span className="text-base font-bold font-display text-foreground">{summary.overdueLoansCount}</span>
+          <span className="text-sm sm:text-base font-bold font-display text-foreground shrink-0">{summary.overdueLoansCount}</span>
         </div>
 
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue">
+        <div className="flex items-center justify-between px-3 sm:px-3.5 py-2.5 rounded-xl border border-border bg-card shadow-2xs hover:border-brand-blue/30 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-brand-blue/10 text-brand-blue shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" />
             </div>
-            <span className="text-xs font-semibold text-muted-foreground">{t("availableCopies")}</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground truncate">{t("availableCopies")}</span>
           </div>
-          <span className="text-base font-bold font-display text-brand-blue dark:text-blue-400">{summary.availableCopiesCount}</span>
+          <span className="text-sm sm:text-base font-bold font-display text-brand-blue dark:text-blue-400 shrink-0">{summary.availableCopiesCount}</span>
         </div>
       </div>
 
-      {/* Navigation Tabs Header */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
+      {/* Navigation Tabs Header (Scrollable horizontally on small screens) */}
+      <div className="flex items-center gap-2 border-b border-border pb-3 overflow-x-auto scrollbar-none sm:flex-wrap -mx-1 px-1 sm:mx-0 sm:px-0">
         <button
           onClick={() => setActiveTab("checkout")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer min-h-[38px] ${
             activeTab === "checkout"
-              ? "bg-brand-blue text-white shadow-sm scale-105"
+              ? "bg-brand-blue text-white shadow-sm"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
           }`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="w-4 h-4 shrink-0" />
           {t("rapidCheckout")}
         </button>
 
         <button
           onClick={() => setActiveTab("checkin")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer min-h-[38px] ${
             activeTab === "checkin"
-              ? "bg-brand-blue text-white shadow-sm scale-105"
+              ? "bg-brand-blue text-white shadow-sm"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
           }`}
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="w-4 h-4 shrink-0" />
           {t("rapidCheckin")}
         </button>
 
         <button
           onClick={() => setActiveTab("holds")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer min-h-[38px] ${
             activeTab === "holds"
-              ? "bg-brand-blue text-white shadow-sm scale-105"
+              ? "bg-brand-blue text-white shadow-sm"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
           }`}
         >
-          <Clock className="w-4 h-4" />
+          <Clock className="w-4 h-4 shrink-0" />
           {t("holdsQueue")}
           {pendingReservations.length > 0 && (
             <span className="px-2 py-0.5 text-[10px] rounded-full bg-brand-blue text-white font-bold">
@@ -443,13 +444,13 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("loans")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer min-h-[38px] ${
             activeTab === "loans"
-              ? "bg-brand-blue text-white shadow-sm scale-105"
+              ? "bg-brand-blue text-white shadow-sm"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
           }`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="w-4 h-4 shrink-0" />
           {language === "uz" ? "Foydalanishdagi kitoblar" : language === "ru" ? "Книги на руках" : "Book In Use"}
           {activeLoans.length > 0 && (
             <span className="px-2 py-0.5 text-[10px] rounded-full bg-brand-blue/20 text-brand-blue dark:text-blue-300 font-bold">
@@ -460,13 +461,13 @@ export function CirculationDesk({
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer min-h-[38px] ${
             activeTab === "history"
-              ? "bg-brand-blue text-white shadow-sm scale-105"
+              ? "bg-brand-blue text-white shadow-sm"
               : "bg-muted/60 hover:bg-muted text-muted-foreground"
           }`}
         >
-          <History className="w-4 h-4" />
+          <History className="w-4 h-4 shrink-0" />
           {language === "uz" ? "Audit va nusxalar tarixi" : language === "ru" ? "История экземпляров и аудит" : "Copy Audit Trail & Traceability"}
         </button>
       </div>
@@ -639,7 +640,8 @@ export function CirculationDesk({
                                 {c.bookTitle}
                               </p>
                             </div>
-                            <span className="text-xs font-semibold text-brand-blue dark:text-blue-400 shrink-0">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 shrink-0">
+                              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
                               Available
                             </span>
                           </button>
@@ -780,17 +782,18 @@ export function CirculationDesk({
                                   {c.barcode}
                                 </span>
                                 {c.status === "BORROWED" && c.currentHolderName ? (
-                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
+                                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-foreground border border-border">
                                     <UserCheck className="w-3 h-3 text-brand-blue shrink-0" />
                                     Book In Hand: {c.currentHolderName}
                                   </span>
                                 ) : c.status === "RESERVED" && c.currentHolderName ? (
-                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                                     <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
                                     Reserved Hold: {c.currentHolderName}
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
+                                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
                                     Available on Shelf
                                   </span>
                                 )}
@@ -1058,54 +1061,56 @@ export function CirculationDesk({
                 <p className="text-xs">All student online reservations have been fulfilled.</p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent border-border">
-                    <TableHead className="text-xs">Book Title</TableHead>
-                    <TableHead className="text-xs">Student Borrower</TableHead>
-                    <TableHead className="text-xs">Assigned Barcode</TableHead>
-                    <TableHead className="text-xs">Expiration Date</TableHead>
-                    <TableHead className="text-xs text-right">Quick Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingReservations.map((resItem) => (
-                    <TableRow key={resItem.id} className="border-border hover:bg-muted/40">
-                      <TableCell className="font-medium text-sm">
-                        <div>
-                          <p className="font-bold text-foreground">{resItem.bookTitle}</p>
-                          <p className="text-xs text-muted-foreground">{resItem.bookAuthor}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        <p className="font-medium text-foreground">{resItem.studentName}</p>
-                        <p className="text-muted-foreground">{resItem.studentEmail}</p>
-                      </TableCell>
-                      <TableCell className="text-xs font-mono">
-                        {resItem.copyBarcode ? (
-                          <span className="px-2 py-0.5 rounded bg-muted font-bold">
-                            {resItem.copyBarcode}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground italic">Any Available</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-xs font-mono text-muted-foreground">
-                        {format(new Date(resItem.expiresAt), "MMM dd, HH:mm")}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          onClick={() => handleFulfillReservation(resItem)}
-                          className="rounded-full text-xs font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white shadow-xs cursor-pointer"
-                        >
-                          Fulfill Checkout <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                        </Button>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="min-w-[620px]">
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent border-border">
+                      <TableHead className="text-xs">Book Title</TableHead>
+                      <TableHead className="text-xs">Student Borrower</TableHead>
+                      <TableHead className="text-xs">Assigned Barcode</TableHead>
+                      <TableHead className="text-xs">Expiration Date</TableHead>
+                      <TableHead className="text-xs text-right">Quick Action</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {pendingReservations.map((resItem) => (
+                      <TableRow key={resItem.id} className="border-border hover:bg-muted/40">
+                        <TableCell className="font-medium text-sm">
+                          <div>
+                            <p className="font-bold text-foreground">{resItem.bookTitle}</p>
+                            <p className="text-xs text-muted-foreground">{resItem.bookAuthor}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          <p className="font-medium text-foreground">{resItem.studentName}</p>
+                          <p className="text-muted-foreground">{resItem.studentEmail}</p>
+                        </TableCell>
+                        <TableCell className="text-xs font-mono">
+                          {resItem.copyBarcode ? (
+                            <span className="px-2 py-0.5 rounded bg-muted font-bold">
+                              {resItem.copyBarcode}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground italic">Any Available</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-xs font-mono text-muted-foreground">
+                          {format(new Date(resItem.expiresAt), "MMM dd, HH:mm")}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            onClick={() => handleFulfillReservation(resItem)}
+                            className="rounded-full text-xs font-semibold bg-brand-blue hover:bg-brand-blue/90 text-white shadow-xs cursor-pointer min-h-[36px]"
+                          >
+                            Fulfill Checkout <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -1132,61 +1137,73 @@ export function CirculationDesk({
                 <p className="text-xs">There are currently no books checked out.</p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent border-border">
-                    <TableHead className="text-xs">Copy Barcode</TableHead>
-                    <TableHead className="text-xs">Book Title</TableHead>
-                    <TableHead className="text-xs">Student Borrower</TableHead>
-                    <TableHead className="text-xs">Borrowed Date</TableHead>
-                    <TableHead className="text-xs">Due Date</TableHead>
-                    <TableHead className="text-xs text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {activeLoans.map((loanItem) => (
-                    <TableRow key={loanItem.id} className="border-border hover:bg-muted/40">
-                      <TableCell className="font-mono text-xs font-bold">
-                        <span className="px-2 py-0.5 rounded bg-muted">
-                          {loanItem.copyBarcode}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-medium text-sm">
-                        <p className="font-bold text-foreground">{loanItem.bookTitle}</p>
-                        <p className="text-xs text-muted-foreground">{loanItem.bookAuthor}</p>
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        <p className="font-medium text-foreground">{loanItem.studentName}</p>
-                        <p className="text-muted-foreground">{loanItem.studentEmail}</p>
-                      </TableCell>
-                      <TableCell className="text-xs font-mono text-muted-foreground">
-                        {format(new Date(loanItem.borrowedAt), "MMM dd, yyyy")}
-                      </TableCell>
-                      <TableCell className="text-xs font-mono">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${loanItem.isOverdue
-                              ? "bg-destructive/10 text-destructive border border-destructive/20 animate-pulse"
-                              : "bg-muted text-foreground"
-                            }`}
-                        >
-                          {format(new Date(loanItem.dueDate), "MMM dd, yyyy")}
-                          {loanItem.isOverdue && " (OVERDUE)"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleSelectLoanForCheckin(loanItem)}
-                          className="rounded-full text-xs font-semibold hover:bg-primary hover:text-primary-foreground border-border"
-                        >
-                          Return Check-in
-                        </Button>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="min-w-[620px]">
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent border-border">
+                      <TableHead className="text-xs">Copy Barcode</TableHead>
+                      <TableHead className="text-xs">Book Title</TableHead>
+                      <TableHead className="text-xs">Student Borrower</TableHead>
+                      <TableHead className="text-xs">Borrowed Date</TableHead>
+                      <TableHead className="text-xs">Due Date</TableHead>
+                      <TableHead className="text-xs text-right">Action</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {activeLoans.map((loanItem) => (
+                      <TableRow key={loanItem.id} className="border-border hover:bg-muted/40">
+                        <TableCell className="text-xs font-semibold text-foreground">
+                          <span className="px-2 py-0.5 rounded-md bg-muted border border-border">
+                            {loanItem.copyBarcode}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-medium text-sm">
+                          <p className="font-bold text-foreground">{loanItem.bookTitle}</p>
+                          <p className="text-xs text-muted-foreground">{loanItem.bookAuthor}</p>
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          <p className="font-medium text-foreground">{loanItem.studentName}</p>
+                          <p className="text-muted-foreground">{loanItem.studentEmail}</p>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {format(new Date(loanItem.borrowedAt), "MMM dd, yyyy")}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs",
+                              loanItem.isOverdue
+                                ? "bg-destructive/10 text-destructive border-destructive/20 animate-pulse"
+                                : "bg-muted text-foreground border-border"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "h-1.5 w-1.5 rounded-full shrink-0",
+                                loanItem.isOverdue ? "bg-destructive" : "bg-muted-foreground/60"
+                              )}
+                            />
+                            <span>
+                              {format(new Date(loanItem.dueDate), "MMM dd, yyyy")}
+                              {loanItem.isOverdue && " (OVERDUE)"}
+                            </span>
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleSelectLoanForCheckin(loanItem)}
+                            className="rounded-full text-xs font-semibold hover:bg-primary hover:text-primary-foreground border-border min-h-[36px]"
+                          >
+                            Return Check-in
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>

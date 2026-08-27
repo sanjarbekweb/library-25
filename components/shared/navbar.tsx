@@ -30,6 +30,7 @@ import { SearchHeader } from "@/components/modules/search/search-header";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageToggle } from "@/components/shared/language-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
+import { AppLogo } from "@/components/shared/app-logo";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -110,19 +111,9 @@ export function Navbar() {
           {/* Brand Logo - Fixed Left */}
           <Link
             href={isSignedIn ? "/catalog" : "/"}
-            className="flex items-center gap-2.5 group shrink-0 transition-transform duration-200 hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-brand-blue rounded-xl p-1"
+            className="flex items-center group shrink-0 focus-visible:ring-2 focus-visible:ring-brand-blue rounded-xl p-1"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-xs transition-shadow group-hover:shadow-md">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
-                libra25
-              </span>
-              <span className="text-[9px] font-mono font-semibold uppercase tracking-widest text-muted-foreground -mt-1">
-                Library
-              </span>
-            </div>
+            <AppLogo size="default" labelSubtitle="Library" />
           </Link>
 
           {/* Center Navigation & Search Bar Area with Fluid Desktop/Laptop Transitions */}
