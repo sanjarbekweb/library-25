@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 import {
   Compass,
   BookMarked,
   Bookmark,
-  LogOut,
   BookOpen,
   ClipboardList,
   Shield,
@@ -310,26 +309,16 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
             <LanguageToggle isCollapsed={isCollapsed} />
           </div>
 
-          {/* User Account Profile Card */}
+          {/* User Account Profile Card (Sign out accessible via UserButton modal) */}
           {isLoaded && isSignedIn ? (
             isCollapsed ? (
-              <div className="hidden md:flex flex-col items-center gap-1.5 py-1">
+              <div className="hidden md:flex items-center justify-center py-1">
                 <div className="flex h-8 w-8 items-center justify-center">
                   <UserButton />
                 </div>
-                <SignOutButton redirectUrl="/">
-                  <button
-                    type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
-                    title={t("signOut")}
-                    aria-label={t("signOut")}
-                  >
-                    <LogOut className="h-3.5 w-3.5" />
-                  </button>
-                </SignOutButton>
               </div>
             ) : (
-              <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 space-y-2">
+              <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60">
                 <div className="flex items-center gap-2.5">
                   <UserButton />
                   <div className="flex flex-col min-w-0 flex-1 text-left">
@@ -341,19 +330,6 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
                     </span>
                   </div>
                 </div>
-
-                {/* Sign out button */}
-                <SignOutButton redirectUrl="/">
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-left cursor-pointer"
-                    title={t("signOut")}
-                    aria-label={t("signOut")}
-                  >
-                    <LogOut className="h-3.5 w-3.5 shrink-0" />
-                    <span>{t("signOut")}</span>
-                  </button>
-                </SignOutButton>
               </div>
             )
           ) : (
@@ -377,7 +353,7 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
 
           {/* Always show full user profile on mobile */}
           {isLoaded && isSignedIn && isCollapsed && (
-            <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 space-y-2 md:hidden">
+            <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 md:hidden">
               <div className="flex items-center gap-2.5">
                 <UserButton />
                 <div className="flex flex-col min-w-0 flex-1 text-left">
@@ -389,18 +365,6 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
                   </span>
                 </div>
               </div>
-
-              <SignOutButton redirectUrl="/">
-                <button
-                  type="button"
-                  className="flex w-full items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-left cursor-pointer"
-                  title={t("signOut")}
-                  aria-label={t("signOut")}
-                >
-                  <LogOut className="h-3.5 w-3.5 shrink-0" />
-                  <span>{t("signOut")}</span>
-                </button>
-              </SignOutButton>
             </div>
           )}
         </div>
