@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Users,
   BarChart3,
@@ -10,10 +10,12 @@ import {
   UserCheck,
   Calendar,
 } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserPresenceAvatar } from "@/components/animate-ui/components/community/user-presence-avatar";
 import {
   Table,
@@ -24,17 +26,93 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
+
 export function LandingBentoGrid() {
   const [activeFilter, setActiveFilter] = useState<"Daily" | "Weekly" | "Monthly">("Monthly");
   const [selectedBadge, setSelectedBadge] = useState<string>("Course Reserve Telemetry");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          isDesktop: "(min-width: 1024px)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions as { reduceMotion: boolean };
+
+          if (reduceMotion) {
+            gsap.set([".bento-header", ".bento-card", ".bar-chart-bar"], {
+              autoAlpha: 1,
+              y: 0,
+              scaleY: 1,
+            });
+            return;
+          }
+
+          // Header scroll reveal
+          gsap.from(".bento-header", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 30,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+
+          // Bento cards staggered entrance
+          gsap.from(".bento-card", {
+            scrollTrigger: {
+              trigger: ".bento-grid-wrapper",
+              start: "top 78%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 40,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: "power3.out",
+          });
+
+          // Telemetry bars upward expansion
+          gsap.from(".bar-chart-bar", {
+            scrollTrigger: {
+              trigger: ".bar-chart-container",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            scaleY: 0,
+            transformOrigin: "bottom",
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "back.out(1.2)",
+          });
+        }
+      );
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section id="features" className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80">
+    <section
+      id="features"
+      ref={sectionRef}
+      className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80 overflow-hidden"
+    >
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
-        <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <Badge variant="outline" className="px-3 py-1 font-mono text-xs border-border/80 bg-card">
-            Built for Modern Libraries
+        <div className="bento-header text-center space-y-3 max-w-2xl mx-auto will-change-transform">
+          <Badge variant="outline" className="px-3.5 py-1 font-mono text-xs border-border/80 bg-card/80 text-muted-foreground backdrop-blur-xs">
+            Circulation Infrastructure
           </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-foreground tracking-tight">
             Built for Modern Libraries
@@ -45,9 +123,9 @@ export function LandingBentoGrid() {
         </div>
 
         {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bento-grid-wrapper grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Librarians & Desk Staff */}
-          <Card data-aos="fade-up" data-aos-delay="100" className="flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
+          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
                 <BarChart3 className="h-5 w-5" />
@@ -60,7 +138,7 @@ export function LandingBentoGrid() {
 
             {/* Widget UI: Circulation Telemetry Bar Chart */}
             <CardContent className="p-0 pt-6">
-              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 space-y-3 shadow-2xs">
+              <div className="bar-chart-container p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 space-y-3 shadow-2xs">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                     <Calendar className="h-3.5 w-3.5 text-brand-blue" />
@@ -84,7 +162,7 @@ export function LandingBentoGrid() {
                     <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end group">
                       <div
                         style={{ height: bar.val }}
-                        className="w-full rounded-t-md bg-gradient-to-t from-brand-blue to-blue-600 group-hover:brightness-110 transition-all"
+                        className="bar-chart-bar w-full rounded-t-md bg-gradient-to-t from-brand-blue to-blue-600 group-hover:brightness-110 transition-all origin-bottom will-change-transform"
                       />
                       <span className="text-[9px] font-mono text-muted-foreground">{bar.month}</span>
                     </div>
@@ -95,7 +173,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 2: Faculty & Department Leads */}
-          <Card data-aos="fade-up" data-aos-delay="200" className="flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
+          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
                 <TrendingUp className="h-5 w-5" />
@@ -130,7 +208,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 3: Catalog Compliance & Policy Stack */}
-          <Card data-aos="fade-up" data-aos-delay="300" className="flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
+          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
                 <ShieldCheck className="h-5 w-5" />
@@ -167,7 +245,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 4: All Book & Patron Telemetry (Col-span 2) */}
-          <Card data-aos="fade-up" data-aos-delay="400" className="md:col-span-2 flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
+          <Card className="bento-card md:col-span-2 flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold">
                 <Users className="h-5 w-5" />
@@ -180,13 +258,13 @@ export function LandingBentoGrid() {
 
             {/* Widget UI: Patron Table & Category Loan Rates */}
             <CardContent className="p-0 pt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 border border-border/80 rounded-2xl bg-slate-50/60 dark:bg-zinc-900/60 overflow-hidden shadow-2xs">
+              <div className="lg:col-span-2 border border-border/80 rounded-2xl bg-slate-50/60 dark:bg-zinc-900/60 overflow-hidden overflow-x-auto shadow-2xs">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-border/70 hover:bg-transparent bg-muted/40">
                       <TableHead className="py-2 px-3 text-xs font-semibold">Book Title</TableHead>
                       <TableHead className="py-2 px-3 text-xs font-semibold">Patron</TableHead>
-                      <TableHead className="py-2 px-3 text-xs font-semibold">Category</TableHead>
+                      <TableHead className="py-2 px-3 text-xs font-semibold hidden sm:table-cell">Category</TableHead>
                       <TableHead className="py-2 px-3 text-xs text-right font-semibold">Status</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -199,7 +277,7 @@ export function LandingBentoGrid() {
                       <TableRow key={idx} className="hover:bg-accent/50 text-xs border-b border-border/50 last:border-0">
                         <TableCell className="py-2.5 px-3 font-bold text-foreground">{row.name}</TableCell>
                         <TableCell className="py-2.5 px-3 text-muted-foreground">{row.patron}</TableCell>
-                        <TableCell className="py-2.5 px-3 text-muted-foreground">{row.cat}</TableCell>
+                        <TableCell className="py-2.5 px-3 text-muted-foreground hidden sm:table-cell">{row.cat}</TableCell>
                         <TableCell className="py-2.5 px-3 text-right font-mono font-bold text-brand-blue">{row.status}</TableCell>
                       </TableRow>
                     ))}
@@ -207,7 +285,7 @@ export function LandingBentoGrid() {
                 </Table>
               </div>
 
-              {/* Side Chart: Category Loan Rates using Shadcn Progress */}
+              {/* Side Chart: Category Loan Rates using Progress */}
               <div className="border border-border/80 rounded-2xl bg-slate-50/60 dark:bg-zinc-900/60 p-3.5 space-y-3 flex flex-col justify-between shadow-2xs">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="font-bold text-foreground">Category Loans</span>
@@ -247,7 +325,7 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 5: Students & Borrowers */}
-          <Card data-aos="fade-up" data-aos-delay="500" className="flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-spring hover-scale-card">
+          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
             <CardHeader className="p-0 space-y-2">
               <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
                 <UserCheck className="h-5 w-5" />

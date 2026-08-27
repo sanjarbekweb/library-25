@@ -1,6 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { HelpCircle, Sparkles } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import {
   Accordion,
   AccordionItem,
@@ -8,6 +12,10 @@ import {
   AccordionPanel,
 } from "@/components/animate-ui/components/headless/accordion";
 import { useLanguage } from "@/components/providers/language-provider";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const FAQS_EN = [
   {
@@ -96,6 +104,7 @@ const FAQS_RU = [
 export function LandingFaq() {
   const { language } = useLanguage();
   const faqs = language === "uz" ? FAQS_UZ : language === "ru" ? FAQS_RU : FAQS_EN;
+  const sectionRef = useRef<HTMLElement>(null);
 
   const badgeText = language === "uz" ? "Ko'p Beriladigan Savollar" : language === "ru" ? "Часто задаваемые вопросы" : "Frequently Asked Questions";
   const sectionTitle = language === "uz" ? "Barcha Muhim Savollarga Javoblar" : language === "ru" ? "Все, что вам нужно знать" : "Everything You Need to Know";
@@ -105,11 +114,63 @@ export function LandingFaq() {
     ? "Ответы на популярные вопросы о правилах выдачи, бронировании и работе с библиотекой."
     : "Got questions about borrowing policies, circulation desk workflows, or account management? Here are the answers.";
 
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions as { reduceMotion: boolean };
+
+          if (reduceMotion) {
+            gsap.set([".faq-header", ".faq-card"], {
+              autoAlpha: 1,
+              y: 0,
+            });
+            return;
+          }
+
+          gsap.from(".faq-header", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 82%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 30,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+
+          gsap.from(".faq-card", {
+            scrollTrigger: {
+              trigger: ".faq-card",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 35,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        }
+      );
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section id="faq" className="py-20 bg-slate-50/70 dark:bg-zinc-950/60 border-b border-border/80">
+    <section
+      id="faq"
+      ref={sectionRef}
+      className="py-20 bg-slate-50/70 dark:bg-zinc-950/60 border-b border-border/80 overflow-hidden"
+    >
       <div className="container max-w-4xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
-        <div data-aos="fade-up" className="text-center space-y-3">
+        <div className="faq-header text-center space-y-3 will-change-transform">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
             <Sparkles className="h-3.5 w-3.5" />
             {badgeText}
@@ -123,7 +184,7 @@ export function LandingFaq() {
         </div>
 
         {/* Headless Animated Accordion */}
-        <div data-aos="fade-up" data-aos-delay="150" className="rounded-3xl border border-border/90 bg-card p-6 sm:p-8 shadow-xs">
+        <div className="faq-card rounded-3xl border border-border/90 bg-card p-6 sm:p-8 shadow-xs will-change-transform">
           <Accordion className="divide-y divide-border/60">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} className="py-2 first:pt-0 last:pb-0">

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   BookOpen,
   PlusCircle,
@@ -62,12 +63,17 @@ const CATEGORY_PRESETS = [
 ];
 
 export function BookManagementConsole({ initialBooks }: BookManagementConsoleProps) {
+  const router = useRouter();
   const { t, language } = useLanguage();
   const [books, setBooks] = useState<ManageableBookItem[]>(initialBooks);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [categorySearchQuery, setCategorySearchQuery] = useState("");
   const [expandedBookId, setExpandedBookId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setBooks(initialBooks);
+  }, [initialBooks]);
 
   const availableCategories = Array.from(
     new Set([...CATEGORY_PRESETS, ...books.map((b) => b.category).filter(Boolean)])
@@ -171,7 +177,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
     setModalSuccess(msg);
     toast.success(msg);
     
-    // Reset form after short delay
+    // Reset form and refresh server state without full page reload
     setTimeout(() => {
       setIsCreateModalOpen(false);
       setTitle("");
@@ -180,8 +186,8 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
       setDescription("");
       setCoverImageUrl("");
       setModalSuccess(null);
-      window.location.reload();
-    }, 1200);
+      router.refresh();
+    }, 800);
   };
 
   // Submit adding physical copy
@@ -215,8 +221,8 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
       setSelectedBookForCopy(null);
       setCustomBarcode("");
       setModalSuccess(null);
-      window.location.reload();
-    }, 1000);
+      router.refresh();
+    }, 600);
   };
 
   return (

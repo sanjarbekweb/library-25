@@ -44,15 +44,17 @@ export function SearchHeader({
 }: SearchHeaderProps) {
   const { t } = useLanguage();
   const effectivePlaceholder = placeholder || t("searchPlaceholder");
+  const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
   const [searchTerm, setSearchTerm] = useState(initialValue);
   const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  if (initialValue !== prevInitialValue) {
+    setPrevInitialValue(initialValue);
     setSearchTerm(initialValue);
     setDebouncedQuery(initialValue);
-  }, [initialValue]);
+  }
 
 
   // Debounce query string change by 300ms
@@ -75,7 +77,7 @@ export function SearchHeader({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // TanStack React Query calling /api/search
+  // TanStack React Query calling /api/search with 60s stale time caching
   const { data, isLoading, isError } = useQuery<SearchApiResponse>({
     queryKey: ["search-catalog", debouncedQuery],
     queryFn: async () => {
@@ -85,6 +87,8 @@ export function SearchHeader({
       return res.json();
     },
     enabled: debouncedQuery.length > 0,
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
 
   const hits = data?.data?.hits ?? [];

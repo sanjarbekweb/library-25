@@ -10,7 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 interface TestimonialItem {
@@ -92,18 +92,60 @@ export function LandingTestimonials() {
 
   useGSAP(
     () => {
-      if (!slideRef.current || !containerRef.current) return;
+      const mm = gsap.matchMedia();
 
-      gsap.to(slideRef.current, {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          scrub: 1.2,
+      mm.add(
+        {
+          isDesktop: "(min-width: 1024px)",
+          isMobile: "(max-width: 1023px)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
         },
-        x: "-45%",
-        ease: "none",
-      });
+        (context) => {
+          const { isDesktop, reduceMotion } = context.conditions as {
+            isDesktop: boolean;
+            isMobile: boolean;
+            reduceMotion: boolean;
+          };
+
+          if (reduceMotion) {
+            gsap.set([".testimonials-header", slideRef.current], {
+              autoAlpha: 1,
+              y: 0,
+              x: 0,
+            });
+            return;
+          }
+
+          // Header reveal
+          gsap.from(".testimonials-header", {
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 82%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 30,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+
+          // Horizontal scroll scrub for desktop & tablet
+          if (slideRef.current && containerRef.current) {
+            const shiftAmount = isDesktop ? "-40%" : "-60%";
+
+            gsap.to(slideRef.current, {
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "clamp(top 85%)",
+                end: "clamp(bottom 15%)",
+                scrub: 1.2,
+              },
+              x: shiftAmount,
+              ease: "none",
+            });
+          }
+        }
+      );
     },
     { scope: containerRef }
   );
@@ -119,7 +161,7 @@ export function LandingTestimonials() {
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12 relative z-10">
         {/* Section Header */}
-        <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
+        <div className="testimonials-header text-center space-y-3 max-w-2xl mx-auto will-change-transform">
           <Badge variant="outline" className="px-3 py-1 font-mono text-xs border-border/80 bg-card">
             <Sparkles className="h-3 w-3 mr-1 text-brand-blue" />
             Library Stories
@@ -141,7 +183,7 @@ export function LandingTestimonials() {
             {TESTIMONIALS.map((item, idx) => (
               <Card
                 key={idx}
-                className="w-[320px] sm:w-[380px] lg:w-[420px] p-7 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-6 hover-scale-card shrink-0 transition-transform duration-300"
+                className="w-[320px] sm:w-[380px] lg:w-[420px] p-7 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-6 shrink-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform"
               >
                 <CardHeader className="p-0 space-y-4">
                   <div className="flex items-center justify-between">

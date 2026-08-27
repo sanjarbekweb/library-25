@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import {
@@ -15,14 +15,22 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { submitTelegramContactAction } from "@/app/actions/contact-actions";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
+
 export function LandingContact() {
   const { user, isLoaded } = useUser();
+  const sectionRef = useRef<HTMLElement>(null);
 
   const [name, setName] = useState("");
   const [emailOrHandle, setEmailOrHandle] = useState("");
@@ -48,6 +56,54 @@ export function LandingContact() {
       }
     }
   }, [isLoaded, user]);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions as { reduceMotion: boolean };
+
+          if (reduceMotion) {
+            gsap.set([".contact-header", ".contact-card"], {
+              autoAlpha: 1,
+              y: 0,
+            });
+            return;
+          }
+
+          gsap.from(".contact-header", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 82%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 30,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+
+          gsap.from(".contact-card", {
+            scrollTrigger: {
+              trigger: ".contact-card",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 35,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        }
+      );
+    },
+    { scope: sectionRef }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,14 +155,18 @@ export function LandingContact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 relative overflow-hidden border-b border-border/80">
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 relative overflow-hidden border-b border-border/80"
+    >
       {/* Background Decorative Blur Highlights */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none z-0" />
       <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none z-0" />
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-12">
         {/* Section Header */}
-        <div data-aos="fade-up" className="text-center space-y-4 max-w-2xl mx-auto">
+        <div className="contact-header text-center space-y-4 max-w-2xl mx-auto will-change-transform">
           <Badge variant="outline" className="px-3.5 py-1 font-mono text-xs gap-1.5 border-border/80 bg-card text-foreground">
             <Bot className="h-3.5 w-3.5 text-brand-blue" />
             <span>Direct Telegram Channel</span>
@@ -120,7 +180,7 @@ export function LandingContact() {
         </div>
 
         {/* Contact Form Container */}
-        <div data-aos="fade-up" data-aos-delay="100" className="max-w-3xl mx-auto">
+        <div className="contact-card max-w-3xl mx-auto will-change-transform">
           <Card className="rounded-3xl border border-border/90 bg-card shadow-xs overflow-hidden">
             <CardContent className="p-6 sm:p-10 space-y-8">
               {isSuccess ? (
