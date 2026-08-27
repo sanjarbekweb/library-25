@@ -9,9 +9,7 @@ import {
   TrendingUp,
   UserCheck,
   Calendar,
-  CheckCircle2,
   Clock,
-  ArrowRight,
   BookOpen,
   Sparkles,
 } from "lucide-react";
@@ -19,7 +17,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { UserPresenceAvatar } from "@/components/animate-ui/components/community/user-presence-avatar";
 import {
@@ -106,7 +103,7 @@ export function LandingBentoGrid() {
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16 relative z-10">
         {/* Section Header */}
         <div className="bento-header text-center space-y-3.5 max-w-2xl mx-auto will-change-transform">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-border/80 bg-card/80 text-muted-foreground backdrop-blur-xs text-xs font-mono font-medium shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/80 text-foreground text-xs font-semibold shadow-2xs">
             <Sparkles className="h-3.5 w-3.5 text-brand-blue" />
             <span>Circulation Infrastructure</span>
           </div>
@@ -123,7 +120,7 @@ export function LandingBentoGrid() {
           {/* Card 1: Librarians & Desk Staff */}
           <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-brand-blue/40 will-change-transform">
             <CardHeader className="p-0 space-y-2.5">
-              <div className="h-11 w-11 rounded-2xl bg-blue-500/10 text-brand-blue border border-blue-500/20 flex items-center justify-center font-bold shadow-2xs">
+              <div className="h-11 w-11 rounded-2xl bg-blue-500/10 text-brand-blue flex items-center justify-center font-bold shadow-2xs">
                 <BarChart3 className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold font-display text-foreground">
@@ -142,7 +139,7 @@ export function LandingBentoGrid() {
                     <Calendar className="h-3.5 w-3.5 text-brand-blue" />
                     <span>Circulation Volume</span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue">
                     +18% Peak
                   </span>
                 </div>
@@ -165,7 +162,7 @@ export function LandingBentoGrid() {
                           title={`${bar.month}: ${bar.val} checkouts`}
                         />
                       </div>
-                      <span className="text-[10px] font-mono font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                      <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                         {bar.month}
                       </span>
                     </div>
@@ -178,7 +175,7 @@ export function LandingBentoGrid() {
           {/* Card 2: Faculty & Department Leads */}
           <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-brand-blue/40 will-change-transform">
             <CardHeader className="p-0 space-y-2.5">
-              <div className="h-11 w-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold shadow-2xs">
+              <div className="h-11 w-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shadow-2xs">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold font-display text-foreground">
@@ -201,16 +198,16 @@ export function LandingBentoGrid() {
                   onClick={() => setSelectedBadge(item.title)}
                   className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-200 flex items-center justify-between cursor-pointer ${
                     selectedBadge === item.title
-                      ? "bg-brand-blue text-white border-brand-blue shadow-xs shadow-brand-blue/20"
-                      : "bg-slate-50/90 dark:bg-zinc-950/70 text-foreground border-border/80 hover:bg-accent/70 hover:border-border"
+                      ? "bg-brand-blue text-white border-transparent shadow-xs shadow-brand-blue/20"
+                      : "bg-slate-50/90 dark:bg-zinc-950/70 text-foreground border-border/80 hover:bg-accent/70"
                   }`}
                 >
-                  <span className="font-medium">{item.title}</span>
+                  <span className="font-semibold">{item.title}</span>
                   <span
-                    className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
                       selectedBadge === item.title
-                        ? "bg-white/20 text-white font-bold"
-                        : "bg-muted text-muted-foreground font-semibold"
+                        ? "bg-white/20 text-white"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {item.metric}
@@ -223,7 +220,7 @@ export function LandingBentoGrid() {
           {/* Card 3: Catalog Compliance & Policy Stack */}
           <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-500/40 will-change-transform">
             <CardHeader className="p-0 space-y-2.5">
-              <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold shadow-2xs">
+              <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shadow-2xs">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold font-display text-foreground">
@@ -242,10 +239,10 @@ export function LandingBentoGrid() {
                     <FileText className="h-4 w-4 text-emerald-500 shrink-0" />
                     <div>
                       <div className="font-bold">MARC21 Metadata Schema</div>
-                      <div className="text-[10px] text-muted-foreground font-normal">OPAC &bull; Z39.50 compliant</div>
+                      <div className="text-[11px] text-muted-foreground font-normal">OPAC &bull; Z39.50 compliant</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400">
                     Verified
                   </span>
                 </div>
@@ -255,10 +252,10 @@ export function LandingBentoGrid() {
                     <Clock className="h-4 w-4 text-brand-blue shrink-0" />
                     <div>
                       <div className="font-bold">14-Day Physical Loan Policy</div>
-                      <div className="text-[10px] text-muted-foreground font-normal">Auto fine &bull; Online renewal</div>
+                      <div className="text-[11px] text-muted-foreground font-normal">Auto fine &bull; Online renewal</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-brand-blue border border-blue-500/20">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400">
                     Active
                   </span>
                 </div>
@@ -269,7 +266,7 @@ export function LandingBentoGrid() {
           {/* Card 4: All Book & Patron Telemetry (Col-span 2) */}
           <Card className="bento-card md:col-span-2 flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-purple-500/40 will-change-transform">
             <CardHeader className="p-0 space-y-2.5">
-              <div className="h-11 w-11 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 flex items-center justify-center font-bold shadow-2xs">
+              <div className="h-11 w-11 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold shadow-2xs">
                 <Users className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold font-display text-foreground">
@@ -304,12 +301,12 @@ export function LandingBentoGrid() {
                         <TableCell className="py-3 px-3.5 text-muted-foreground hidden sm:table-cell">{row.cat}</TableCell>
                         <TableCell className="py-3 px-3.5 text-right">
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                               row.type === "emerald"
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
                                 : row.type === "blue"
-                                ? "bg-blue-500/10 text-brand-blue border border-blue-500/20"
-                                : "bg-muted text-muted-foreground border border-border/70"
+                                ? "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
+                                : "bg-muted text-muted-foreground"
                             }`}
                           >
                             {row.status}
@@ -330,9 +327,9 @@ export function LandingBentoGrid() {
                       <button
                         key={f}
                         onClick={() => setActiveFilter(f)}
-                        className={`px-2 py-0.5 text-[10px] rounded-md font-mono transition-all cursor-pointer ${
+                        className={`px-2 py-0.5 text-xs rounded-md font-medium transition-all cursor-pointer ${
                           activeFilter === f
-                            ? "bg-brand-blue text-white font-bold shadow-2xs"
+                            ? "bg-brand-blue text-white font-semibold shadow-2xs"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -350,9 +347,9 @@ export function LandingBentoGrid() {
                     { label: "Literature", val: 45 },
                   ].map((item, i) => (
                     <div key={i} className="space-y-1">
-                      <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+                      <div className="flex justify-between text-xs text-muted-foreground">
                         <span className="font-medium text-foreground/80">{item.label}</span>
-                        <span className="font-bold text-brand-blue">{item.val}%</span>
+                        <span className="font-semibold text-brand-blue">{item.val}%</span>
                       </div>
                       <Progress value={item.val} className="h-1.5" />
                     </div>
@@ -365,7 +362,7 @@ export function LandingBentoGrid() {
           {/* Card 5: Students & Borrowers */}
           <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-teal-500/40 will-change-transform">
             <CardHeader className="p-0 space-y-2.5">
-              <div className="h-11 w-11 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center font-bold shadow-2xs">
+              <div className="h-11 w-11 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold shadow-2xs">
                 <UserCheck className="h-5 w-5" />
               </div>
               <CardTitle className="text-xl font-bold font-display text-foreground">
@@ -389,7 +386,7 @@ export function LandingBentoGrid() {
                       </span>
                       18 Active Holds
                     </div>
-                    <div className="text-[10px] text-muted-foreground font-mono">4 Ready at Desk</div>
+                    <div className="text-xs text-muted-foreground font-medium">4 Ready at Desk</div>
                   </div>
                 </div>
 
@@ -399,7 +396,7 @@ export function LandingBentoGrid() {
                     <BookOpen className="h-3.5 w-3.5 text-brand-blue shrink-0" />
                     <span className="truncate max-w-[140px] font-semibold">Clean Architecture</span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full">
                     Ready
                   </span>
                 </div>
