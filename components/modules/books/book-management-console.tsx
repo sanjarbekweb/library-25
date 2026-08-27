@@ -467,7 +467,7 @@ export function BookManagementConsole({ initialBooks }: BookManagementConsolePro
                             }}
                             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted hover:bg-accent text-foreground transition-colors"
                           >
-                            <span>{b.totalCopies} copies</span>
+                            <span>{b.totalCopies}</span>
                             {isExpanded ? (
                               <ChevronDown className="h-3 w-3 text-brand-blue" />
                             ) : (
