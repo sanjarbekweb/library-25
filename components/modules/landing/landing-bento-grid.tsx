@@ -9,6 +9,11 @@ import {
   TrendingUp,
   UserCheck,
   Calendar,
+  CheckCircle2,
+  Clock,
+  ArrowRight,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -77,24 +82,10 @@ export function LandingBentoGrid() {
               toggleActions: "play none none none",
             },
             autoAlpha: 0,
-            y: 40,
-            duration: 0.8,
-            stagger: 0.12,
+            y: 35,
+            duration: 0.7,
+            stagger: 0.1,
             ease: "power3.out",
-          });
-
-          // Telemetry bars upward expansion
-          gsap.from(".bar-chart-bar", {
-            scrollTrigger: {
-              trigger: ".bar-chart-container",
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-            scaleY: 0,
-            transformOrigin: "bottom",
-            duration: 0.8,
-            stagger: 0.08,
-            ease: "back.out(1.2)",
           });
         }
       );
@@ -106,14 +97,19 @@ export function LandingBentoGrid() {
     <section
       id="features"
       ref={sectionRef}
-      className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80 overflow-hidden"
+      className="py-20 lg:py-24 bg-slate-50/70 dark:bg-[#07090D] border-b border-border/80 overflow-hidden relative transition-colors duration-300"
     >
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+      {/* Background Subtle Ambiance */}
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-brand-blue/5 dark:bg-brand-blue/10 rounded-full blur-[130px] pointer-events-none -z-0" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none -z-0" />
+
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16 relative z-10">
         {/* Section Header */}
-        <div className="bento-header text-center space-y-3 max-w-2xl mx-auto will-change-transform">
-          <Badge variant="outline" className="px-3.5 py-1 font-mono text-xs border-border/80 bg-card/80 text-muted-foreground backdrop-blur-xs">
-            Circulation Infrastructure
-          </Badge>
+        <div className="bento-header text-center space-y-3.5 max-w-2xl mx-auto will-change-transform">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-border/80 bg-card/80 text-muted-foreground backdrop-blur-xs text-xs font-mono font-medium shadow-2xs">
+            <Sparkles className="h-3.5 w-3.5 text-brand-blue" />
+            <span>Circulation Infrastructure</span>
+          </div>
           <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-foreground tracking-tight">
             Built for Modern Libraries
           </h2>
@@ -123,48 +119,55 @@ export function LandingBentoGrid() {
         </div>
 
         {/* Bento Grid Layout */}
-        <div className="bento-grid-wrapper grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bento-grid-wrapper grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
           {/* Card 1: Librarians & Desk Staff */}
-          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
-            <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
+          <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-brand-blue/40 will-change-transform">
+            <CardHeader className="p-0 space-y-2.5">
+              <div className="h-11 w-11 rounded-2xl bg-blue-500/10 text-brand-blue border border-blue-500/20 flex items-center justify-center font-bold shadow-2xs">
                 <BarChart3 className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-bold">For Librarians &amp; Desk Staff</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold font-display text-foreground">
+                For Librarians &amp; Desk Staff
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 A unified cloud console for book acquisitions, cataloging, hold queues, and desk checkouts.
               </CardDescription>
             </CardHeader>
 
             {/* Widget UI: Circulation Telemetry Bar Chart */}
             <CardContent className="p-0 pt-6">
-              <div className="bar-chart-container p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 space-y-3 shadow-2xs">
+              <div className="bar-chart-container p-4 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 border border-border/80 space-y-3.5 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                     <Calendar className="h-3.5 w-3.5 text-brand-blue" />
-                    Circulation Volume
+                    <span>Circulation Volume</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+                    +18% Peak
                   </span>
-                  <Badge variant="blue" className="text-[10px] font-mono px-2 py-0.5">
-                    Monthly
-                  </Badge>
                 </div>
 
                 {/* Monthly Bar Chart (Jan - Jun) */}
-                <div className="grid grid-cols-6 gap-2 items-end h-24 pt-2">
+                <div className="grid grid-cols-6 gap-2.5 items-end h-28 pt-2">
                   {[
-                    { month: "Jan", val: "65%" },
-                    { month: "Feb", val: "85%" },
-                    { month: "Mar", val: "45%" },
-                    { month: "Apr", val: "90%" },
-                    { month: "May", val: "75%" },
-                    { month: "Jun", val: "95%" },
+                    { month: "Jan", height: "65%", val: "650" },
+                    { month: "Feb", height: "85%", val: "850" },
+                    { month: "Mar", height: "50%", val: "500" },
+                    { month: "Apr", height: "92%", val: "920" },
+                    { month: "May", height: "78%", val: "780" },
+                    { month: "Jun", height: "98%", val: "980" },
                   ].map((bar, idx) => (
-                    <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end group">
-                      <div
-                        style={{ height: bar.val }}
-                        className="bar-chart-bar w-full rounded-t-md bg-gradient-to-t from-brand-blue to-blue-600 group-hover:brightness-110 transition-all origin-bottom will-change-transform"
-                      />
-                      <span className="text-[9px] font-mono text-muted-foreground">{bar.month}</span>
+                    <div key={idx} className="flex flex-col items-center gap-1.5 h-full justify-end group cursor-default">
+                      <div className="w-full flex justify-center items-end h-full">
+                        <div
+                          style={{ height: bar.height }}
+                          className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-brand-blue to-indigo-500 shadow-xs group-hover:brightness-115 group-hover:shadow-md transition-all duration-300"
+                          title={`${bar.month}: ${bar.val} checkouts`}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                        {bar.month}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -173,13 +176,15 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 2: Faculty & Department Leads */}
-          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
-            <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold">
+          <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-brand-blue/40 will-change-transform">
+            <CardHeader className="p-0 space-y-2.5">
+              <div className="h-11 w-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold shadow-2xs">
                 <TrendingUp className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-bold">For Faculty &amp; Academic Leads</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold font-display text-foreground">
+                For Faculty &amp; Academic Leads
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 Track course textbook demands, borrowing trends, and physical copy availability in real time.
               </CardDescription>
             </CardHeader>
@@ -187,98 +192,129 @@ export function LandingBentoGrid() {
             {/* Widget UI: Interactive Dynamic Badges */}
             <CardContent className="p-0 pt-6 space-y-2.5">
               {[
-                "Course Reserve Telemetry",
-                "Acquisition Priorities",
-                "Real-Time Shelf Stock",
-              ].map((badgeText) => (
+                { title: "Course Reserve Telemetry", metric: "48 Active Titles" },
+                { title: "Acquisition Priorities", metric: "14 High Demand" },
+                { title: "Real-Time Shelf Stock", metric: "96% Available" },
+              ].map((item) => (
                 <button
-                  key={badgeText}
-                  onClick={() => setSelectedBadge(badgeText)}
-                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-300 ease-out flex items-center justify-between cursor-pointer ${
-                    selectedBadge === badgeText
-                      ? "bg-brand-blue text-white border-brand-blue shadow-xs"
-                      : "bg-slate-50/80 dark:bg-zinc-900/80 text-foreground border-border/70 hover:bg-accent"
+                  key={item.title}
+                  onClick={() => setSelectedBadge(item.title)}
+                  className={`w-full text-left p-3 rounded-2xl border text-xs font-semibold transition-all duration-200 flex items-center justify-between cursor-pointer ${
+                    selectedBadge === item.title
+                      ? "bg-brand-blue text-white border-brand-blue shadow-xs shadow-brand-blue/20"
+                      : "bg-slate-50/90 dark:bg-zinc-950/70 text-foreground border-border/80 hover:bg-accent/70 hover:border-border"
                   }`}
                 >
-                  <span>{badgeText}</span>
-                  <span className="text-[10px] opacity-80">&rarr;</span>
+                  <span className="font-medium">{item.title}</span>
+                  <span
+                    className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                      selectedBadge === item.title
+                        ? "bg-white/20 text-white font-bold"
+                        : "bg-muted text-muted-foreground font-semibold"
+                    }`}
+                  >
+                    {item.metric}
+                  </span>
                 </button>
               ))}
             </CardContent>
           </Card>
 
           {/* Card 3: Catalog Compliance & Policy Stack */}
-          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
-            <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+          <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-500/40 will-change-transform">
+            <CardHeader className="p-0 space-y-2.5">
+              <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold shadow-2xs">
                 <ShieldCheck className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-bold">Catalog &amp; Loan Policies</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold font-display text-foreground">
+                Catalog &amp; Loan Policies
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 Manage MARC21 metadata standards, physical copy barcodes, and automated loan policies.
               </CardDescription>
             </CardHeader>
 
             {/* Widget UI: Document Stack Review */}
             <CardContent className="p-0 pt-6">
-              <div className="relative space-y-2">
-                <div className="p-3 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 shadow-2xs flex items-center justify-between">
+              <div className="space-y-2.5">
+                <div className="p-3.5 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 border border-border/80 shadow-2xs flex items-center justify-between transition-colors hover:border-emerald-500/30">
                   <div className="flex items-center gap-2.5 text-xs font-semibold text-foreground">
-                    <FileText className="h-4 w-4 text-brand-blue" />
-                    <span>MARC21 Metadata Schema</span>
+                    <FileText className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <div>
+                      <div className="font-bold">MARC21 Metadata Schema</div>
+                      <div className="text-[10px] text-muted-foreground font-normal">OPAC &bull; Z39.50 compliant</div>
+                    </div>
                   </div>
-                  <Badge variant="blue" className="text-[10px] font-mono">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                     Verified
-                  </Badge>
+                  </span>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50/50 dark:bg-zinc-900/50 border border-border/70 text-xs flex items-center justify-between opacity-80">
-                  <div className="flex items-center gap-2.5 text-foreground">
-                    <FileText className="h-4 w-4 text-brand-blue" />
-                    <span>Physical Copy Loan Policy</span>
+
+                <div className="p-3.5 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 border border-border/80 shadow-2xs flex items-center justify-between transition-colors hover:border-brand-blue/30">
+                  <div className="flex items-center gap-2.5 text-xs font-semibold text-foreground">
+                    <Clock className="h-4 w-4 text-brand-blue shrink-0" />
+                    <div>
+                      <div className="font-bold">14-Day Physical Loan Policy</div>
+                      <div className="text-[10px] text-muted-foreground font-normal">Auto fine &bull; Online renewal</div>
+                    </div>
                   </div>
-                  <Badge variant="blue" className="text-[10px] font-mono">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-brand-blue border border-blue-500/20">
                     Active
-                  </Badge>
+                  </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Card 4: All Book & Patron Telemetry (Col-span 2) */}
-          <Card className="bento-card md:col-span-2 flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
-            <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold">
+          <Card className="bento-card md:col-span-2 flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-purple-500/40 will-change-transform">
+            <CardHeader className="p-0 space-y-2.5">
+              <div className="h-11 w-11 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 flex items-center justify-center font-bold shadow-2xs">
                 <Users className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-bold">Centralized Catalog &amp; Patron Telemetry</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold font-display text-foreground">
+                Centralized Catalog &amp; Patron Telemetry
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 ISBN records, physical copy holdings, student checkout histories, active holds, and fine audits.
               </CardDescription>
             </CardHeader>
 
             {/* Widget UI: Patron Table & Category Loan Rates */}
             <CardContent className="p-0 pt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 border border-border/80 rounded-2xl bg-slate-50/60 dark:bg-zinc-900/60 overflow-hidden overflow-x-auto shadow-2xs">
+              <div className="lg:col-span-2 border border-border/80 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 overflow-hidden overflow-x-auto shadow-2xs">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b border-border/70 hover:bg-transparent bg-muted/40">
-                      <TableHead className="py-2 px-3 text-xs font-semibold">Book Title</TableHead>
-                      <TableHead className="py-2 px-3 text-xs font-semibold">Patron</TableHead>
-                      <TableHead className="py-2 px-3 text-xs font-semibold hidden sm:table-cell">Category</TableHead>
-                      <TableHead className="py-2 px-3 text-xs text-right font-semibold">Status</TableHead>
+                    <TableRow className="border-b border-border/80 hover:bg-transparent bg-muted/30">
+                      <TableHead className="py-2.5 px-3.5 text-xs font-bold text-foreground">Book Title</TableHead>
+                      <TableHead className="py-2.5 px-3.5 text-xs font-semibold text-muted-foreground">Patron</TableHead>
+                      <TableHead className="py-2.5 px-3.5 text-xs font-semibold text-muted-foreground hidden sm:table-cell">Category</TableHead>
+                      <TableHead className="py-2.5 px-3.5 text-xs text-right font-bold text-foreground">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {[
-                      { name: "Clean Code", patron: "Albert Gray", cat: "CS / Software", status: "Active Loan" },
-                      { name: "Quantum Physics", patron: "Emma Russel", cat: "Physics", status: "Hold Ready" },
-                      { name: "Design Patterns", patron: "David Reed", cat: "Engineering", status: "Returned" },
+                      { name: "Clean Code", patron: "Albert Gray", cat: "CS / Software", status: "Active Loan", type: "blue" },
+                      { name: "Quantum Physics", patron: "Emma Russel", cat: "Physics", status: "Hold Ready", type: "emerald" },
+                      { name: "Design Patterns", patron: "David Reed", cat: "Engineering", status: "Returned", type: "muted" },
                     ].map((row, idx) => (
-                      <TableRow key={idx} className="hover:bg-accent/50 text-xs border-b border-border/50 last:border-0">
-                        <TableCell className="py-2.5 px-3 font-bold text-foreground">{row.name}</TableCell>
-                        <TableCell className="py-2.5 px-3 text-muted-foreground">{row.patron}</TableCell>
-                        <TableCell className="py-2.5 px-3 text-muted-foreground hidden sm:table-cell">{row.cat}</TableCell>
-                        <TableCell className="py-2.5 px-3 text-right font-mono font-bold text-brand-blue">{row.status}</TableCell>
+                      <TableRow key={idx} className="hover:bg-accent/40 text-xs border-b border-border/60 last:border-0 transition-colors">
+                        <TableCell className="py-3 px-3.5 font-bold text-foreground">{row.name}</TableCell>
+                        <TableCell className="py-3 px-3.5 text-muted-foreground">{row.patron}</TableCell>
+                        <TableCell className="py-3 px-3.5 text-muted-foreground hidden sm:table-cell">{row.cat}</TableCell>
+                        <TableCell className="py-3 px-3.5 text-right">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                              row.type === "emerald"
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                                : row.type === "blue"
+                                ? "bg-blue-500/10 text-brand-blue border border-blue-500/20"
+                                : "bg-muted text-muted-foreground border border-border/70"
+                            }`}
+                          >
+                            {row.status}
+                          </span>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -286,16 +322,18 @@ export function LandingBentoGrid() {
               </div>
 
               {/* Side Chart: Category Loan Rates using Progress */}
-              <div className="border border-border/80 rounded-2xl bg-slate-50/60 dark:bg-zinc-900/60 p-3.5 space-y-3 flex flex-col justify-between shadow-2xs">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-foreground">Category Loans</span>
-                  <div className="flex gap-1">
+              <div className="border border-border/80 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 p-4 space-y-3 flex flex-col justify-between shadow-2xs">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-foreground">Demand by Discipline</span>
+                  <div className="flex gap-1 bg-background/60 p-0.5 rounded-lg border border-border/70">
                     {(["Daily", "Weekly", "Monthly"] as const).map((f) => (
                       <button
                         key={f}
                         onClick={() => setActiveFilter(f)}
-                        className={`px-1.5 py-0.5 text-[9px] rounded-md font-mono cursor-pointer ${
-                          activeFilter === f ? "bg-brand-blue text-white font-bold" : "text-muted-foreground hover:bg-accent"
+                        className={`px-2 py-0.5 text-[10px] rounded-md font-mono transition-all cursor-pointer ${
+                          activeFilter === f
+                            ? "bg-brand-blue text-white font-bold shadow-2xs"
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
                         {f[0]}
@@ -304,17 +342,17 @@ export function LandingBentoGrid() {
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-1">
+                <div className="space-y-2.5 pt-1">
                   {[
                     { label: "Computer Science", val: 95 },
                     { label: "Engineering", val: 80 },
                     { label: "Physics & Math", val: 65 },
-                    { label: "Literature", val: 40 },
+                    { label: "Literature", val: 45 },
                   ].map((item, i) => (
                     <div key={i} className="space-y-1">
-                      <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
-                        <span>{item.label}</span>
-                        <span>{item.val}%</span>
+                      <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+                        <span className="font-medium text-foreground/80">{item.label}</span>
+                        <span className="font-bold text-brand-blue">{item.val}%</span>
                       </div>
                       <Progress value={item.val} className="h-1.5" />
                     </div>
@@ -325,27 +363,45 @@ export function LandingBentoGrid() {
           </Card>
 
           {/* Card 5: Students & Borrowers */}
-          <Card className="bento-card flex flex-col justify-between p-6 rounded-3xl border border-border/90 bg-card shadow-xs transition-transform duration-300 hover:-translate-y-1 hover:shadow-md will-change-transform">
-            <CardHeader className="p-0 space-y-2">
-              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+          <Card className="bento-card flex flex-col justify-between p-6 sm:p-7 rounded-3xl border border-border/80 bg-card/85 dark:bg-zinc-900/60 backdrop-blur-md shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-teal-500/40 will-change-transform">
+            <CardHeader className="p-0 space-y-2.5">
+              <div className="h-11 w-11 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center font-bold shadow-2xs">
                 <UserCheck className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-bold">For Students &amp; Borrowers</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-bold font-display text-foreground">
+                For Students &amp; Borrowers
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 Live campus reader presence, instant hold queues, and pickup notifications.
               </CardDescription>
             </CardHeader>
 
-            {/* Widget UI: Interactive User Presence Avatars */}
+            {/* Widget UI: Interactive User Presence & Pickup Card */}
             <CardContent className="p-0 pt-6 space-y-3">
-              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-zinc-900/80 border border-border/70 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
-                <UserPresenceAvatar size="sm" />
-                <div className="text-right shrink-0">
-                  <div className="text-xs font-bold text-emerald-500 flex items-center gap-1 justify-end">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    18 Active Holds
+              <div className="p-4 rounded-2xl bg-slate-50/90 dark:bg-zinc-950/70 border border-border/80 space-y-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <UserPresenceAvatar size="sm" />
+                  <div className="text-right">
+                    <div className="text-xs font-bold text-emerald-500 flex items-center gap-1.5 justify-end">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                      18 Active Holds
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-mono">4 Ready at Desk</div>
                   </div>
-                  <div className="text-[10px] text-muted-foreground font-mono">4 Ready for Pickup</div>
+                </div>
+
+                {/* Instant Pickup Notification Snippet */}
+                <div className="pt-2 border-t border-border/70 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-foreground font-medium">
+                    <BookOpen className="h-3.5 w-3.5 text-brand-blue shrink-0" />
+                    <span className="truncate max-w-[140px] font-semibold">Clean Architecture</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    Ready
+                  </span>
                 </div>
               </div>
             </CardContent>
