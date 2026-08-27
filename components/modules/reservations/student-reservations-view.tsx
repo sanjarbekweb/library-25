@@ -67,18 +67,14 @@ export function StudentReservationsView({ reservations }: StudentReservationsVie
           </h2>
 
           {activeReservations.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border/80 p-5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-muted/20">
-              <div className="flex items-center gap-3 text-left">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue/10 text-brand-blue shrink-0">
-                  <Clock className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{noHoldsText}</p>
-                  <p className="text-xs text-muted-foreground">{exploreCatalogSubtitle}</p>
-                </div>
-              </div>
-              <Link href="/catalog" className="shrink-0">
-                <button className="px-3.5 py-1.5 rounded-xl border border-border bg-card text-xs font-bold text-foreground hover:bg-accent transition-colors cursor-pointer shadow-2xs">
+            <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-card space-y-3">
+              <BookOpen className="h-8 w-8 text-muted-foreground/40 mx-auto" />
+              <p className="text-sm font-medium text-foreground">{noHoldsText}</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                {exploreCatalogSubtitle}
+              </p>
+              <Link href="/catalog">
+                <button className="text-xs font-bold text-brand-blue hover:underline pt-2 cursor-pointer inline-flex items-center gap-1">
                   {browseCatalogText}
                 </button>
               </Link>

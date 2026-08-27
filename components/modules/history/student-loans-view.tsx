@@ -157,13 +157,11 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
       )}
 
       {/* Section 1: Active Checkouts & Due Date Countdown */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-            <Clock className="h-5 w-5 text-brand-blue" />
-            {t("activeLoans")} ({activeLoans.length})
-          </h2>
-        </div>
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+        <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
+          <Clock className="h-5 w-5 text-brand-blue" />
+          {t("activeLoans")} ({activeLoans.length})
+        </h2>
 
         {activeLoans.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,7 +169,7 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
               <Card
                 key={loan.id}
                 className={cn(
-                  "border-border bg-card shadow-sm rounded-2xl overflow-hidden transition-all hover:border-border/80",
+                  "border-border bg-card shadow-xs rounded-2xl overflow-hidden transition-all hover:border-border/80",
                   loan.isOverdue && "border-destructive/40 ring-1 ring-destructive/30"
                 )}
               >
@@ -248,36 +246,34 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
             ))}
           </div>
         ) : (
-          <Card className="border-border bg-card shadow-sm rounded-2xl p-8 text-center">
-            <BookMarked className="h-10 w-10 mx-auto text-muted-foreground/50 mb-2" />
-            <h3 className="font-display font-bold text-base text-foreground">
+          <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-card space-y-3">
+            <BookMarked className="h-8 w-8 mx-auto text-muted-foreground/40" />
+            <h3 className="font-display font-bold text-sm text-foreground">
               {noActiveCheckoutsTitle}
             </h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
               {noActiveCheckoutsSubtitle}
             </p>
-            <div className="mt-4">
+            <div className="pt-1">
               <Link href="/catalog">
-                <Button size="sm" className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90">
+                <Button size="sm" className="rounded-full bg-brand-blue text-white hover:bg-brand-blue/90 text-xs font-semibold cursor-pointer">
                   {t("browseCatalog")}
                 </Button>
               </Link>
             </div>
-          </Card>
+          </div>
         )}
-      </div>
+      </section>
 
       {/* Section 2: Historical Returned Loans */}
-      <div className="space-y-4 pt-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-brand-blue" />
-            {t("returnedLoans")} ({historicalLoans.length})
-          </h2>
-        </div>
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+        <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
+          <CheckCircle2 className="h-5 w-5 text-brand-blue" />
+          {t("returnedLoans")} ({historicalLoans.length})
+        </h2>
 
         {historicalLoans.length > 0 ? (
-          <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-2xs">
             <Table>
               <TableHeader className="bg-muted/40">
                 <TableRow>
@@ -334,15 +330,15 @@ export function StudentLoansView({ overview }: StudentLoansViewProps) {
                 ))}
               </TableBody>
             </Table>
-          </Card>
+          </div>
         ) : (
-          <Card className="border-border bg-card shadow-sm rounded-2xl p-6 text-center">
+          <div className="rounded-2xl border border-dashed border-border p-6 text-center bg-card">
             <p className="text-xs text-muted-foreground italic">
               {language === "uz" ? "Qaytarilgan kitoblar tarixi hozircha bo'sh." : language === "ru" ? "История возвратов пока пуста." : "No historical returns logged yet. Your returned loans will be listed here."}
             </p>
-          </Card>
+          </div>
         )}
-      </div>
+      </section>
 
       {/* Submit Feedback Modal Dialog */}
       {selectedLoanForFeedback && (
