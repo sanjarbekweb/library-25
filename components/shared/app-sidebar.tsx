@@ -296,18 +296,29 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
                 })}
               </div>
             )}
+
+            {/* Preferences Group */}
+            <div className="pt-2 space-y-1">
+              {isCollapsed ? (
+                <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
+              ) : (
+                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
+                  {t("preferences")}
+                </p>
+              )}
+              {/* Mobile header always visible */}
+              <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
+                {t("preferences")}
+              </p>
+
+              <ThemeToggle isCollapsed={isCollapsed} />
+              <LanguageToggle isCollapsed={isCollapsed} />
+            </div>
           </nav>
         </div>
 
-        {/* Bottom Utility Controls & User Profile */}
-        <div className="space-y-2.5 border-t border-border/60 pt-3 mt-4">
-          {/* Utility Controls with Stationary Icons */}
-          <div className="flex flex-col gap-1 w-full">
-            <ThemeToggle isCollapsed={isCollapsed} />
-            <LanguageToggle isCollapsed={isCollapsed} />
-          </div>
-
-          {/* User Account Profile Card (Sign out accessible via UserButton modal) */}
+        {/* Bottom User Profile Section */}
+        <div className="mt-auto border-t border-border/60 pt-3">
           {isLoaded && isSignedIn ? (
             isCollapsed ? (
               <div className="hidden md:flex items-center justify-center py-1">
