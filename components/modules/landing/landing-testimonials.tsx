@@ -1,13 +1,20 @@
 "use client";
 
 import { useRef } from "react";
+import Image, { StaticImageData } from "next/image";
 import { Star, Quote, Sparkles } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+
+import avatar1 from "@/public/avatars/avatar-1.webp";
+import avatar2 from "@/public/avatars/avatar-2.webp";
+import avatar3 from "@/public/avatars/avatar-3.webp";
+import avatar4 from "@/public/avatars/avatar-4.webp";
+import avatar5 from "@/public/avatars/avatar-5.webp";
+import avatar6 from "@/public/avatars/avatar-6.webp";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -19,6 +26,7 @@ interface TestimonialItem {
   role: string;
   campus: string;
   avatar: string;
+  image: StaticImageData;
   bg: string;
   rating: string;
 }
@@ -31,6 +39,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "Head University Librarian",
     campus: "Central Campus Library",
     avatar: "BA",
+    image: avatar4,
     bg: "bg-brand-blue text-white",
     rating: "5.0",
   },
@@ -41,6 +50,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "Senior Student & Researcher",
     campus: "Faculty of Computer Science",
     avatar: "MA",
+    image: avatar1,
     bg: "bg-indigo-600 text-white",
     rating: "5.0",
   },
@@ -51,6 +61,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "Circulation Desk Assistant",
     campus: "Engineering Library Desk",
     avatar: "JN",
+    image: avatar6,
     bg: "bg-emerald-600 text-white",
     rating: "5.0",
   },
@@ -61,6 +72,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "Graduate Student",
     campus: "Department of Mathematics",
     avatar: "ER",
+    image: avatar3,
     bg: "bg-amber-600 text-white",
     rating: "5.0",
   },
@@ -71,6 +83,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "Dean of Academic Affairs",
     campus: "Campus Faculty Board",
     avatar: "AQ",
+    image: avatar5,
     bg: "bg-violet-600 text-white",
     rating: "5.0",
   },
@@ -81,6 +94,7 @@ const TESTIMONIALS: TestimonialItem[] = [
     role: "IT & Systems Administrator",
     campus: "Campus Digital Services",
     avatar: "SK",
+    image: avatar2,
     bg: "bg-cyan-600 text-white",
     rating: "5.0",
   },
@@ -209,11 +223,9 @@ export function LandingTestimonials() {
                 </CardHeader>
 
                 <CardContent className="p-0 flex items-center gap-3 border-t border-border/70 pt-4">
-                  <Avatar className="h-11 w-11 shrink-0 border border-border/60 shadow-2xs">
-                    <AvatarFallback className={`${item.bg} font-bold text-sm`}>
-                      {item.avatar}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="h-11 w-11 shrink-0 rounded-2xl overflow-hidden border border-border/60 shadow-2xs bg-muted">
+                    <Image src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
                   <div className="min-w-0">
                     <h3 className="font-display font-bold text-sm text-foreground truncate">
                       {item.name}

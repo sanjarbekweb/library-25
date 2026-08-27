@@ -1,27 +1,34 @@
 'use client';
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import Image, { StaticImageData } from 'next/image';
 import { cn } from '@/lib/utils';
+
+import avatar1 from '@/public/avatars/avatar-1.webp';
+import avatar2 from '@/public/avatars/avatar-2.webp';
+import avatar3 from '@/public/avatars/avatar-3.webp';
+import avatar4 from '@/public/avatars/avatar-4.webp';
+import avatar5 from '@/public/avatars/avatar-5.webp';
+import avatar6 from '@/public/avatars/avatar-6.webp';
 
 interface Reader {
   id: number;
   name: string;
   department: string;
   initials: string;
+  image: StaticImageData;
   bg: string;
-  textColor: string;
   online: boolean;
 }
 
 const READERS: Reader[] = [
   {
     id: 1,
-    name: 'Arham (CS & Software)',
+    name: 'Malika (CS & Software)',
     department: 'CS',
-    initials: 'AK',
+    initials: 'MA',
+    image: avatar1,
     bg: 'bg-blue-600',
-    textColor: 'text-white',
     online: true,
   },
   {
@@ -29,8 +36,8 @@ const READERS: Reader[] = [
     name: 'Sardor (Systems Admin)',
     department: 'Admin',
     initials: 'SK',
+    image: avatar2,
     bg: 'bg-indigo-600',
-    textColor: 'text-white',
     online: true,
   },
   {
@@ -38,8 +45,8 @@ const READERS: Reader[] = [
     name: 'Elena (Mathematics)',
     department: 'Math',
     initials: 'ER',
+    image: avatar3,
     bg: 'bg-emerald-600',
-    textColor: 'text-white',
     online: true,
   },
   {
@@ -47,8 +54,8 @@ const READERS: Reader[] = [
     name: 'Prof. Alisher (Faculty)',
     department: 'Faculty',
     initials: 'AQ',
+    image: avatar4,
     bg: 'bg-amber-600',
-    textColor: 'text-white',
     online: false,
   },
   {
@@ -56,8 +63,8 @@ const READERS: Reader[] = [
     name: 'David (Physics)',
     department: 'Physics',
     initials: 'DR',
+    image: avatar5,
     bg: 'bg-violet-600',
-    textColor: 'text-white',
     online: false,
   },
   {
@@ -65,8 +72,8 @@ const READERS: Reader[] = [
     name: 'Jasur (History)',
     department: 'History',
     initials: 'JK',
+    image: avatar6,
     bg: 'bg-rose-600',
-    textColor: 'text-white',
     online: false,
   },
 ];
@@ -90,7 +97,7 @@ export function UserPresenceAvatar({ className, size = 'default' }: UserPresence
   };
 
   const avatarSizeClass =
-    size === 'sm' ? 'w-8 h-8 text-[11px]' : 'w-9 sm:w-10 h-9 sm:h-10 text-xs sm:text-sm';
+    size === 'sm' ? 'w-8 h-8' : 'w-9 sm:w-10 h-9 sm:h-10';
   const pillPadding = size === 'sm' ? 'p-1' : 'p-1 sm:p-1.5';
 
   return (
@@ -111,16 +118,19 @@ export function UserPresenceAvatar({ className, size = 'default' }: UserPresence
               onMouseEnter={() => setActiveTooltip(reader.name)}
               onMouseLeave={() => setActiveTooltip(null)}
               className={cn(
-                'relative rounded-full flex items-center justify-center font-bold font-display shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background cursor-pointer shrink-0 select-none',
-                reader.bg,
-                reader.textColor,
+                'relative rounded-full flex items-center justify-center shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background cursor-pointer shrink-0 overflow-hidden select-none bg-muted',
                 avatarSizeClass
               )}
               title={`${reader.name} (Click to set offline)`}
             >
-              {reader.initials}
+              <Image
+                src={reader.image}
+                alt={reader.name}
+                className="w-full h-full object-cover"
+                priority
+              />
               {/* Online Green Beacon Dot */}
-              <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+              <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background z-10" />
             </button>
           ))}
         </div>
@@ -142,14 +152,16 @@ export function UserPresenceAvatar({ className, size = 'default' }: UserPresence
               onMouseEnter={() => setActiveTooltip(reader.name)}
               onMouseLeave={() => setActiveTooltip(null)}
               className={cn(
-                'relative rounded-full flex items-center justify-center font-bold font-display shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background grayscale hover:grayscale-0 cursor-pointer shrink-0 select-none opacity-85 hover:opacity-100',
-                reader.bg,
-                reader.textColor,
+                'relative rounded-full flex items-center justify-center shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background grayscale hover:grayscale-0 cursor-pointer shrink-0 overflow-hidden select-none opacity-85 hover:opacity-100 bg-muted',
                 avatarSizeClass
               )}
               title={`${reader.name} (Click to set online)`}
             >
-              {reader.initials}
+              <Image
+                src={reader.image}
+                alt={reader.name}
+                className="w-full h-full object-cover"
+              />
             </button>
           ))}
         </div>
