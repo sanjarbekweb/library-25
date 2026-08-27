@@ -88,6 +88,8 @@ model User {
   @@index([clerkId])
   @@index([email])
   @@index([role])
+  @@index([createdAt])
+  @@index([role, isActive])
   @@map("users")
 }
 
@@ -113,6 +115,7 @@ model Book {
   @@index([author])
   @@index([category])
   @@index([isbn])
+  @@index([createdAt])
   @@index([category, createdAt])
   @@map("books")
 }
@@ -167,7 +170,10 @@ model Loan {
   @@index([assistantId])
   @@index([status])
   @@index([dueDate])
+  @@index([borrowedAt])
+  @@index([returnedAt])
   @@index([studentId, status])
+  @@index([studentId, createdAt])
   @@index([status, dueDate])
   @@index([studentId, status, dueDate])
   @@map("loans")
@@ -217,7 +223,9 @@ model Reservation {
   @@index([studentId])
   @@index([status])
   @@index([expiresAt])
+  @@index([createdAt])
   @@index([studentId, status])
+  @@index([studentId, status, expiresAt])
   @@index([bookId, status])
   @@map("reservations")
 }
@@ -242,6 +250,8 @@ model Feedback {
   @@index([bookId])
   @@index([studentId])
   @@index([rating])
+  @@index([createdAt])
   @@index([bookId, isModerated])
+  @@index([isModerated, createdAt])
   @@map("feedbacks")
 }

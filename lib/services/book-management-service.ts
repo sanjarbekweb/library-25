@@ -7,7 +7,7 @@ import {
 } from "@/lib/schemas/book-management-schema";
 import { syncBookToSearchIndex } from "@/lib/search/sync";
 import { invalidateBookCache, invalidateCategoriesCache } from "@/lib/cache/invalidation";
-import { CopyStatus, LoanStatus, ReservationStatus } from "@prisma/client";
+import { CopyStatus } from "@prisma/client";
 
 export interface ManageableBookItem {
   id: string;
@@ -39,10 +39,24 @@ export interface ManageableBookItem {
 export async function getManageableBooks(): Promise<ManageableBookItem[]> {
   const books = await prisma.book.findMany({
     orderBy: { createdAt: "desc" },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      author: true,
+      isbn: true,
+      category: true,
+      description: true,
+      coverImageUrl: true,
+      publicationYear: true,
+      createdAt: true,
       copies: {
         orderBy: { barcode: "asc" },
-        include: {
+        select: {
+          id: true,
+          barcode: true,
+          condition: true,
+          status: true,
+          currentHolderId: true,
           currentHolder: {
             select: {
               firstName: true,
@@ -102,7 +116,7 @@ export async function getManageableBooks(): Promise<ManageableBookItem[]> {
 export async function createBookWithCopies(
   input: CreateBookInput,
   actorIdentifier: string,
-  actorRole: string
+  _actorRole?: string
 ) {
   const validated = CreateBookSchema.parse(input);
 
@@ -186,8 +200,8 @@ export async function createBookWithCopies(
     invalidateCategoriesCache();
 
     return result;
-  } catch (error: any) {
-    if (error?.code === "P2002") {
+  } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "P2002") {
       throw new Error(`A book record or barcode with that ISBN/Code already exists in library catalog.`);
     }
     throw error;
@@ -200,7 +214,7 @@ export async function createBookWithCopies(
 export async function addPhysicalCopy(
   input: AddBookCopyInput,
   actorIdentifier: string,
-  actorRole: string
+  _actorRole?: string
 ) {
   const validated = AddBookCopySchema.parse(input);
   const { bookId, barcode, condition } = validated;
@@ -266,8 +280,8 @@ export async function addPhysicalCopy(
     invalidateBookCache(bookId);
 
     return result;
-  } catch (error: any) {
-    if (error?.code === "P2002") {
+  } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "P2002") {
       throw new Error(`A physical book copy with that barcode already exists in library inventory.`);
     }
     throw error;

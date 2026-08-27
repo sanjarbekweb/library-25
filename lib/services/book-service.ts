@@ -245,29 +245,78 @@ export async function getCatalogBooks(
 
   const offset = (page - 1) * limit;
 
-  // When sorting by rating, aggregate across all matching catalog entries before paginating
+  // When sorting by rating, use database aggregation to rank book IDs before fetching the paginated slice
   if (sort === "rating") {
-    const [total, allBooks] = await Promise.all([
-      prisma.book.count({ where }),
-      prisma.book.findMany({
-        where,
-        include: {
-          copies: {
-            select: {
-              status: true,
-            },
-          },
-          feedbacks: {
-            where: { isModerated: false },
-            select: {
-              rating: true,
-            },
+    const total = await prisma.book.count({ where });
+
+    // Aggregate feedback average ratings by bookId
+    const feedbackRatings = await prisma.feedback.groupBy({
+      by: ["bookId"],
+      _avg: { rating: true },
+      _count: { rating: true },
+      where: { isModerated: false },
+    });
+
+    const ratingMap = new Map<string, { avg: number; count: number }>();
+    for (const fb of feedbackRatings) {
+      if (fb._avg.rating !== null) {
+        ratingMap.set(fb.bookId, {
+          avg: Number(fb._avg.rating.toFixed(1)),
+          count: fb._count.rating,
+        });
+      }
+    }
+
+    // Get matching book IDs & publication order
+    const matchingBooks = await prisma.book.findMany({
+      where,
+      select: { id: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Sort matching IDs by average rating descending
+    matchingBooks.sort((a, b) => {
+      const ratingA = ratingMap.get(a.id)?.avg ?? 0;
+      const ratingB = ratingMap.get(b.id)?.avg ?? 0;
+      return ratingB - ratingA;
+    });
+
+    const paginatedIds = matchingBooks.slice(offset, offset + limit).map((b) => b.id);
+
+    if (paginatedIds.length === 0) {
+      return {
+        books: [],
+        total,
+        page,
+        totalPages: Math.ceil(total / limit) || 1,
+      };
+    }
+
+    const pageBooks = await prisma.book.findMany({
+      where: { id: { in: paginatedIds } },
+      include: {
+        copies: {
+          select: {
+            id: true,
+            status: true,
           },
         },
-      }),
-    ]);
+        feedbacks: {
+          where: { isModerated: false },
+          select: {
+            rating: true,
+          },
+        },
+      },
+    });
 
-    const mappedBooks: CatalogBookItem[] = allBooks.map((book) => {
+    // Preserve the sorted ID order
+    const bookMap = new Map(pageBooks.map((b) => [b.id, b]));
+    const orderedBooks = paginatedIds
+      .map((id) => bookMap.get(id))
+      .filter((b): b is NonNullable<typeof b> => b !== undefined);
+
+    const mappedBooks: CatalogBookItem[] = orderedBooks.map((book) => {
       const availableCopiesCount = book.copies.filter(
         (copy) => copy.status === "AVAILABLE"
       ).length;
@@ -299,11 +348,8 @@ export async function getCatalogBooks(
       };
     });
 
-    mappedBooks.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0));
-    const paginatedBooks = mappedBooks.slice(offset, offset + limit);
-
     return {
-      books: paginatedBooks,
+      books: mappedBooks,
       total,
       page,
       totalPages: Math.ceil(total / limit) || 1,
@@ -526,9 +572,18 @@ async function fetchRawBookDetails(id: string): Promise<BookDetails | null> {
   };
 }
 
+const getCachedBookDetails = unstable_cache(
+  async (bId: string) => fetchRawBookDetails(bId),
+  ["book-details-data"],
+  {
+    revalidate: CACHE_TTL.SHORT,
+    tags: [CACHE_TAGS.CATALOG],
+  }
+);
+
 /**
  * Service function to retrieve detailed book metadata, per-copy availability breakdown, and verified reviews.
- * Cached with Next.js unstable_cache and tagged per book ID for instant loads & targeted invalidation.
+ * Cached with Next.js unstable_cache for instant loads & targeted invalidation.
  */
 export async function getBookDetails(id: string): Promise<BookDetails | null> {
   const parsedId = BookIdParamSchema.safeParse(id);
@@ -536,17 +591,7 @@ export async function getBookDetails(id: string): Promise<BookDetails | null> {
     return null;
   }
 
-  const bookId = parsedId.data;
-  const getCachedBook = unstable_cache(
-    async (bId: string) => fetchRawBookDetails(bId),
-    [`book-details-${bookId}`],
-    {
-      revalidate: CACHE_TTL.SHORT,
-      tags: [CACHE_TAGS.BOOK(bookId)],
-    }
-  );
-
-  return getCachedBook(bookId);
+  return getCachedBookDetails(parsedId.data);
 }
 
 /**

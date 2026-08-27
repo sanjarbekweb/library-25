@@ -8,7 +8,7 @@ import {
   CheckoutInput,
   CheckinInput,
 } from "@/lib/schemas/circulation-schema";
-import { CopyCondition, CopyStatus, HistoryAction } from "@prisma/client";
+import { CopyCondition, CopyStatus, HistoryAction, Prisma } from "@prisma/client";
 import { addDays, isAfter } from "date-fns";
 
 export interface StudentSearchResult {
@@ -509,12 +509,37 @@ export async function lookupStudents(query: string): Promise<StudentSearchResult
   }));
 }
 
+interface SelectedCopyRecord {
+  id: string;
+  barcode: string;
+  condition: CopyCondition;
+  status: CopyStatus;
+  currentHolderId: string | null;
+  book: {
+    id: string;
+    title: string;
+    author: string;
+    isbn: string | null;
+    coverImageUrl: string | null;
+    category: string;
+  };
+  currentHolder: {
+    firstName: string;
+    lastName: string;
+  } | null;
+  loans: {
+    id: string;
+    dueDate: Date;
+    borrowedAt: Date;
+  }[];
+}
+
 /**
  * Search physical copies for barcode scan / quick selection.
  */
 export async function lookupBookCopies(query: string): Promise<CopySearchResult[]> {
   const trimmed = query.trim();
-  const mapCopy = (c: any) => ({
+  const mapCopy = (c: SelectedCopyRecord): CopySearchResult => ({
     id: c.id,
     barcode: c.barcode,
     condition: c.condition,
@@ -534,14 +559,39 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
     borrowedAt: c.loans[0]?.borrowedAt || null,
   });
 
+  const bookSelect = {
+    id: true,
+    title: true,
+    author: true,
+    isbn: true,
+    coverImageUrl: true,
+    category: true,
+  };
+
+  const holderSelect = {
+    firstName: true,
+    lastName: true,
+  };
+
+  const loanSelect = {
+    id: true,
+    dueDate: true,
+    borrowedAt: true,
+  };
+
   if (!trimmed) {
     const copies = await prisma.bookCopy.findMany({
       take: 12,
       orderBy: { updatedAt: "desc" },
-      include: {
-        book: true,
-        currentHolder: true,
-        loans: { where: { status: "ACTIVE" }, take: 1 },
+      select: {
+        id: true,
+        barcode: true,
+        condition: true,
+        status: true,
+        currentHolderId: true,
+        book: { select: bookSelect },
+        currentHolder: { select: holderSelect },
+        loans: { where: { status: "ACTIVE" }, select: loanSelect, take: 1 },
       },
     });
 
@@ -571,14 +621,19 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
       ],
     },
     take: 24,
-    include: {
-      book: true,
-      currentHolder: true,
-      loans: { where: { status: "ACTIVE" }, take: 1 },
+    select: {
+      id: true,
+      barcode: true,
+      condition: true,
+      status: true,
+      currentHolderId: true,
+      book: { select: bookSelect },
+      currentHolder: { select: holderSelect },
+      loans: { where: { status: "ACTIVE" }, select: loanSelect, take: 1 },
     },
   });
 
-  // Step 2: Tokenized & Fuzzy Stemmed Fallback (e.g. "invester" -> "invest", or multi-word titles)
+  // Step 2: Tokenized & Fuzzy Stemmed Fallback
   if (copies.length === 0) {
     const tokens = trimmed
       .toLowerCase()
@@ -586,15 +641,15 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
       .filter((t) => t.length >= 2);
 
     if (tokens.length > 0) {
-      const tokenConditions: any[] = [];
+      const tokenConditions: Prisma.BookCopyWhereInput[] = [];
 
       for (const token of tokens) {
         const stems = new Set<string>();
         stems.add(token);
 
         if (token.length >= 4) {
-          stems.add(token.substring(0, token.length - 2)); // e.g. "invester" -> "invest"
-          stems.add(token.substring(0, token.length - 1)); // e.g. "invester" -> "investe"
+          stems.add(token.substring(0, token.length - 2));
+          stems.add(token.substring(0, token.length - 1));
         }
         if (
           token.endsWith("er") ||
@@ -631,10 +686,15 @@ export async function lookupBookCopies(query: string): Promise<CopySearchResult[
             OR: tokenConditions,
           },
           take: 24,
-          include: {
-            book: true,
-            currentHolder: true,
-            loans: { where: { status: "ACTIVE" }, take: 1 },
+          select: {
+            id: true,
+            barcode: true,
+            condition: true,
+            status: true,
+            currentHolderId: true,
+            book: { select: bookSelect },
+            currentHolder: { select: holderSelect },
+            loans: { where: { status: "ACTIVE" }, select: loanSelect, take: 1 },
           },
         });
       }
@@ -681,10 +741,32 @@ export async function getCirculationDeskData() {
       },
       orderBy: { createdAt: "asc" },
       take: 15,
-      include: {
-        book: true,
-        bookCopy: true,
-        student: true,
+      select: {
+        id: true,
+        bookId: true,
+        bookCopyId: true,
+        studentId: true,
+        expiresAt: true,
+        createdAt: true,
+        book: {
+          select: {
+            title: true,
+            author: true,
+            coverImageUrl: true,
+          },
+        },
+        bookCopy: {
+          select: {
+            barcode: true,
+          },
+        },
+        student: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
       },
     }),
 
@@ -693,13 +775,34 @@ export async function getCirculationDeskData() {
       where: { status: "ACTIVE" },
       orderBy: { dueDate: "asc" },
       take: 25,
-      include: {
+      select: {
+        id: true,
+        bookCopyId: true,
+        studentId: true,
+        borrowedAt: true,
+        dueDate: true,
         bookCopy: {
-          include: {
-            book: true,
+          select: {
+            id: true,
+            barcode: true,
+            condition: true,
+            book: {
+              select: {
+                id: true,
+                title: true,
+                author: true,
+                coverImageUrl: true,
+              },
+            },
           },
         },
-        student: true,
+        student: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
       },
     }),
   ]);

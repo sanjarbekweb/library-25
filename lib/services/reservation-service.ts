@@ -268,10 +268,19 @@ async function fetchRawStudentReservations(userId: string): Promise<StudentReser
   }));
 }
 
+const getCachedStudentReservations = unstable_cache(
+  async (uId: string) => fetchRawStudentReservations(uId),
+  ["user-reservations-data"],
+  {
+    revalidate: CACHE_TTL.SHORT,
+    tags: [CACHE_TAGS.CATALOG],
+  }
+);
+
 /**
  * Fetch all reservations for the authenticated student.
  * Automatically checks and updates expired reservations.
- * Cached with Next.js unstable_cache tagged by authenticated user ID.
+ * Cached with Next.js unstable_cache.
  */
 export async function getStudentReservations(
   userClerkId: string
@@ -285,7 +294,7 @@ export async function getStudentReservations(
     return [];
   }
 
-  // 1. Process expired PENDING reservations automatically
+  // 1. Process expired PENDING reservations automatically in a single atomic batch
   const expiredReservations = await prisma.reservation.findMany({
     where: {
       studentId: user.id,
@@ -294,48 +303,42 @@ export async function getStudentReservations(
     },
   });
 
-  for (const expRes of expiredReservations) {
+  if (expiredReservations.length > 0) {
     await prisma.$transaction(async (tx) => {
-      await tx.reservation.update({
-        where: { id: expRes.id },
-        data: { status: "EXPIRED" },
-      });
-
-      if (expRes.bookCopyId) {
-        await tx.bookCopy.update({
-          where: { id: expRes.bookCopyId },
-          data: { status: "AVAILABLE", currentHolderId: null },
+      for (const expRes of expiredReservations) {
+        await tx.reservation.update({
+          where: { id: expRes.id },
+          data: { status: "EXPIRED" },
         });
 
-        await tx.bookHistory.create({
-          data: {
-            bookCopyId: expRes.bookCopyId,
-            action: "RESERVATION_EXPIRED",
-            actorId: user.id,
-            previousState: "RESERVED",
-            newState: "AVAILABLE",
-            notes: "Reservation expired automatically after 48-hour hold window.",
-          },
-        });
+        if (expRes.bookCopyId) {
+          await tx.bookCopy.update({
+            where: { id: expRes.bookCopyId },
+            data: { status: "AVAILABLE", currentHolderId: null },
+          });
+
+          await tx.bookHistory.create({
+            data: {
+              bookCopyId: expRes.bookCopyId,
+              action: "RESERVATION_EXPIRED",
+              actorId: user.id,
+              previousState: "RESERVED",
+              newState: "AVAILABLE",
+              notes: "Reservation expired automatically after 48-hour hold window.",
+            },
+          });
+        }
       }
     });
 
-    await syncBookToSearchIndex(expRes.bookId);
-    invalidateBookCache(expRes.bookId);
+    const affectedBookIds = Array.from(new Set(expiredReservations.map((r) => r.bookId)));
+    await Promise.all(affectedBookIds.map((bId) => syncBookToSearchIndex(bId)));
+    affectedBookIds.forEach((bId) => invalidateBookCache(bId));
     invalidateUserReservationsCache(user.id);
   }
 
-  // 2. Fetch cached student reservations
-  const getCachedReservations = unstable_cache(
-    async (uId: string) => fetchRawStudentReservations(uId),
-    [`user-reservations-${user.id}`],
-    {
-      revalidate: CACHE_TTL.SHORT,
-      tags: [CACHE_TAGS.USER_RESERVATIONS(user.id)],
-    }
-  );
-
-  return getCachedReservations(user.id);
+  // 2. Fetch student reservations
+  return getCachedStudentReservations(user.id);
 }
 
 /**

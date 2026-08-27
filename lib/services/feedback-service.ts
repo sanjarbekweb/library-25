@@ -186,13 +186,13 @@ export async function getAdminFeedbacks(
 
   const offset = (page - 1) * limit;
 
-  const [totalCount, publishedCount, moderatedCount, allFeedbacksForStats, paginatedFeedbacks] =
+  const [totalCount, publishedCount, moderatedCount, feedbackAvg, paginatedFeedbacks, filteredTotal] =
     await Promise.all([
       prisma.feedback.count(),
       prisma.feedback.count({ where: { isModerated: false } }),
       prisma.feedback.count({ where: { isModerated: true } }),
-      prisma.feedback.findMany({
-        select: { rating: true },
+      prisma.feedback.aggregate({
+        _avg: { rating: true },
       }),
       prisma.feedback.findMany({
         where,
@@ -225,15 +225,13 @@ export async function getAdminFeedbacks(
           },
         },
       }),
+      prisma.feedback.count({ where }),
     ]);
 
-  const avgRatingSum = allFeedbacksForStats.reduce((acc, f) => acc + f.rating, 0);
   const averageRating =
-    allFeedbacksForStats.length > 0
-      ? Number((avgRatingSum / allFeedbacksForStats.length).toFixed(1))
+    feedbackAvg._avg.rating !== null
+      ? Number(feedbackAvg._avg.rating.toFixed(1))
       : null;
-
-  const filteredTotal = await prisma.feedback.count({ where });
 
   const feedbacks: AdminFeedbackItem[] = paginatedFeedbacks.map((f) => ({
     id: f.id,
