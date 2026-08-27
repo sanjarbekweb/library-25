@@ -6,7 +6,7 @@ import { StudentLoansView } from "@/components/modules/history/student-loans-vie
 import { AppShellLayout } from "@/components/shared/app-shell-layout";
 
 export const metadata: Metadata = {
-  title: "My Loans & Borrowing History | ShelfSync",
+  title: "My Loans & Borrowing History | libra25",
   description:
     "View your active library book checkouts, return due date countdowns, overdue alerts, and historical reading records.",
 };

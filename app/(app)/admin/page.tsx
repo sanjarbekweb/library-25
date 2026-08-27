@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Admin Control Console | ShelfSync",
+  title: "Admin Control Console | libra25",
   description: "Administrative controls for library moderation, user management, and analytics.",
 };
 

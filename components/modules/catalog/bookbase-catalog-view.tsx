@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, AlertCircle, ChevronLeft } from "lucide-react";
 import { CatalogBookItem } from "@/lib/services/book-service";
-import { FeaturedBookPanel } from "./featured-book-panel";
 import { AppShellLayout } from "@/components/shared/app-shell-layout";
 import { ImageWithLoader } from "@/components/shared/image-with-loader";
 import { Button } from "@/components/ui/button";
@@ -29,17 +27,11 @@ export function BookbaseCatalogView({
   categories,
   currentCategory,
   currentSearch,
-  currentSort,
   currentPage,
   totalPages,
   totalCount,
 }: BookbaseCatalogViewProps) {
   const { t, language } = useLanguage();
-
-  // Default selected book is either first recommended or first category book
-  const [selectedBook, setSelectedBook] = useState<CatalogBookItem | null>(
-    recommendedBooks[0] || categoryBooks[0] || null
-  );
 
   const recommendedLabel = language === "uz" ? "Tavsiya etilganlar" : language === "ru" ? "Рекомендуем" : "Recommended";
   const seeAllLabel = language === "uz" ? "Barchasi" : language === "ru" ? "Все" : "See All";
@@ -51,9 +43,7 @@ export function BookbaseCatalogView({
   const nextLabel = language === "uz" ? "Keyingi" : language === "ru" ? "Вперед" : "Next";
 
   return (
-    <AppShellLayout
-      rightPanel={<FeaturedBookPanel book={selectedBook} />}
-    >
+    <AppShellLayout>
       <div className="space-y-6">
         {/* SECTION 1: RECOMMENDED BOOKS WIDGET */}
         {!currentSearch && recommendedBooks.length > 0 && (
@@ -72,38 +62,32 @@ export function BookbaseCatalogView({
             </div>
 
             {/* Recommended Row / Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {recommendedBooks.map((book) => {
-                const isSelected = selectedBook?.id === book.id;
-                return (
-                  <div
-                    key={book.id}
-                    onClick={() => setSelectedBook(book)}
-                    className={cn(
-                      "group cursor-pointer rounded-2xl p-2 transition-all duration-200",
-                      isSelected ? "ring-2 ring-brand-blue bg-accent/40" : "hover:bg-accent/30"
-                    )}
-                  >
-                    <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-shadow">
-                      <ImageWithLoader
-                        src={book.coverImageUrl || ""}
-                        alt={`Cover image for ${book.title}`}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                      />
-                    </div>
-                    <div className="pt-2.5 space-y-0.5">
-                      <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
-                        {book.title}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        {book.author}
-                      </p>
-                    </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {recommendedBooks.map((book) => (
+                <Link
+                  key={book.id}
+                  href={`/books/${book.id}`}
+                  className="group cursor-pointer rounded-2xl p-2 transition-all duration-200 hover:bg-accent/40 block"
+                >
+                  <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1">
+                    <ImageWithLoader
+                      src={book.coverImageUrl || ""}
+                      alt={`Cover image for ${book.title}`}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                    />
                   </div>
-                );
-              })}
+                  <div className="pt-2.5 space-y-0.5">
+                    <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
+                      {book.title}
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {book.author}
+                    </p>
+                  </div>
+                </Link>
+              ))}
             </div>
           </section>
         )}
@@ -174,38 +158,32 @@ export function BookbaseCatalogView({
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {categoryBooks.map((book) => {
-                const isSelected = selectedBook?.id === book.id;
-                return (
-                  <div
-                    key={book.id}
-                    onClick={() => setSelectedBook(book)}
-                    className={cn(
-                      "group cursor-pointer rounded-2xl p-2 transition-all duration-200",
-                      isSelected ? "ring-2 ring-brand-blue bg-accent/40" : "hover:bg-accent/30"
-                    )}
-                  >
-                    <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-shadow">
-                      <ImageWithLoader
-                        src={book.coverImageUrl || ""}
-                        alt={`Cover image for ${book.title}`}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      />
-                    </div>
-                    <div className="pt-2 space-y-0.5">
-                      <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
-                        {book.title}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        {book.author}
-                      </p>
-                    </div>
+            <div className="grid grid-cols-2 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {categoryBooks.map((book) => (
+                <Link
+                  key={book.id}
+                  href={`/books/${book.id}`}
+                  className="group cursor-pointer rounded-2xl p-2 transition-all duration-200 hover:bg-accent/40 block"
+                >
+                  <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1">
+                    <ImageWithLoader
+                      src={book.coverImageUrl || ""}
+                      alt={`Cover image for ${book.title}`}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                    />
                   </div>
-                );
-              })}
+                  <div className="pt-2 space-y-0.5">
+                    <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
+                      {book.title}
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {book.author}
+                    </p>
+                  </div>
+                </Link>
+              ))}
             </div>
           )}
 

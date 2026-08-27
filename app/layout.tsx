@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Rubik } from "next/font/google";
+import { Inter } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
@@ -9,19 +9,19 @@ import { LanguageProvider } from "@/components/providers/language-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const rubik = Rubik({
-  variable: "--font-rubik",
-  subsets: ["latin"],
+const inter = Inter({
+  variable: "--font-sans-main",
+  subsets: ["latin", "cyrillic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "ShelfSync — School Library Management",
-    template: "%s | ShelfSync",
+    default: "libra25 — School Library Management",
+    template: "%s | libra25",
   },
   description:
-    "ShelfSync is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
+    "libra25 is a modern school library management platform with typo-tolerant search, rapid circulation desk workflows, and real-time collection analytics.",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn(
           "h-full antialiased font-sans",
-          rubik.variable
+          inter.variable
         )}
       >
         <head>

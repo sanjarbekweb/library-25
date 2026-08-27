@@ -12,9 +12,9 @@ import { LandingFaq } from "@/components/modules/landing/landing-faq";
 import { LandingContact } from "@/components/modules/landing/landing-contact";
 
 export const metadata = {
-  title: "ShelfSync | Unified Campus Library Management Platform",
+  title: "libra25 | Unified Campus Library Management Platform",
   description:
-    "ShelfSync is a modern, all-in-one library management platform designed to streamline book discovery, hold reservations, desk checkouts, and collection tracking.",
+    "libra25 is a modern, all-in-one library management platform designed to streamline book discovery, hold reservations, desk checkouts, and collection tracking.",
 };
 
 export default async function HomePage() {
@@ -25,7 +25,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-brand-yellow selection:text-black overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-brand-blue selection:text-white overflow-hidden">
       <AOSInit />
       <Navbar />
 
@@ -50,10 +50,10 @@ export default async function HomePage() {
       </main>
 
       {/* 5. Footer Section with Large Frosted Brand Mark Watermark */}
-      <footer className="relative border-t border-hairline bg-card py-16 overflow-hidden">
+      <footer className="relative border-t border-border/80 bg-slate-50/70 dark:bg-zinc-950/60 py-16 overflow-hidden">
         {/* Large Frosted Background Watermark */}
         <div className="absolute bottom-[-2rem] left-1/2 -translate-x-1/2 text-[120px] sm:text-[180px] md:text-[220px] font-extrabold tracking-tighter text-foreground/[0.03] select-none pointer-events-none whitespace-nowrap z-0">
-          ShelfSync
+          libra25
         </div>
 
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-12">
@@ -61,15 +61,15 @@ export default async function HomePage() {
             {/* Mission Statement */}
             <div className="md:col-span-2 space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-yellow text-black font-bold shadow-xs">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-xs">
                   <BookOpen className="h-4 w-4" />
                 </div>
                 <span className="font-display text-xl font-bold tracking-tight text-foreground">
-                  ShelfSync
+                  libra25
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-sm">
-                ShelfSync is the unified campus library platform that empowers students, desk assistants, and faculty with seamless book circulation.
+                libra25 is the unified campus library platform that empowers students, desk assistants, and faculty with seamless book circulation.
               </p>
             </div>
 
@@ -105,8 +105,8 @@ export default async function HomePage() {
           </div>
 
           {/* Bottom Bar & Social Channels */}
-          <div className="border-t border-hairline pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <div>&copy; {new Date().getFullYear()} ShelfSync Library System. All rights reserved.</div>
+          <div className="border-t border-border/70 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+            <div>&copy; {new Date().getFullYear()} libra25 Library System. All rights reserved.</div>
             <div className="flex items-center gap-4 font-medium">
               <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
                 Instagram

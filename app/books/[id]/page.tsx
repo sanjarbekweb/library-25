@@ -25,13 +25,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${book.title} by ${book.author}`;
   const description =
     book.description ||
-    `Explore ${book.title} by ${book.author} in the ShelfSync School Library Catalog. Check real-time copy availability, publication details, and verified student reviews.`;
+    `Explore ${book.title} by ${book.author} in the libra25 School Library Catalog. Check real-time copy availability, publication details, and verified student reviews.`;
 
   return {
     title,
     description,
     openGraph: {
-      title: `${book.title} | ShelfSync Library`,
+      title: `${book.title} | libra25 Library`,
       description,
       type: "book",
       authors: [book.author],
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: "summary_large_image",
-      title: `${book.title} | ShelfSync Library`,
+      title: `${book.title} | libra25 Library`,
       description,
       images: book.coverImageUrl ? [book.coverImageUrl] : [],
     },

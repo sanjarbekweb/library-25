@@ -10,7 +10,7 @@ export function LandingTestimonials() {
       role: "Head Librarian at Central Campus Library",
       rating: "5.0",
       quote:
-        "ShelfSync has revolutionized our campus library operations. Desk checkout times dropped to under 10 seconds, and students love reserving physical titles directly from their phones.",
+        "libra25 has revolutionized our campus library operations. Desk checkout times dropped to under 10 seconds, and students love reserving physical titles directly from their phones.",
       avatar: "AB",
       bg: "bg-brand-blue text-white",
     },
@@ -21,23 +21,23 @@ export function LandingTestimonials() {
       quote:
         "Finding textbooks for course research and tracking hold availability is effortless. The catalog search is fast, accurate, and always displays real-time copy stock.",
       avatar: "MA",
-      bg: "bg-brand-yellow text-black font-bold",
+      bg: "bg-brand-blue text-white font-bold",
     },
   ];
 
   return (
-    <section id="resources" className="py-20 bg-card border-b border-hairline">
+    <section id="resources" className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <Badge variant="outline" className="px-3 py-1 font-mono text-xs">
+          <Badge variant="outline" className="px-3 py-1 font-mono text-xs border-border/80 bg-card">
             Library Stories
           </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
             Trusted by Librarians &amp; Students
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Discover how ShelfSync simplifies catalog discovery, hold fulfillment, and circulation desk transactions.
+            Discover how libra25 simplifies catalog discovery, hold fulfillment, and circulation desk transactions.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export function LandingTestimonials() {
               key={idx}
               data-aos="fade-up"
               data-aos-delay={100 * (idx + 1)}
-              className="p-8 rounded-3xl border border-hairline bg-background shadow-soft-floating flex flex-col justify-between space-y-6 hover-scale-card"
+              className="p-8 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-6 hover-scale-card"
             >
               <CardHeader className="p-0 space-y-4">
                 <div className="flex items-center justify-between">
@@ -66,7 +66,7 @@ export function LandingTestimonials() {
                 </p>
               </CardHeader>
 
-              <CardContent className="p-0 flex items-center gap-3 border-t border-hairline pt-4">
+              <CardContent className="p-0 flex items-center gap-3 border-t border-border/70 pt-4">
                 <Avatar className="h-11 w-11 shrink-0">
                   <AvatarFallback className={`${item.bg} font-bold text-sm`}>
                     {item.avatar}

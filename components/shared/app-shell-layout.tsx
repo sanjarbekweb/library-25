@@ -1,29 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { SidebarProvider, useSidebar } from "@/components/providers/sidebar-provider";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/app-header";
+import { cn } from "@/lib/utils";
 
 interface AppShellLayoutProps {
   children: React.ReactNode;
   rightPanel?: React.ReactNode;
 }
 
-export function AppShellLayout({ children, rightPanel }: AppShellLayoutProps) {
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+function AppShellContent({ children, rightPanel }: AppShellLayoutProps) {
+  const { isCollapsed } = useSidebar();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex">
       {/* Left Navigation Sidebar */}
-      <AppSidebar
-        mobileOpen={mobileSidebarOpen}
-        onCloseMobile={() => setMobileSidebarOpen(false)}
-      />
+      <AppSidebar />
 
       {/* Main App Container */}
-      <div className="flex flex-1 flex-col md:pl-60 min-w-0">
+      <div
+        className={cn(
+          "flex flex-1 flex-col min-w-0 transition-all duration-300 ease-in-out",
+          isCollapsed ? "md:pl-[68px]" : "md:pl-64"
+        )}
+      >
         {/* Top Header */}
-        <AppHeader onOpenMobile={() => setMobileSidebarOpen(true)} />
+        <AppHeader />
 
         {/* Content Body & Optional Right Panel */}
         <div className="flex flex-1 min-w-0">
@@ -35,5 +38,13 @@ export function AppShellLayout({ children, rightPanel }: AppShellLayoutProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export function AppShellLayout(props: AppShellLayoutProps) {
+  return (
+    <SidebarProvider>
+      <AppShellContent {...props} />
+    </SidebarProvider>
   );
 }

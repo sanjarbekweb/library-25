@@ -12,7 +12,6 @@ import {
   Loader2,
   Mail,
   User,
-  Tag,
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
@@ -21,19 +20,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { submitTelegramContactAction } from "@/app/actions/contact-actions";
-import { ContactCategory } from "@/lib/schemas/contact-schema";
-
-const CATEGORY_OPTIONS: { value: ContactCategory; label: string; icon: string }[] = [
-  { value: "FEEDBACK", label: "Feedback", icon: "💬" },
-  { value: "FEATURE_REQUEST", label: "Feature Suggestion", icon: "💡" },
-  { value: "BUG_REPORT", label: "Bug Report", icon: "🐛" },
-  { value: "GENERAL_INQUIRY", label: "General Inquiry", icon: "❓" },
-];
 
 export function LandingContact() {
   const { user, isLoaded } = useUser();
 
-  const [category, setCategory] = useState<ContactCategory>("FEEDBACK");
   const [name, setName] = useState("");
   const [emailOrHandle, setEmailOrHandle] = useState("");
   const [message, setMessage] = useState("");
@@ -80,7 +70,7 @@ export function LandingContact() {
       const response = await submitTelegramContactAction({
         name: name.trim() || undefined,
         emailOrHandle: emailOrHandle.trim(),
-        category,
+        category: "FEEDBACK",
         message: message.trim(),
         honeypot,
       });
@@ -93,7 +83,7 @@ export function LandingContact() {
         setErrorMessage(errStr);
         toast.error(errStr);
       }
-    } catch (err) {
+    } catch {
       const fallbackErr = "An unexpected network error occurred.";
       setErrorMessage(fallbackErr);
       toast.error(fallbackErr);
@@ -109,16 +99,16 @@ export function LandingContact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-background relative overflow-hidden border-b border-hairline">
+    <section id="contact" className="py-20 bg-slate-100/60 dark:bg-zinc-900/40 relative overflow-hidden border-b border-border/80">
       {/* Background Decorative Blur Highlights */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none z-0" />
       <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none z-0" />
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-4 max-w-2xl mx-auto">
-          <Badge variant="outline" className="px-3.5 py-1 font-mono text-xs gap-1.5 border-brand-yellow/30 bg-brand-yellow/10 text-foreground">
-            <Bot className="h-3.5 w-3.5 text-amber-500" />
+          <Badge variant="outline" className="px-3.5 py-1 font-mono text-xs gap-1.5 border-border/80 bg-card text-foreground">
+            <Bot className="h-3.5 w-3.5 text-brand-blue" />
             <span>Direct Telegram Channel</span>
           </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
@@ -131,7 +121,7 @@ export function LandingContact() {
 
         {/* Contact Form Container */}
         <div data-aos="fade-up" data-aos-delay="100" className="max-w-3xl mx-auto">
-          <Card className="rounded-3xl border border-hairline bg-card shadow-soft-floating overflow-hidden">
+          <Card className="rounded-3xl border border-border/90 bg-card shadow-xs overflow-hidden">
             <CardContent className="p-6 sm:p-10 space-y-8">
               {isSuccess ? (
                 /* Success Feedback State */
@@ -153,7 +143,7 @@ export function LandingContact() {
                     <Button
                       onClick={handleReset}
                       variant="outline"
-                      className="rounded-xl px-6 font-medium gap-2 hover:bg-accent"
+                      className="rounded-xl px-6 font-medium gap-2 hover:bg-accent border-border"
                     >
                       <RefreshCw className="h-4 w-4" />
                       Send Another Message
@@ -175,35 +165,6 @@ export function LandingContact() {
                     />
                   </div>
 
-                  {/* Category Selector */}
-                  <div className="space-y-2.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <Tag className="h-3.5 w-3.5" />
-                      <span>Select Topic</span>
-                    </label>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {CATEGORY_OPTIONS.map((opt) => {
-                        const isSelected = category === opt.value;
-                        return (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => setCategory(opt.value)}
-                            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium border transition-all ${
-                              isSelected
-                                ? "bg-brand-yellow/15 border-brand-yellow text-foreground font-semibold shadow-xs"
-                                : "bg-background/50 border-hairline text-muted-foreground hover:bg-accent hover:text-foreground"
-                            }`}
-                          >
-                            <span>{opt.icon}</span>
-                            <span className="truncate">{opt.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
                   {/* 2-Column Name & Contact inputs */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Name */}
@@ -217,7 +178,7 @@ export function LandingContact() {
                         placeholder="e.g. Alex Turner"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="rounded-xl border-hairline bg-background/50 focus:bg-background h-11 text-sm"
+                        className="rounded-xl border-border/80 bg-slate-50/70 dark:bg-zinc-900/70 focus:bg-background h-11 text-sm transition-colors"
                         maxLength={100}
                       />
                     </div>
@@ -234,7 +195,7 @@ export function LandingContact() {
                         value={emailOrHandle}
                         onChange={(e) => setEmailOrHandle(e.target.value)}
                         required
-                        className="rounded-xl border-hairline bg-background/50 focus:bg-background h-11 text-sm"
+                        className="rounded-xl border-border/80 bg-slate-50/70 dark:bg-zinc-900/70 focus:bg-background h-11 text-sm transition-colors"
                         maxLength={150}
                       />
                     </div>
@@ -260,7 +221,7 @@ export function LandingContact() {
                       required
                       minLength={10}
                       maxLength={2000}
-                      className="w-full rounded-2xl border border-hairline bg-background/50 focus:bg-background p-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-yellow/50 transition-all resize-none"
+                      className="w-full rounded-2xl border border-border/80 bg-slate-50/70 dark:bg-zinc-900/70 focus:bg-background p-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue transition-all resize-none"
                     />
                   </div>
 
@@ -275,23 +236,23 @@ export function LandingContact() {
                   {/* Submit Button */}
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                      <Sparkles className="h-3.5 w-3.5 text-brand-blue shrink-0" />
                       <span>Direct end-to-end bot notification</span>
                     </div>
 
                     <Button
                       type="submit"
                       disabled={isSubmitting || message.trim().length < 10}
-                      className="w-full sm:w-auto h-11 px-8 rounded-xl bg-brand-yellow text-black hover:bg-brand-yellow/90 font-bold text-sm shadow-sm gap-2 transition-all"
+                      className="w-full sm:w-auto h-11 px-8 rounded-xl bg-brand-blue text-white hover:bg-brand-blue/90 font-bold text-sm shadow-sm gap-2 transition-all cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin text-black" />
+                          <Loader2 className="h-4 w-4 animate-spin text-white" />
                           <span>Sending to Bot...</span>
                         </>
                       ) : (
                         <>
-                          <Send className="h-4 w-4 text-black" />
+                          <Send className="h-4 w-4 text-white" />
                           <span>Send Message</span>
                         </>
                       )}

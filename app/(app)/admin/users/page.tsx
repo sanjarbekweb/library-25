@@ -5,7 +5,7 @@ import { getAdminUsers } from "@/lib/services/user-service";
 import { UserManagement } from "@/components/modules/admin/user-management";
 
 export const metadata = {
-  title: "User & Role Management | ShelfSync Admin",
+  title: "User & Role Management | libra25 Admin",
   description: "Manage system user accounts, promote assistants, demote roles, and adjust RBAC policies.",
 };
 

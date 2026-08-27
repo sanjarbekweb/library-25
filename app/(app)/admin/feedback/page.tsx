@@ -2,7 +2,7 @@ import { getAdminFeedbacks } from "@/lib/services/feedback-service";
 import { AdminFeedbackModeration } from "@/components/modules/feedback/admin-feedback-moderation";
 
 export const metadata = {
-  title: "Feedback & Review Moderation | ShelfSync Admin",
+  title: "Feedback & Review Moderation | libra25 Admin",
   description: "Moderate student reviews, ratings, and feedback across the library catalog.",
 };
 

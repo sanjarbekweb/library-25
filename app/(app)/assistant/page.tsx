@@ -4,7 +4,7 @@ import { CirculationDesk } from "@/components/modules/circulation/circulation-de
 import { CirculationDeskSkeleton } from "@/components/modules/circulation/circulation-skeleton";
 
 export const metadata = {
-  title: "Circulation Desk | ShelfSync Assistant",
+  title: "Circulation Desk | libra25 Assistant",
   description: "Rapid in-person checkout, check-in, and hold fulfillment desk.",
 };
 

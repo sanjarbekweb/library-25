@@ -12,12 +12,14 @@ import {
   ClipboardList,
   Shield,
   X,
-  Bell,
+  PanelLeftClose,
+  LogIn,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageToggle } from "@/components/shared/language-toggle";
-import { IconButton } from "@/components/animate-ui/components/buttons/icon";
+import { NotificationsToggle } from "@/components/shared/notifications-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useSidebar } from "@/components/providers/sidebar-provider";
 import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
@@ -25,12 +27,17 @@ interface AppSidebarProps {
   onCloseMobile?: () => void;
 }
 
-export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProps) {
+export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCloseMobile }: AppSidebarProps) {
   const pathname = usePathname();
   const { isSignedIn, isLoaded, user } = useUser();
   const { t } = useLanguage();
-  const userRole = user?.publicMetadata?.role as string | undefined;
+  const sidebar = useSidebar();
 
+  const isCollapsed = sidebar.isCollapsed;
+  const mobileOpen = propMobileOpen !== undefined ? propMobileOpen : sidebar.mobileOpen;
+  const handleCloseMobile = propOnCloseMobile || sidebar.closeMobile;
+
+  const userRole = user?.publicMetadata?.role as string | undefined;
   const isAssistantOrAdmin = userRole === "ASSISTANT" || userRole === "ADMIN";
   const isAdmin = userRole === "ADMIN";
 
@@ -97,42 +104,73 @@ export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProp
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
-          onClick={onCloseMobile}
+          onClick={handleCloseMobile}
         />
       )}
 
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 flex w-60 flex-col justify-between border-r border-border bg-card p-4 sm:p-5 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto",
-          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+          "fixed top-0 bottom-0 left-0 z-50 flex flex-col justify-between border-r border-border bg-card p-3.5 transition-all duration-300 ease-in-out md:translate-x-0 overflow-y-auto overflow-x-hidden",
+          isCollapsed ? "md:w-[68px]" : "md:w-64",
+          // Mobile state: full width drawer
+          mobileOpen
+            ? "w-64 translate-x-0 shadow-2xl"
+            : "-translate-x-full md:translate-x-0"
         )}
       >
         <div className="space-y-6">
-          {/* Brand Logo Header */}
-          <div className="flex items-center justify-between">
-            <Link
-              href={isSignedIn ? "/catalog" : "/"}
-              className="flex items-center gap-2.5 group"
-              onClick={onCloseMobile}
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform group-hover:scale-105">
-                <BookOpen className="h-5 w-5" />
-              </div>
-              <span className="font-display text-xl font-bold tracking-tight text-foreground">
-                ShelfSync
-              </span>
-            </Link>
-
-            {/* Mobile close button */}
-            {onCloseMobile && (
+          {/* Brand Logo Header & Collapse / Expand Interaction */}
+          <div className="flex items-center justify-between h-10">
+            {isCollapsed ? (
+              /* When folded: click the libra25 logo icon to expand the sidebar */
               <button
                 type="button"
-                onClick={onCloseMobile}
-                className="p-1 rounded-lg text-muted-foreground hover:text-foreground md:hidden cursor-pointer"
+                onClick={sidebar.toggleCollapse}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform hover:scale-105 cursor-pointer"
+                title={t("expandSidebar")}
+                aria-label={t("expandSidebar")}
               >
-                <X className="h-5 w-5" />
+                <BookOpen className="h-5 w-5" />
               </button>
+            ) : (
+              /* When expanded: logo links to home/catalog, collapse button is on the top right */
+              <>
+                <Link
+                  href={isSignedIn ? "/catalog" : "/"}
+                  className="flex items-center gap-3 group min-w-0"
+                  onClick={handleCloseMobile}
+                  title="libra25"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform group-hover:scale-105">
+                    <BookOpen className="h-5 w-5" />
+                  </div>
+                  <span className="font-display text-xl font-bold tracking-tight text-foreground whitespace-nowrap overflow-hidden transition-all duration-300">
+                    libra25
+                  </span>
+                </Link>
+
+                {/* Desktop collapse button */}
+                <button
+                  type="button"
+                  onClick={sidebar.toggleCollapse}
+                  className="hidden md:flex items-center justify-center h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-colors cursor-pointer shrink-0 ml-auto"
+                  title={t("collapseSidebar")}
+                  aria-label={t("collapseSidebar")}
+                >
+                  <PanelLeftClose className="h-4 w-4" />
+                </button>
+              </>
             )}
+
+            {/* Mobile close button */}
+            <button
+              type="button"
+              onClick={handleCloseMobile}
+              className="p-1 rounded-lg text-muted-foreground hover:text-foreground md:hidden cursor-pointer ml-auto"
+              aria-label="Close navigation"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Main Navigation Links */}
@@ -143,42 +181,71 @@ export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProp
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={onCloseMobile}
+                  onClick={handleCloseMobile}
+                  title={isCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200",
+                    "w-full h-10 flex items-center rounded-2xl text-xs font-semibold transition-all duration-200 px-2.5 group",
                     item.active
                       ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
                       : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span>{item.label}</span>
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                    <Icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
+                  </div>
+                  <span
+                    className={cn(
+                      "ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 font-semibold truncate",
+                      isCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-auto opacity-100"
+                    )}
+                  >
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}
 
             {/* Staff Navigation Links */}
             {staffItems.length > 0 && (
-              <div className="pt-4 space-y-1">
-                <p className="px-3 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold">
+              <div className="pt-2 space-y-1">
+                {isCollapsed ? (
+                  <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
+                ) : (
+                  <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
+                    {t("deskAndStaff")}
+                  </p>
+                )}
+                {/* Mobile header always visible */}
+                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
                   {t("deskAndStaff")}
                 </p>
+
                 {staffItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={onCloseMobile}
+                      onClick={handleCloseMobile}
+                      title={isCollapsed ? item.label : undefined}
                       className={cn(
-                        "flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200",
+                        "w-full h-10 flex items-center rounded-2xl text-xs font-semibold transition-all duration-200 px-2.5 group",
                         item.active
                           ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
                           : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
                       )}
                     >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                        <Icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
+                      </div>
+                      <span
+                        className={cn(
+                          "ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 font-semibold truncate",
+                          isCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-auto opacity-100"
+                        )}
+                      >
+                        {item.label}
+                      </span>
                     </Link>
                   );
                 })}
@@ -187,26 +254,45 @@ export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProp
 
             {/* Admin Section */}
             {adminItems.length > 0 && (
-              <div className="pt-4 space-y-1">
-                <p className="px-3 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold">
+              <div className="pt-2 space-y-1">
+                {isCollapsed ? (
+                  <div className="hidden md:block my-2 border-t border-border/60 mx-1" />
+                ) : (
+                  <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold truncate">
+                    {t("management")}
+                  </p>
+                )}
+                {/* Mobile header always visible */}
+                <p className="px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold md:hidden">
                   {t("management")}
                 </p>
+
                 {adminItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={onCloseMobile}
+                      onClick={handleCloseMobile}
+                      title={isCollapsed ? item.label : undefined}
                       className={cn(
-                        "flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200",
+                        "w-full h-10 flex items-center rounded-2xl text-xs font-semibold transition-all duration-200 px-2.5 group",
                         item.active
                           ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
                           : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
                       )}
                     >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                        <Icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
+                      </div>
+                      <span
+                        className={cn(
+                          "ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 font-semibold truncate",
+                          isCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-auto opacity-100"
+                        )}
+                      >
+                        {item.label}
+                      </span>
                     </Link>
                   );
                 })}
@@ -216,28 +302,82 @@ export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProp
         </div>
 
         {/* Bottom Utility Controls & User Profile */}
-        <div className="space-y-3 border-t border-border/60 pt-4 mt-6">
-          {/* Vertical Icon Buttons Stack */}
-          <div className="flex flex-col items-center gap-2.5 py-1">
-            <LanguageToggle />
-            <ThemeToggle />
-            <div className="relative">
-              <IconButton
-                variant="outline"
-                size="sm"
-                className="rounded-full w-9 h-9 border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer shadow-2xs"
-                aria-label={t("notifications")}
-                title={t("notifications")}
-              >
-                <Bell className="h-4 w-4" />
-              </IconButton>
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive pointer-events-none" />
-            </div>
+        <div className="space-y-2.5 border-t border-border/60 pt-3 mt-4">
+          {/* Utility Controls with Stationary Icons */}
+          <div className="flex flex-col gap-1 w-full">
+            <NotificationsToggle isCollapsed={isCollapsed} />
+            <ThemeToggle isCollapsed={isCollapsed} />
+            <LanguageToggle isCollapsed={isCollapsed} />
           </div>
 
           {/* User Account Profile Card */}
           {isLoaded && isSignedIn ? (
-            <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 space-y-2">
+            isCollapsed ? (
+              <div className="hidden md:flex flex-col items-center gap-1.5 py-1">
+                <div className="flex h-8 w-8 items-center justify-center">
+                  <UserButton />
+                </div>
+                <SignOutButton redirectUrl="/">
+                  <button
+                    type="button"
+                    className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+                    title={t("signOut")}
+                    aria-label={t("signOut")}
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                  </button>
+                </SignOutButton>
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 space-y-2">
+                <div className="flex items-center gap-2.5">
+                  <UserButton />
+                  <div className="flex flex-col min-w-0 flex-1 text-left">
+                    <span className="text-xs font-bold text-foreground truncate leading-tight">
+                      {user?.fullName || user?.firstName || t("patron")}
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-foreground capitalize">
+                      {localizedRole}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sign out button */}
+                <SignOutButton redirectUrl="/">
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-left cursor-pointer"
+                    title={t("signOut")}
+                    aria-label={t("signOut")}
+                  >
+                    <LogOut className="h-3.5 w-3.5 shrink-0" />
+                    <span>{t("signOut")}</span>
+                  </button>
+                </SignOutButton>
+              </div>
+            )
+          ) : (
+            <div className="pt-1">
+              <Link
+                href="/sign-in"
+                onClick={handleCloseMobile}
+                title={t("signIn")}
+                className={cn(
+                  "flex items-center justify-center rounded-2xl text-xs font-bold bg-brand-blue text-white hover:bg-brand-blue/90 transition-all text-center cursor-pointer shadow-sm",
+                  isCollapsed
+                    ? "md:w-10 md:h-10 md:p-0 w-full px-3.5 py-2.5"
+                    : "w-full px-3.5 py-2.5"
+                )}
+              >
+                <LogIn className={cn("h-4 w-4 shrink-0", !isCollapsed && "mr-1.5", isCollapsed && "md:mr-0")} />
+                <span className={cn(isCollapsed && "md:hidden")}>{t("signIn")}</span>
+              </Link>
+            </div>
+          )}
+
+          {/* Always show full user profile on mobile */}
+          {isLoaded && isSignedIn && isCollapsed && (
+            <div className="p-2.5 rounded-2xl bg-accent/40 border border-border/60 space-y-2 md:hidden">
               <div className="flex items-center gap-2.5">
                 <UserButton />
                 <div className="flex flex-col min-w-0 flex-1 text-left">
@@ -254,21 +394,13 @@ export function AppSidebar({ mobileOpen = false, onCloseMobile }: AppSidebarProp
                 <button
                   type="button"
                   className="flex w-full items-center gap-2 px-2 py-1.5 rounded-xl text-[11px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-left cursor-pointer"
+                  title={t("signOut")}
+                  aria-label={t("signOut")}
                 >
-                  <LogOut className="h-3.5 w-3.5" />
+                  <LogOut className="h-3.5 w-3.5 shrink-0" />
                   <span>{t("signOut")}</span>
                 </button>
               </SignOutButton>
-            </div>
-          ) : (
-            <div className="pt-1">
-              <Link
-                href="/sign-in"
-                onClick={onCloseMobile}
-                className="flex items-center justify-center w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold bg-brand-blue text-white hover:bg-brand-blue/90 transition-all text-center cursor-pointer shadow-sm"
-              >
-                <span>{t("signIn")}</span>
-              </Link>
             </div>
           )}
         </div>

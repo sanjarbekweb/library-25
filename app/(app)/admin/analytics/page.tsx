@@ -3,7 +3,7 @@ import { getCollectionAnalytics } from "@/lib/services/analytics-service";
 import { AnalyticsDashboard } from "@/components/modules/analytics/analytics-dashboard";
 
 export const metadata: Metadata = {
-  title: "Circulation & Collection Analytics | ShelfSync Admin",
+  title: "Circulation & Collection Analytics | libra25 Admin",
   description:
     "Real-time library analytics, monthly circulation trends, category growth, overdue ratios, and reader cohort telemetry.",
 };

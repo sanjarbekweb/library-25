@@ -80,12 +80,12 @@ export function Navbar() {
         <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
           {/* Brand Logo - Fixed Left */}
           <Link href={isSignedIn ? "/catalog" : "/"} className="flex items-center gap-2.5 group shrink-0 transition-transform duration-300">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-yellow text-black font-bold shadow-sm transition-transform">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-blue text-white font-bold shadow-sm transition-transform">
               <BookOpen className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
               <span className="font-display text-lg font-bold tracking-tight text-foreground">
-                ShelfSync
+                libra25
               </span>
               <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground -mt-1">
                 Library
@@ -161,7 +161,7 @@ export function Navbar() {
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       )}
                     >
-                      <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+                      <Bookmark className="h-4 w-4 text-brand-blue fill-current" />
                       {t("holds")}
                     </Link>
 
@@ -380,7 +380,7 @@ export function Navbar() {
                           : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
-                      <BookOpen className="h-4 w-4 text-brand-yellow" />
+                      <BookOpen className="h-4 w-4 text-brand-blue" />
                       {t("catalog")}
                     </Link>
 
@@ -394,7 +394,7 @@ export function Navbar() {
                           : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
-                      <Bookmark className="h-4 w-4 text-brand-yellow fill-current" />
+                      <Bookmark className="h-4 w-4 text-brand-blue fill-current" />
                       {t("holds")}
                     </Link>
 

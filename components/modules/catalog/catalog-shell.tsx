@@ -37,7 +37,7 @@ export function CatalogShell({
               <BookOpen className="h-4 w-4" />
             </div>
             <span className="font-display font-extrabold text-base text-foreground">
-              ShelfSync
+              libra25
             </span>
           </div>
           <span className="hidden sm:inline-block text-xs font-mono text-muted-foreground">

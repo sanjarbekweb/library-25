@@ -14,7 +14,7 @@ interface PageProps {
 export const metadata = {
   title: "Discover Books & Library Catalog",
   description:
-    "Explore physical book titles, live copy inventory availability, categories, and verified student reviews in the ShelfSync catalog.",
+    "Explore physical book titles, live copy inventory availability, categories, and verified student reviews in the libra25 catalog.",
 };
 
 export default async function CatalogPage({ searchParams }: PageProps) {

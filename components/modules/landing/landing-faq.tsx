@@ -23,7 +23,7 @@ const FAQS_EN = [
   {
     question: "How does the typo-tolerant search engine work?",
     answer:
-      "ShelfSync is powered by high-speed search indexers that match queries across book titles, authors, ISBNs, and categories even with minor misspellings or partial words.",
+      "libra25 is powered by high-speed search indexers that match queries across book titles, authors, ISBNs, and categories even with minor misspellings or partial words.",
   },
   {
     question: "How are staff and assistant permissions managed?",
@@ -51,7 +51,7 @@ const FAQS_UZ = [
   {
     question: "Xatolikka chidamli qidiruv tizimi qanday ishlaydi?",
     answer:
-      "ShelfSync tezkor qidiruv indeksi orqali kitob nomi, muallifi, ISBN va turkumi bo'yicha hatto imloviy xatolar bilan kiritilganda ham eng to'g'ri natijalarni topib beradi.",
+      "libra25 tezkor qidiruv indeksi orqali kitob nomi, muallifi, ISBN va turkumi bo'yicha hatto imloviy xatolar bilan kiritilganda ham eng to'g'ri natijalarni topib beradi.",
   },
   {
     question: "Xodimlar va yordamchilar huquqlari qanday boshqariladi?",
@@ -79,7 +79,7 @@ const FAQS_RU = [
   {
     question: "Как работает поиск с защитой от опечаток?",
     answer:
-      "Поисковая система ShelfSync сопоставляет запросы по названию, автору, ISBN и категориям даже при наличии опечаток или неполных слов.",
+      "Поисковая система libra25 сопоставляет запросы по названию, автору, ISBN и категориям даже при наличии опечаток или неполных слов.",
   },
   {
     question: "Как распределяются права персонала и библиотекарей?",
@@ -106,7 +106,7 @@ export function LandingFaq() {
     : "Got questions about borrowing policies, circulation desk workflows, or account management? Here are the answers.";
 
   return (
-    <section id="faq" className="py-20 bg-background border-b border-border/80">
+    <section id="faq" className="py-20 bg-slate-50/70 dark:bg-zinc-950/60 border-b border-border/80">
       <div className="container max-w-4xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3">
@@ -123,7 +123,7 @@ export function LandingFaq() {
         </div>
 
         {/* Headless Animated Accordion */}
-        <div data-aos="fade-up" data-aos-delay="150" className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-xs">
+        <div data-aos="fade-up" data-aos-delay="150" className="rounded-3xl border border-border/90 bg-card p-6 sm:p-8 shadow-xs">
           <Accordion className="divide-y divide-border/60">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} className="py-2 first:pt-0 last:pb-0">

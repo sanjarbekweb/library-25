@@ -115,7 +115,7 @@ export async function sendTelegramContactMessage({
     `<b>📝 Message:</b>`,
     cleanMessage,
     ``,
-    `<i>Sent via ShelfSync Landing Page Contact Form</i>`,
+    `<i>Sent via libra25 Landing Page Contact Form</i>`,
   ].join("\n");
 
   // 6. Send request to Telegram Bot API

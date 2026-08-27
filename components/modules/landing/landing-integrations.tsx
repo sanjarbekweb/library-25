@@ -47,18 +47,18 @@ export function LandingIntegrations() {
   ];
 
   return (
-    <section id="pricing" className="py-20 bg-canvas-warm dark:bg-canvas-dark border-b border-hairline overflow-hidden">
+    <section id="pricing" className="py-20 bg-slate-50/70 dark:bg-zinc-950/60 border-b border-border/80 overflow-hidden">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Section Header */}
         <div data-aos="fade-up" className="text-center space-y-3 max-w-2xl mx-auto">
-          <Badge variant="outline" className="px-3 py-1 font-mono text-xs">
+          <Badge variant="outline" className="px-3 py-1 font-mono text-xs border-border/80 bg-card">
             Seamless Ecosystem
           </Badge>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-foreground tracking-tight">
             Library Ecosystem Integrations
           </h2>
           <p className="text-sm text-muted-foreground">
-            Connect ShelfSync with your campus scanners, identity providers, and catalog databases.
+            Connect libra25 with your campus scanners, identity providers, and catalog databases.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export function LandingIntegrations() {
                 key={idx}
                 data-aos="zoom-in"
                 data-aos-delay={100 + idx * 80}
-                className="p-5 rounded-3xl border border-hairline bg-card shadow-soft-floating flex flex-col justify-between space-y-4 hover-scale-subtle"
+                className="p-5 rounded-3xl border border-border/90 bg-card shadow-xs flex flex-col justify-between space-y-4 hover-scale-subtle"
               >
                 <div className={`h-11 w-11 rounded-2xl ${item.color} flex items-center justify-center font-bold`}>
                   <IconComp className="h-5 w-5" />
