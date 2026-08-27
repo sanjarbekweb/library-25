@@ -29,3 +29,11 @@ Whenever styling components, layouts, badges, cards, or status indicators:
 1. **Restrained & Minimal Palette:** Stick strictly to a core, unified color palette (`brand-yellow`, `brand-blue`, neutral warm/dark canvas tones, and semantic state indicators like emerald for success/active and rose for overdue/errors). Avoid introducing excessive, arbitrary accent colors (e.g. rainbow badges or too many mismatched pastel tints).
 2. **Design Token Authority:** Always use established design tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `brand-yellow`, `brand-blue`). Hardcoded hex codes or ad-hoc Tailwind colors outside the core palette are strictly prohibited.
 3. **Visual Hierarchy through Tone & Contrast:** Rely on typography weights, subtle opacity layers (`bg-accent`, `bg-muted/50`), and crisp hairline borders rather than multi-colored background fills to create depth and structure.
+
+# Text / Content Relevance & Library UX Copywriting Law
+
+Whenever creating or reviewing UI copy, microcopy, modals, toasts, tooltips, or empty states:
+1. **Contextual Library Tone:** All headings, descriptions, empty states, search placeholders, and error messages must fit an educational, trustworthy, and modern library application. Use precise domain terminology (e.g. "Available on Shelf", "Loan Period", "Borrow Request", "Catalog Index", "Overdue Notice") that is student-friendly and librarian-accurate.
+2. **Actionable & Crisp Microcopy:** Action buttons, call-to-actions, and dialog prompts must clearly state the exact outcome (e.g. "Request Book", "Renew Borrowing", "Confirm Return") rather than vague verbs like "Submit" or "Click here".
+3. **Zero Developer Placeholder Slop:** Never leave generic phrases ("Lorem ipsum", "Something went wrong", "Test error"). Always provide constructive feedback and guidance on what the user should do next.
+

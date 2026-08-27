@@ -10,25 +10,29 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# testing & coverage
 /coverage
+/.nyc_output
 
-# next.js
+# next.js & build output
 /.next/
 /out/
-
-# production
 /build
+/dist
+.turbo
 
-# misc
+# misc & OS files
 .DS_Store
+Thumbs.db
 *.pem
+*.local
 
-# debug
+# debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -37,9 +41,15 @@ yarn-error.log*
 # vercel
 .vercel
 
-# typescript
+# typescript build cache
 *.tsbuildinfo
 next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# agent skills collection (external ecosystem library)
+.agents/skills/
+.agent/skills/
+temp_skills/
+
