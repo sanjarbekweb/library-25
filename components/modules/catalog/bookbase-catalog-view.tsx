@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, AlertCircle, ChevronLeft } from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { CatalogBookItem } from "@/lib/services/book-service";
 import { AppShellLayout } from "@/components/shared/app-shell-layout";
 import { ImageWithLoader } from "@/components/shared/image-with-loader";
@@ -10,7 +10,6 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/utils";
 
 interface BookbaseCatalogViewProps {
-  recommendedBooks: CatalogBookItem[];
   categoryBooks: CatalogBookItem[];
   categories: string[];
   currentCategory: string;
@@ -22,7 +21,6 @@ interface BookbaseCatalogViewProps {
 }
 
 export function BookbaseCatalogView({
-  recommendedBooks,
   categoryBooks,
   categories,
   currentCategory,
@@ -33,8 +31,6 @@ export function BookbaseCatalogView({
 }: BookbaseCatalogViewProps) {
   const { t, language } = useLanguage();
 
-  const recommendedLabel = language === "uz" ? "Tavsiya etilganlar" : language === "ru" ? "Рекомендуем" : "Recommended";
-  const seeAllLabel = language === "uz" ? "Barchasi" : language === "ru" ? "Все" : "See All";
   const categoriesLabel = language === "uz" ? "Turkumlar" : language === "ru" ? "Категории" : "Categories";
   const searchResultsLabel = language === "uz" ? `"${currentSearch}" bo'yicha natijalar` : language === "ru" ? `Результаты поиска для "${currentSearch}"` : `Search Results for "${currentSearch}"`;
   const clearFilterLabel = language === "uz" ? "Filterni tozalash" : language === "ru" ? "Сбросить поиск" : "Clear Search Filter";
@@ -44,55 +40,8 @@ export function BookbaseCatalogView({
 
   return (
     <AppShellLayout>
-      <div className="space-y-6">
-        {/* SECTION 1: RECOMMENDED BOOKS WIDGET */}
-        {!currentSearch && recommendedBooks.length > 0 && (
-          <section className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display font-bold text-lg text-foreground">
-                {recommendedLabel}
-              </h2>
-              <Link
-                href="/catalog?category=all"
-                className="text-xs font-bold text-brand-blue hover:underline flex items-center gap-0.5"
-              >
-                <span>{seeAllLabel}</span>
-                <ChevronRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-
-            {/* Recommended Row / Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {recommendedBooks.map((book) => (
-                <Link
-                  key={book.id}
-                  href={`/books/${book.id}`}
-                  className="group cursor-pointer rounded-2xl p-2 transition-all duration-200 hover:bg-accent/40 block"
-                >
-                  <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1">
-                    <ImageWithLoader
-                      src={book.coverImageUrl || ""}
-                      alt={`Cover image for ${book.title}`}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                    />
-                  </div>
-                  <div className="pt-2.5 space-y-0.5">
-                    <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
-                      {book.title}
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {book.author}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* SECTION 2: CATEGORIES & CATALOG GRID WIDGET */}
+      <div className="space-y-6 max-w-7xl mx-auto">
+        {/* CATEGORIES & CATALOG GRID WIDGET */}
         <section className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h2 className="font-display font-bold text-lg text-foreground">
@@ -143,7 +92,7 @@ export function BookbaseCatalogView({
             </div>
           )}
 
-          {/* Books Grid */}
+          {/* Stable Books Grid (Cards maintain uniform size during sidebar collapse/expand) */}
           {categoryBooks.length === 0 ? (
             <div className="py-12 text-center space-y-3">
               <AlertCircle className="h-8 w-8 mx-auto text-muted-foreground/60" />
@@ -158,23 +107,23 @@ export function BookbaseCatalogView({
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 sm:gap-5">
               {categoryBooks.map((book) => (
                 <Link
                   key={book.id}
                   href={`/books/${book.id}`}
-                  className="group cursor-pointer rounded-2xl p-2 transition-all duration-200 hover:bg-accent/40 block"
+                  className="group cursor-pointer rounded-2xl p-2.5 transition-all duration-200 hover:bg-accent/40 block"
                 >
-                  <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1">
+                  <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-muted shadow-xs group-hover:shadow-md transition-all group-hover:-translate-y-1">
                     <ImageWithLoader
                       src={book.coverImageUrl || ""}
                       alt={`Cover image for ${book.title}`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 180px"
                     />
                   </div>
-                  <div className="pt-2 space-y-0.5">
+                  <div className="pt-2.5 space-y-0.5">
                     <h4 className="font-display font-bold text-xs text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
                       {book.title}
                     </h4>

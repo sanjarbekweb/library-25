@@ -1,4 +1,4 @@
-import { getCatalogBooks, getCategories, getTopDemandBooks } from "@/lib/services/book-service";
+import { getCatalogBooks, getCategories } from "@/lib/services/book-service";
 import { syncCurrentAuthenticatedUser } from "@/lib/services/user-service";
 import { BookbaseCatalogView } from "@/components/modules/catalog/bookbase-catalog-view";
 
@@ -28,18 +28,16 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     | "newest"
     | "rating";
 
-  const [, categories, catalogData, topDemandBooks] = await Promise.all([
+  const [, categories, catalogData] = await Promise.all([
     syncCurrentAuthenticatedUser(),
     getCategories(),
     getCatalogBooks({ category, search, sort, page, limit: 12 }),
-    getTopDemandBooks(4),
   ]);
 
   const { books, total, totalPages } = catalogData;
 
   return (
     <BookbaseCatalogView
-      recommendedBooks={topDemandBooks}
       categoryBooks={books}
       categories={categories}
       currentCategory={category}

@@ -1,6 +1,6 @@
 export function BookCardSkeleton() {
   return (
-    <div className="flex flex-col h-full rounded-2xl p-2 space-y-2">
+    <div className="flex flex-col h-full rounded-2xl p-2.5 space-y-2">
       {/* Cover Image */}
       <div className="relative aspect-[3/4] w-full skeleton-shimmer rounded-xl shadow-xs" />
 
@@ -15,21 +15,7 @@ export function BookCardSkeleton() {
 
 export function BookbaseCatalogSkeleton() {
   return (
-    <div className="space-y-6">
-      {/* Recommended Section Skeleton */}
-      <section className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="h-5 w-32 skeleton-shimmer rounded-md" />
-          <div className="h-3.5 w-16 skeleton-shimmer rounded-md" />
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <BookCardSkeleton key={i} />
-          ))}
-        </div>
-      </section>
-
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Categories Section Skeleton */}
       <section className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
         <div className="h-5 w-28 skeleton-shimmer rounded-md" />
@@ -44,7 +30,7 @@ export function BookbaseCatalogSkeleton() {
         </div>
 
         {/* Catalog Grid Skeleton */}
-        <div className="grid grid-cols-2 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 sm:gap-5">
           {Array.from({ length: 12 }).map((_, i) => (
             <BookCardSkeleton key={i} />
           ))}
@@ -56,7 +42,7 @@ export function BookbaseCatalogSkeleton() {
 
 export function CatalogSkeleton({ count = 12 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 min-[420px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 sm:gap-5">
       {Array.from({ length: count }).map((_, i) => (
         <BookCardSkeleton key={i} />
       ))}
