@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageToggle } from "@/components/shared/language-toggle";
-import { NotificationsToggle } from "@/components/shared/notifications-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSidebar } from "@/components/providers/sidebar-provider";
 import { cn } from "@/lib/utils";
@@ -304,7 +303,6 @@ export function AppSidebar({ mobileOpen: propMobileOpen, onCloseMobile: propOnCl
         <div className="space-y-2.5 border-t border-border/60 pt-3 mt-4">
           {/* Utility Controls with Stationary Icons */}
           <div className="flex flex-col gap-1 w-full">
-            <NotificationsToggle isCollapsed={isCollapsed} />
             <ThemeToggle isCollapsed={isCollapsed} />
             <LanguageToggle isCollapsed={isCollapsed} />
           </div>
