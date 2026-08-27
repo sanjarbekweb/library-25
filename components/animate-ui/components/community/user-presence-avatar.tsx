@@ -1,205 +1,166 @@
 'use client';
 
 import * as React from 'react';
-import { motion, LayoutGroup } from 'motion/react';
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/animate-ui/components/animate/tooltip';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-const USERS = [
+interface Reader {
+  id: number;
+  name: string;
+  department: string;
+  initials: string;
+  bg: string;
+  textColor: string;
+  online: boolean;
+}
+
+const READERS: Reader[] = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    fallback: 'AK',
-    tooltip: 'Arham (CS)',
+    name: 'Arham (CS & Software)',
+    department: 'CS',
+    initials: 'AK',
+    bg: 'bg-blue-600',
+    textColor: 'text-white',
     online: true,
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-    fallback: 'SK',
-    tooltip: 'Sardor (Admin)',
+    name: 'Sardor (Systems Admin)',
+    department: 'Admin',
+    initials: 'SK',
+    bg: 'bg-indigo-600',
+    textColor: 'text-white',
     online: true,
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    fallback: 'EL',
-    tooltip: 'Elena (Math)',
+    name: 'Elena (Mathematics)',
+    department: 'Math',
+    initials: 'ER',
+    bg: 'bg-emerald-600',
+    textColor: 'text-white',
     online: true,
   },
   {
     id: 4,
-    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
-    fallback: 'AQ',
-    tooltip: 'Alisher (Faculty)',
+    name: 'Prof. Alisher (Faculty)',
+    department: 'Faculty',
+    initials: 'AQ',
+    bg: 'bg-amber-600',
+    textColor: 'text-white',
     online: false,
   },
   {
     id: 5,
-    src: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&auto=format&fit=crop&q=80',
-    fallback: 'DR',
-    tooltip: 'David (Physics)',
+    name: 'David (Physics)',
+    department: 'Physics',
+    initials: 'DR',
+    bg: 'bg-violet-600',
+    textColor: 'text-white',
     online: false,
   },
   {
     id: 6,
-    src: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80',
-    fallback: 'JK',
-    tooltip: 'Jasur (History)',
+    name: 'Jasur (History)',
+    department: 'History',
+    initials: 'JK',
+    bg: 'bg-rose-600',
+    textColor: 'text-white',
     online: false,
   },
 ];
-
-const AVATAR_MOTION_TRANSITION = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-} as const;
-
-const GROUP_CONTAINER_TRANSITION = {
-  type: 'spring',
-  stiffness: 150,
-  damping: 20,
-} as const;
 
 interface UserPresenceAvatarProps {
   className?: string;
   size?: 'sm' | 'default';
 }
 
-function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarProps) {
-  const [users, setUsers] = React.useState(USERS);
-  const [togglingGroup, setTogglingGroup] = React.useState<
-    'online' | 'offline' | null
-  >(null);
+export function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarProps) {
+  const [readers, setReaders] = React.useState<Reader[]>(READERS);
+  const [activeTooltip, setActiveTooltip] = React.useState<string | null>(null);
 
-  const online = users.filter((u) => u.online);
-  const offline = users.filter((u) => !u.online);
+  const onlineReaders = readers.filter((r) => r.online);
+  const offlineReaders = readers.filter((r) => !r.online);
 
   const toggleStatus = (id: number) => {
-    const user = users.find((u) => u.id === id);
-    if (!user) return;
-
-    setTogglingGroup(user.online ? 'online' : 'offline');
-    setUsers((prev) => {
-      const idx = prev.findIndex((u) => u.id === id);
-      if (idx === -1) return prev;
-      const updated = [...prev];
-      const target = updated[idx];
-      if (!target) return prev;
-      updated.splice(idx, 1);
-      updated.push({ ...target, online: !target.online });
-      return updated;
-    });
-    // Reset group z-index after the animation duration (keep in sync with animation timing)
-    setTimeout(() => setTogglingGroup(null), 500);
+    setReaders((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, online: !r.online } : r))
+    );
   };
 
-  const avatarSizeClass = size === 'sm' ? 'size-9 sm:size-9.5' : 'size-10 sm:size-11';
-  const containerHeightClass = size === 'sm' ? 'h-9.5' : 'h-11';
+  const avatarSizeClass =
+    size === 'sm' ? 'w-8 h-8 text-[11px]' : 'w-9 sm:w-10 h-9 sm:h-10 text-xs sm:text-sm';
+  const pillPadding = size === 'sm' ? 'p-1' : 'p-1 sm:p-1.5';
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-3 sm:gap-4", className)}>
-      <LayoutGroup>
-        <TooltipProvider>
-          {online.length > 0 && (
-            <motion.div
-              layout
-              className={cn(
-                'bg-slate-200/90 dark:bg-zinc-800 p-0.5 rounded-full shadow-2xs',
-                togglingGroup === 'online' ? 'z-5' : 'z-10',
-              )}
-              transition={GROUP_CONTAINER_TRANSITION}
-            >
-              <div
-                key={online.map((u) => u.id).join('_') + '-online'}
-                className={cn("flex items-center -space-x-2 sm:-space-x-2.5", containerHeightClass)}
-              >
-                {online.map((user) => (
-                  <Tooltip key={user.id}>
-                    <TooltipTrigger asChild>
-                      <motion.div
-                        layoutId={`avatar-${user.id}`}
-                        className="cursor-pointer"
-                        onClick={() => toggleStatus(user.id)}
-                        animate={{
-                          filter: 'grayscale(0)',
-                          scale: 1,
-                        }}
-                        transition={AVATAR_MOTION_TRANSITION}
-                        initial={false}
-                      >
-                        <Avatar className={cn("border-2 border-slate-200/90 dark:border-zinc-800 shadow-xs", avatarSizeClass)}>
-                          <AvatarImage src={user.src} alt={user.tooltip} />
-                          <AvatarFallback className="font-bold text-xs bg-brand-blue text-white">{user.fallback}</AvatarFallback>
-                        </Avatar>
-                      </motion.div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{user.tooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-            </motion.div>
+    <div className={cn('flex flex-wrap items-center gap-3 relative', className)}>
+      {/* Online Group Pill */}
+      {onlineReaders.length > 0 && (
+        <div
+          className={cn(
+            'flex items-center -space-x-2 rounded-full border border-border/80 bg-slate-200/80 dark:bg-zinc-800/90 shadow-2xs',
+            pillPadding
           )}
+        >
+          {onlineReaders.map((reader) => (
+            <button
+              key={reader.id}
+              type="button"
+              onClick={() => toggleStatus(reader.id)}
+              onMouseEnter={() => setActiveTooltip(reader.name)}
+              onMouseLeave={() => setActiveTooltip(null)}
+              className={cn(
+                'relative rounded-full flex items-center justify-center font-bold font-display shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background cursor-pointer shrink-0 select-none',
+                reader.bg,
+                reader.textColor,
+                avatarSizeClass
+              )}
+              title={`${reader.name} (Click to set offline)`}
+            >
+              {reader.initials}
+              {/* Online Green Beacon Dot */}
+              <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+            </button>
+          ))}
+        </div>
+      )}
 
-          {offline.length > 0 && (
-            <motion.div
-              layout
-              className={cn(
-                'bg-slate-200/90 dark:bg-zinc-800 p-0.5 rounded-full shadow-2xs',
-                togglingGroup === 'offline' ? 'z-5' : 'z-10',
-              )}
-              transition={GROUP_CONTAINER_TRANSITION}
-            >
-              <div
-                key={offline.map((u) => u.id).join('_') + '-offline'}
-                className={cn("flex items-center -space-x-2 sm:-space-x-2.5", containerHeightClass)}
-              >
-                {offline.map((user) => (
-                  <Tooltip key={user.id}>
-                    <TooltipTrigger asChild>
-                      <motion.div
-                        layoutId={`avatar-${user.id}`}
-                        className="cursor-pointer"
-                        onClick={() => toggleStatus(user.id)}
-                        animate={{
-                          filter: 'grayscale(1)',
-                          scale: 1,
-                        }}
-                        transition={AVATAR_MOTION_TRANSITION}
-                        initial={false}
-                      >
-                        <Avatar className={cn("border-2 border-slate-200/90 dark:border-zinc-800 shadow-xs", avatarSizeClass)}>
-                          <AvatarImage src={user.src} alt={user.tooltip} />
-                          <AvatarFallback className="font-bold text-xs bg-muted text-muted-foreground">{user.fallback}</AvatarFallback>
-                        </Avatar>
-                      </motion.div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{user.tooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-            </motion.div>
+      {/* Offline Group Pill */}
+      {offlineReaders.length > 0 && (
+        <div
+          className={cn(
+            'flex items-center -space-x-2 rounded-full border border-border/80 bg-slate-200/80 dark:bg-zinc-800/90 shadow-2xs opacity-80 hover:opacity-100 transition-opacity',
+            pillPadding
           )}
-        </TooltipProvider>
-      </LayoutGroup>
+        >
+          {offlineReaders.map((reader) => (
+            <button
+              key={reader.id}
+              type="button"
+              onClick={() => toggleStatus(reader.id)}
+              onMouseEnter={() => setActiveTooltip(reader.name)}
+              onMouseLeave={() => setActiveTooltip(null)}
+              className={cn(
+                'relative rounded-full flex items-center justify-center font-bold font-display shadow-xs transition-transform duration-200 hover:scale-110 hover:z-20 border-2 border-background grayscale hover:grayscale-0 cursor-pointer shrink-0 select-none opacity-85 hover:opacity-100',
+                reader.bg,
+                reader.textColor,
+                avatarSizeClass
+              )}
+              title={`${reader.name} (Click to set online)`}
+            >
+              {reader.initials}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Floating Hover Label */}
+      {activeTooltip && (
+        <div className="absolute -top-7 left-0 z-30 px-2 py-0.5 rounded-md bg-foreground text-background text-[10px] font-medium shadow-md pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+          {activeTooltip}
+        </div>
+      )}
     </div>
   );
 }
-
-export { UserPresenceAvatar };
