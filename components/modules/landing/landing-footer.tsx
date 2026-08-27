@@ -193,7 +193,7 @@ export function LandingFooter() {
                   </a>
                 </li>
                 <li>
-                  <a href="#resources" className="hover:text-brand-blue transition-colors block py-0.5">
+                  <a href="#testimonials" className="hover:text-brand-blue transition-colors block py-0.5">
                     Student Reviews
                   </a>
                 </li>

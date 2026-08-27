@@ -17,6 +17,9 @@ import {
   Layers,
   MessageSquare,
   ChevronRight,
+  HelpCircle,
+  Send,
+  Cpu,
 } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -135,34 +138,41 @@ export function Navbar() {
             >
               {pathname === "/" ? (
                 /* Landing Page Section Navigation Buttons */
-                <div className="flex items-center gap-1 p-1 rounded-full border border-border/70 bg-card/60 backdrop-blur-xs shadow-2xs">
-                  <a
-                    href="#product"
-                    onClick={(e) => handleScrollToSection(e, "#product")}
-                    className="px-3.5 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
-                  >
-                    {t("product")}
-                  </a>
+                <div className="flex items-center gap-0.5 lg:gap-1 p-1 rounded-full border border-border/70 bg-card/60 backdrop-blur-xs shadow-2xs">
                   <a
                     href="#features"
                     onClick={(e) => handleScrollToSection(e, "#features")}
-                    className="px-3.5 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
+                    className="px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
                   >
-                    {t("features")}
+                    {t("navFeatures", "Features")}
                   </a>
                   <a
-                    href="#pricing"
-                    onClick={(e) => handleScrollToSection(e, "#pricing")}
-                    className="px-3.5 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
+                    href="#integrations"
+                    onClick={(e) => handleScrollToSection(e, "#integrations")}
+                    className="px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
                   >
-                    {t("pricing")}
+                    {t("navIntegrations", "Integrations")}
                   </a>
                   <a
-                    href="#resources"
-                    onClick={(e) => handleScrollToSection(e, "#resources")}
-                    className="px-3.5 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
+                    href="#testimonials"
+                    onClick={(e) => handleScrollToSection(e, "#testimonials")}
+                    className="px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
                   >
-                    {t("resources")}
+                    {t("navReviews", "Reviews")}
+                  </a>
+                  <a
+                    href="#faq"
+                    onClick={(e) => handleScrollToSection(e, "#faq")}
+                    className="px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
+                  >
+                    {t("navFaq", "FAQ")}
+                  </a>
+                  <a
+                    href="#contact"
+                    onClick={(e) => handleScrollToSection(e, "#contact")}
+                    className="px-3 py-1.5 text-xs lg:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 rounded-full transition-all duration-200"
+                  >
+                    {t("navContact", "Support")}
                   </a>
                 </div>
               ) : (
@@ -375,46 +385,57 @@ export function Navbar() {
                   </span>
                   <div className="grid grid-cols-1 gap-1 pt-1">
                     <a
-                      href="#product"
-                      onClick={(e) => handleScrollToSection(e, "#product")}
-                      className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <BookOpen className="h-4 w-4 text-brand-blue" />
-                        {t("product")}
-                      </span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
-                    </a>
-                    <a
                       href="#features"
                       onClick={(e) => handleScrollToSection(e, "#features")}
                       className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
                     >
                       <span className="flex items-center gap-2.5">
                         <Layers className="h-4 w-4 text-brand-blue" />
-                        {t("features")}
+                        {t("navFeatures", "Features")}
                       </span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
                     </a>
                     <a
-                      href="#pricing"
-                      onClick={(e) => handleScrollToSection(e, "#pricing")}
+                      href="#integrations"
+                      onClick={(e) => handleScrollToSection(e, "#integrations")}
                       className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
                     >
                       <span className="flex items-center gap-2.5">
-                        <Sparkles className="h-4 w-4 text-brand-blue" />
-                        {t("pricing")}
+                        <Cpu className="h-4 w-4 text-brand-blue" />
+                        {t("navIntegrations", "Integrations")}
                       </span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
                     </a>
                     <a
-                      href="#resources"
-                      onClick={(e) => handleScrollToSection(e, "#resources")}
+                      href="#testimonials"
+                      onClick={(e) => handleScrollToSection(e, "#testimonials")}
                       className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
                     >
                       <span className="flex items-center gap-2.5">
                         <MessageSquare className="h-4 w-4 text-brand-blue" />
-                        {t("resources")}
+                        {t("navReviews", "Reviews")}
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
+                    </a>
+                    <a
+                      href="#faq"
+                      onClick={(e) => handleScrollToSection(e, "#faq")}
+                      className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <HelpCircle className="h-4 w-4 text-brand-blue" />
+                        {t("navFaq", "FAQ")}
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
+                    </a>
+                    <a
+                      href="#contact"
+                      onClick={(e) => handleScrollToSection(e, "#contact")}
+                      className="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl text-foreground hover:bg-accent/60 transition-colors min-h-[44px]"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Send className="h-4 w-4 text-brand-blue" />
+                        {t("navContact", "Support")}
                       </span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
                     </a>

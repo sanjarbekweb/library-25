@@ -157,7 +157,7 @@ export function LandingTestimonials() {
 
   return (
     <section
-      id="resources"
+      id="testimonials"
       ref={containerRef}
       className="py-24 bg-slate-100/60 dark:bg-zinc-900/40 border-b border-border/80 overflow-hidden relative"
     >

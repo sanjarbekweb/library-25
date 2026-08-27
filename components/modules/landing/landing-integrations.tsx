@@ -119,7 +119,7 @@ export function LandingIntegrations() {
 
   return (
     <section
-      id="pricing"
+      id="integrations"
       ref={sectionRef}
       className="py-20 bg-slate-50/70 dark:bg-zinc-950/60 border-b border-border/80 overflow-hidden"
     >

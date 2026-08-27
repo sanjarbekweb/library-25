@@ -163,6 +163,11 @@ const translations: Record<Language, Record<string, string>> = {
     viewAnalytics: "View Analytics",
 
     // Landing Page
+    navFeatures: "Features",
+    navIntegrations: "Integrations",
+    navReviews: "Reviews",
+    navFaq: "FAQ",
+    navContact: "Support",
     heroTitle: "Unified Campus Library Management Platform",
     heroSubtitle: "Streamline book discovery, hold reservations, desk checkouts, and collection tracking with speed and simplicity.",
     exploreCatalogBtn: "Explore Book Catalog",
@@ -321,6 +326,11 @@ const translations: Record<Language, Record<string, string>> = {
     viewAnalytics: "Tahlillarni ko'rish",
 
     // Landing Page
+    navFeatures: "Imkoniyatlar",
+    navIntegrations: "Integratsiyalar",
+    navReviews: "Fikrlar",
+    navFaq: "Savol-Javob",
+    navContact: "Yordam",
     heroTitle: "Yagona Maktab Kutubxonasini Boshqarish Tizimi",
     heroSubtitle: "Kitob qidirish, band qilish, tezkor ijara va to'liq fond nazoratini zamonaviy tarzda boshqaring.",
     exploreCatalogBtn: "Kitoblar katalogini ko'rish",
@@ -479,6 +489,11 @@ const translations: Record<Language, Record<string, string>> = {
     viewAnalytics: "Открыть аналитику",
 
     // Landing Page
+    navFeatures: "Возможности",
+    navIntegrations: "Интеграции",
+    navReviews: "Отзывы",
+    navFaq: "FAQ",
+    navContact: "Поддержка",
     heroTitle: "Единая Платформа Управления Школьной Библиотекой",
     heroSubtitle: "Быстрый поиск книг, онлайн-бронирование, мгновенная выдача и точный учет фонда в реальном времени.",
     exploreCatalogBtn: "Открыть каталог книг",
