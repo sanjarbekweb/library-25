@@ -19,44 +19,44 @@ import { cn } from '@/lib/utils';
 const USERS = [
   {
     id: 1,
-    src: 'https://pbs.twimg.com/profile_images/1897311929028255744/otxpL-ke_400x400.jpg',
+    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
     fallback: 'AK',
-    tooltip: 'Arhamkhnz',
+    tooltip: 'Arham (CS)',
     online: true,
   },
   {
     id: 2,
-    src: 'https://pbs.twimg.com/profile_images/1948770261848756224/oPwqXMD6_400x400.jpg',
+    src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
     fallback: 'SK',
-    tooltip: 'Skyleen',
+    tooltip: 'Sardor (Admin)',
     online: true,
   },
   {
     id: 3,
-    src: 'https://pbs.twimg.com/profile_images/1593304942210478080/TUYae5z7_400x400.jpg',
-    fallback: 'CN',
-    tooltip: 'Shadcn',
+    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+    fallback: 'EL',
+    tooltip: 'Elena (Math)',
     online: true,
   },
   {
     id: 4,
-    src: 'https://pbs.twimg.com/profile_images/1677042510839857154/Kq4tpySA_400x400.jpg',
-    fallback: 'AW',
-    tooltip: 'Adam Wathan',
+    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
+    fallback: 'AQ',
+    tooltip: 'Alisher (Faculty)',
     online: false,
   },
   {
     id: 5,
-    src: 'https://pbs.twimg.com/profile_images/1783856060249595904/8TfcCN0r_400x400.jpg',
-    fallback: 'GR',
-    tooltip: 'Guillermo Rauch',
+    src: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&auto=format&fit=crop&q=80',
+    fallback: 'DR',
+    tooltip: 'David (Physics)',
     online: false,
   },
   {
     id: 6,
-    src: 'https://pbs.twimg.com/profile_images/1534700564810018816/anAuSfkp_400x400.jpg',
-    fallback: 'JH',
-    tooltip: 'Jhey',
+    src: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80',
+    fallback: 'JK',
+    tooltip: 'Jasur (History)',
     online: false,
   },
 ];
@@ -106,8 +106,8 @@ function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarP
     setTimeout(() => setTogglingGroup(null), 500);
   };
 
-  const avatarSizeClass = size === 'sm' ? 'size-9.5 sm:size-10' : 'size-10 sm:size-12';
-  const containerHeightClass = size === 'sm' ? 'h-10' : 'h-11 sm:h-12';
+  const avatarSizeClass = size === 'sm' ? 'size-9 sm:size-9.5' : 'size-10 sm:size-11';
+  const containerHeightClass = size === 'sm' ? 'h-9.5' : 'h-11';
 
   return (
     <div className={cn("flex flex-wrap items-center gap-3 sm:gap-4", className)}>
@@ -124,7 +124,7 @@ function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarP
             >
               <div
                 key={online.map((u) => u.id).join('_') + '-online'}
-                className={cn("flex items-center -space-x-2.5 sm:-space-x-3", containerHeightClass)}
+                className={cn("flex items-center -space-x-2 sm:-space-x-2.5", containerHeightClass)}
               >
                 {online.map((user) => (
                   <Tooltip key={user.id}>
@@ -138,18 +138,17 @@ function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarP
                           scale: 1,
                         }}
                         transition={AVATAR_MOTION_TRANSITION}
-                        title="Click to go offline"
                         initial={false}
                       >
-                        <Avatar className={cn("border-2 sm:border-3 border-slate-200/90 dark:border-zinc-800", avatarSizeClass)}>
+                        <Avatar className={cn("border-2 border-slate-200/90 dark:border-zinc-800 shadow-xs", avatarSizeClass)}>
                           <AvatarImage src={user.src} alt={user.tooltip} />
                           <AvatarFallback className="font-bold text-xs bg-brand-blue text-white">{user.fallback}</AvatarFallback>
-                          <TooltipContent>
-                            <p>{user.tooltip}</p>
-                          </TooltipContent>
                         </Avatar>
                       </motion.div>
                     </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{user.tooltip}</p>
+                    </TooltipContent>
                   </Tooltip>
                 ))}
               </div>
@@ -167,7 +166,7 @@ function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarP
             >
               <div
                 key={offline.map((u) => u.id).join('_') + '-offline'}
-                className={cn("flex items-center -space-x-2.5 sm:-space-x-3", containerHeightClass)}
+                className={cn("flex items-center -space-x-2 sm:-space-x-2.5", containerHeightClass)}
               >
                 {offline.map((user) => (
                   <Tooltip key={user.id}>
@@ -181,18 +180,17 @@ function UserPresenceAvatar({ className, size = 'default' }: UserPresenceAvatarP
                           scale: 1,
                         }}
                         transition={AVATAR_MOTION_TRANSITION}
-                        title="Click to go online"
                         initial={false}
                       >
-                        <Avatar className={cn("border-2 sm:border-3 border-slate-200/90 dark:border-zinc-800", avatarSizeClass)}>
+                        <Avatar className={cn("border-2 border-slate-200/90 dark:border-zinc-800 shadow-xs", avatarSizeClass)}>
                           <AvatarImage src={user.src} alt={user.tooltip} />
                           <AvatarFallback className="font-bold text-xs bg-muted text-muted-foreground">{user.fallback}</AvatarFallback>
-                          <TooltipContent>
-                            <p>{user.tooltip}</p>
-                          </TooltipContent>
                         </Avatar>
                       </motion.div>
                     </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{user.tooltip}</p>
+                    </TooltipContent>
                   </Tooltip>
                 ))}
               </div>
