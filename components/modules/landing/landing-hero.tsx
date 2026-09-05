@@ -174,12 +174,13 @@ export function LandingHero() {
                 y: 40,
                 duration: 1.1,
                 ease: "back.out(1.2)",
+                clearProps: "transform,scale,opacity,visibility",
               },
               "-=1.1"
             );
 
-          // Idle floating oscillation on 3D sculpture
-          gsap.to(".hero-sculpture-img", {
+          // Idle floating oscillation on 3D sculpture floating wrapper
+          gsap.to(".hero-floating-sculpture", {
             y: -14,
             duration: 3.6,
             repeat: -1,
@@ -199,36 +200,66 @@ export function LandingHero() {
             });
           }
 
-          // Interactive 3D Perspective Tilt with gsap.quickTo on Desktop
-          if (isDesktop && sculptureRef.current && sectionRef.current) {
-            const rotX = gsap.quickTo(sculptureRef.current, "rotationX", {
-              duration: 0.5,
+          // Interactive 3D Perspective Tilt on Sculpture Hover (Desktop)
+          const sculptureEl = sculptureRef.current;
+          if (isDesktop && sculptureEl) {
+            // Set 3D perspective directly on sculpture wrapper
+            gsap.set(sculptureEl, {
+              transformPerspective: 1200,
+              transformStyle: "preserve-3d",
+            });
+
+            const rotX = gsap.quickTo(sculptureEl, "rotationX", {
+              duration: 0.35,
               ease: "power2.out",
             });
-            const rotY = gsap.quickTo(sculptureRef.current, "rotationY", {
-              duration: 0.5,
+            const rotY = gsap.quickTo(sculptureEl, "rotationY", {
+              duration: 0.35,
               ease: "power2.out",
             });
-            const moveX = gsap.quickTo(sculptureRef.current, "x", {
-              duration: 0.6,
+            const moveX = gsap.quickTo(sculptureEl, "x", {
+              duration: 0.4,
               ease: "power2.out",
             });
-            const moveY = gsap.quickTo(sculptureRef.current, "y", {
-              duration: 0.6,
+            const moveY = gsap.quickTo(sculptureEl, "y", {
+              duration: 0.4,
               ease: "power2.out",
             });
+            const scaleTo = gsap.quickTo(sculptureEl, "scale", {
+              duration: 0.4,
+              ease: "power2.out",
+            });
+
+            const glowEl = glowRef.current;
+            const glowMoveX = glowEl
+              ? gsap.quickTo(glowEl, "x", { duration: 0.5, ease: "power2.out" })
+              : null;
+            const glowMoveY = glowEl
+              ? gsap.quickTo(glowEl, "y", { duration: 0.5, ease: "power2.out" })
+              : null;
+
+            const handleMouseEnter = () => {
+              scaleTo(1.05);
+            };
 
             const handleMouseMove = (e: MouseEvent) => {
-              const rect = sectionRef.current?.getBoundingClientRect();
-              if (!rect) return;
+              const rect = sculptureEl.getBoundingClientRect();
+              if (!rect.width || !rect.height) return;
 
+              // Normalized coordinates (-0.5 to +0.5) centered on the sculpture itself
               const xNorm = (e.clientX - rect.left) / rect.width - 0.5;
               const yNorm = (e.clientY - rect.top) / rect.height - 0.5;
 
-              rotY(xNorm * 18);
-              rotX(-yNorm * 18);
-              moveX(xNorm * 16);
-              moveY(yNorm * 16);
+              // Dynamic, responsive 3D tilt tracking cursor position on hover
+              rotY(xNorm * 26);
+              rotX(-yNorm * 26);
+              moveX(xNorm * 18);
+              moveY(yNorm * 18);
+
+              if (glowMoveX && glowMoveY) {
+                glowMoveX(xNorm * 30);
+                glowMoveY(yNorm * 30);
+              }
             };
 
             const handleMouseLeave = () => {
@@ -236,15 +267,21 @@ export function LandingHero() {
               rotY(0);
               moveX(0);
               moveY(0);
+              scaleTo(1);
+              if (glowMoveX && glowMoveY) {
+                glowMoveX(0);
+                glowMoveY(0);
+              }
             };
 
-            const sectionEl = sectionRef.current;
-            sectionEl.addEventListener("mousemove", handleMouseMove);
-            sectionEl.addEventListener("mouseleave", handleMouseLeave);
+            sculptureEl.addEventListener("mouseenter", handleMouseEnter);
+            sculptureEl.addEventListener("mousemove", handleMouseMove);
+            sculptureEl.addEventListener("mouseleave", handleMouseLeave);
 
             return () => {
-              sectionEl.removeEventListener("mousemove", handleMouseMove);
-              sectionEl.removeEventListener("mouseleave", handleMouseLeave);
+              sculptureEl.removeEventListener("mouseenter", handleMouseEnter);
+              sculptureEl.removeEventListener("mousemove", handleMouseMove);
+              sculptureEl.removeEventListener("mouseleave", handleMouseLeave);
             };
           }
         }
@@ -328,12 +365,12 @@ export function LandingHero() {
                   </SignInButton>
                 )}
 
-                <Link
-                  href="/catalog"
+                <a
+                  href="#features"
                   className="text-sm font-semibold text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
                 >
                   {exploreText}
-                </Link>
+                </a>
               </div>
 
               {/* Social Proof & Metrics (50K / Live Presence Avatars) */}
@@ -361,17 +398,21 @@ export function LandingHero() {
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[420px] h-80 sm:h-[420px] bg-gradient-to-tr from-brand-blue/20 dark:from-brand-blue/30 via-purple-600/10 dark:via-purple-600/20 to-indigo-400/15 dark:to-indigo-400/20 rounded-full blur-[110px] pointer-events-none will-change-transform"
               />
 
+              {/* Interactive 3D Tilt Container (Receives direct cursor events) */}
               <div
                 ref={sculptureRef}
-                className="relative z-10 w-full max-w-[380px] sm:max-w-[460px] lg:max-w-[520px] aspect-square flex items-center justify-center [transform-style:preserve-3d] will-change-transform"
+                className="relative z-10 w-full max-w-[380px] sm:max-w-[460px] lg:max-w-[520px] aspect-square flex items-center justify-center [transform-style:preserve-3d] cursor-pointer will-change-transform"
               >
-                <Image
-                  src={heroImg}
-                  alt="libra25 3D Origami Book Bloom Sculpture"
-                  priority
-                  unoptimized
-                  className="hero-sculpture-img w-full h-full object-contain -scale-x-100 drop-shadow-[0_20px_50px_rgba(120,80,255,0.25)] dark:drop-shadow-[0_25px_60px_rgba(120,80,255,0.35)] drop-shadow-[0_10px_25px_rgba(29,97,255,0.15)] dark:drop-shadow-[0_10px_25px_rgba(29,97,255,0.25)] select-none pointer-events-none will-change-transform"
-                />
+                {/* Isolated Idle Floating Layer */}
+                <div className="hero-floating-sculpture w-full h-full flex items-center justify-center [transform-style:preserve-3d] pointer-events-none">
+                  <Image
+                    src={heroImg}
+                    alt="libra25 3D Origami Book Bloom Sculpture"
+                    priority
+                    unoptimized
+                    className="w-full h-full object-contain -scale-x-100 drop-shadow-[0_20px_50px_rgba(120,80,255,0.25)] dark:drop-shadow-[0_25px_60px_rgba(120,80,255,0.35)] drop-shadow-[0_10px_25px_rgba(29,97,255,0.15)] dark:drop-shadow-[0_10px_25px_rgba(29,97,255,0.25)] select-none pointer-events-none"
+                  />
+                </div>
               </div>
             </div>
           </div>
