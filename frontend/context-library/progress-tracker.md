@@ -11,6 +11,14 @@ change.
 - Unit 15C is complete locally (Partial gate pending external DB migration for partial indexes).
 - Current Unit: **Unit 15D — All remaining writers and role synchronization**.
 
+## Repository Hygiene & Clean-Clone Build Review (2026-11-20)
+
+- Committed the frontend/backend split (previously uncommitted and half-staged) and fixed `.gitignore` (was UTF-16, so `.env`, `node_modules`, `.next`, `.clerk` were not ignored; no secret was ever committed).
+- Backend previously built only because of a stale root `node_modules`: declared `pg`, `@prisma/adapter-pg`, `date-fns`; aligned Prisma CLI to 7.10 (was 8.0.0-rc vs 7.x client); added `backend/prisma.config.ts`, `backend/.env.example`, build/typecheck/db scripts; CORS restricted to `CORS_ORIGIN`.
+- Frontend generates its Prisma client from the backend-owned schema via `scripts/generate-prisma-client.mjs` (temporary until U-21 removes frontend DB access).
+- Verification: backend clean install, `tsc`, build, boot (health 200, unauthenticated route 401); frontend `tsc` + `next build` (19 routes); 33/33 unit tests. Database integration suites still require an isolated `_test` database and were not run.
+- Still open against the plan: frontend server components (`app/catalog`, `app/books/[id]`, admin/assistant layouts, `api/search`, `api/webhooks/clerk`) still import `lib/services`/Prisma directly (U-18–U-21); deprecated `app/actions/*` remain; backend has no tests yet; U-15A.2/15B/15C live-database gates and U-15D gate remain unqualified; full-repo lint not passing.
+
 ## Continuation Review — Full-Stack Backend Separation (2026-11-05)
 
 - **Chapter 1: Foundation & Auth Middleware Complete**
