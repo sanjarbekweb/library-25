@@ -1,0 +1,122 @@
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import { getBookDetails } from "@/lib/services/book-service";
+import { fetchReservationForBookApi } from "@/hooks/api/useReservations";
+import { fetchEligibleLoanApi } from "@/hooks/api/useFeedback";
+import { BookDetailView } from "@/components/modules/books/book-detail-view";
+import { AppShellLayout } from "@/components/shared/app-shell-layout";
+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const book = await getBookDetails(id);
+
+  if (!book) {
+    return {
+      title: "Book Not Found",
+      description: "The requested library book could not be found in the catalog.",
+    };
+  }
+
+  const title = `${book.title} by ${book.author}`;
+  const description =
+    book.description ||
+    `Explore ${book.title} by ${book.author} in the libra25 School Library Catalog. Check real-time copy availability, publication details, and verified student reviews.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${book.title} | libra25 Library`,
+      description,
+      type: "book",
+      authors: [book.author],
+      isbn: book.isbn || undefined,
+      images: book.coverImageUrl
+        ? [{ url: book.coverImageUrl, alt: book.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${book.title} | libra25 Library`,
+      description,
+      images: book.coverImageUrl ? [book.coverImageUrl] : [],
+    },
+  };
+}
+
+export default async function BookDetailPage({ params }: PageProps) {
+  const { id } = await params;
+  const { userId, getToken } = await auth();
+  const token = userId ? await getToken() : null;
+
+  const [book, existingReservation, eligibleLoan] = await Promise.all([
+    getBookDetails(id),
+    userId ? fetchReservationForBookApi(id, token) : Promise.resolve(null),
+    userId ? fetchEligibleLoanApi(id, token) : Promise.resolve(null),
+  ]);
+
+  if (!book) {
+    notFound();
+  }
+
+  // Schema.org Book JSON-LD Structured Data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    name: book.title,
+    author: {
+      "@type": "Person",
+      name: book.author,
+    },
+    isbn: book.isbn || undefined,
+    genre: book.category,
+    datePublished: book.publicationYear ? String(book.publicationYear) : undefined,
+    image: book.coverImageUrl || undefined,
+    description: book.description || undefined,
+    ...(book.averageRating && book.totalReviews > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: book.averageRating,
+            reviewCount: book.totalReviews,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    offers: {
+      "@type": "Offer",
+      availability:
+        book.copyBreakdown.available > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      price: "0.00",
+      priceCurrency: "USD",
+      itemCondition: "https://schema.org/UsedCondition",
+    },
+  };
+
+  return (
+    <AppShellLayout>
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <div className="max-w-6xl mx-auto">
+        <BookDetailView
+          book={book}
+          isSignedIn={!!userId}
+          existingReservationId={existingReservation?.id}
+          eligibleLoanIdForFeedback={eligibleLoan?.loanId}
+        />
+      </div>
+    </AppShellLayout>
+  );
+}

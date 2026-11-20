@@ -1,0 +1,490 @@
+"use client";
+
+import { useState, useEffect, useTransition } from "react";
+import Link from "next/link";
+import { format } from "date-fns";
+import {
+  QrCode,
+  Search,
+  BookOpen,
+  User,
+  Clock,
+  AlertTriangle,
+  History,
+  Sparkles,
+  ArrowLeft,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import Image from "next/image";
+import { useAuth } from "@clerk/nextjs";
+import type { CopySearchResult } from "@/hooks/api/useCirculation";
+import { fetchCopiesApi } from "@/hooks/api/useCirculation";
+import type { CopyTraceabilityDetail } from "@/hooks/api/useHistory";
+import { fetchCopyTraceabilityApi } from "@/hooks/api/useHistory";
+import { CopyHistoryTimeline } from "./copy-history-timeline";
+import { cn } from "@/lib/utils";
+
+interface CopyTraceabilityViewProps {
+  initialDetail?: CopyTraceabilityDetail | null;
+  initialBarcode?: string;
+}
+
+export function CopyTraceabilityView({
+  initialDetail = null,
+  initialBarcode = "",
+}: CopyTraceabilityViewProps) {
+  const { getToken } = useAuth();
+  const [barcodeInput, setBarcodeInput] = useState(initialBarcode);
+  const [searchResults, setSearchResults] = useState<CopySearchResult[]>([]);
+  const [detail, setDetail] = useState<CopyTraceabilityDetail | null>(initialDetail);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const [prevBarcode, setPrevBarcode] = useState(initialBarcode);
+  const [prevDetail, setPrevDetail] = useState(initialDetail);
+  if (initialBarcode !== prevBarcode) {
+    setPrevBarcode(initialBarcode);
+    if (initialBarcode) {
+      setBarcodeInput(initialBarcode);
+    }
+  }
+  if (initialDetail !== prevDetail) {
+    setPrevDetail(initialDetail);
+    if (initialDetail !== undefined) {
+      setDetail(initialDetail);
+    }
+  }
+
+  const displayedResults = barcodeInput.trim() ? searchResults : [];
+
+  // Live search for matching book titles or barcodes
+  useEffect(() => {
+    const trimmed = barcodeInput.trim();
+    if (!trimmed) {
+      return;
+    }
+    let ignore = false;
+    const timer = setTimeout(async () => {
+      try {
+        const token = await getToken();
+        const data = await fetchCopiesApi(trimmed, token);
+        if (!ignore && data) {
+          setSearchResults(data);
+        }
+      } catch {
+        if (!ignore) setSearchResults([]);
+      }
+    }, 250);
+
+    return () => {
+      ignore = true;
+      clearTimeout(timer);
+    };
+  }, [barcodeInput, getToken]);
+
+  const executeLookup = (query: string) => {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const token = await getToken();
+        const data = await fetchCopyTraceabilityApi(query, token);
+        setDetail(data);
+      } catch (err: any) {
+        setDetail(null);
+        setError(err?.message || "Failed to find copy");
+      }
+    });
+  };
+
+  const handleLookup = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = barcodeInput.trim();
+    if (!query) return;
+
+    setError(null);
+    startTransition(async () => {
+      // 1. First search physical copy inventory matching query (title, author, barcode)
+      try {
+        const token = await getToken();
+        const copies = await fetchCopiesApi(query, token);
+        if (copies && copies.length > 0) {
+          setSearchResults(copies);
+
+          // Check if user entered an exact barcode match
+          const exactBarcodeMatch = copies.find(
+            (c: CopySearchResult) => c.barcode.toLowerCase() === query.toLowerCase()
+          );
+
+          if (exactBarcodeMatch) {
+            setBarcodeInput(exactBarcodeMatch.barcode);
+            try {
+              const data = await fetchCopyTraceabilityApi(exactBarcodeMatch.barcode, token);
+              setDetail(data);
+            } catch (err: any) {
+              setDetail(null);
+              setError(err?.message || "Failed to find copy");
+            }
+          } else if (copies.length === 1) {
+            setBarcodeInput(copies[0].barcode);
+            try {
+              const data = await fetchCopyTraceabilityApi(copies[0].barcode, token);
+              setDetail(data);
+            } catch (err: any) {
+              setDetail(null);
+              setError(err?.message || "Failed to find copy");
+            }
+          } else {
+            // Multiple copies found for title/author search -> clear detail so list displays in place of placeholder
+            setDetail(null);
+          }
+        } else {
+          // Fallback exact barcode lookup attempt
+          try {
+            const data = await fetchCopyTraceabilityApi(query, token);
+            setSearchResults([]);
+            setDetail(data);
+          } catch {
+            setSearchResults([]);
+            setDetail(null);
+            setError(`No book title, author, or physical copy barcode found matching "${query}"`);
+          }
+        }
+      } catch (err: any) {
+        setSearchResults([]);
+        setDetail(null);
+        setError(err?.message || "Failed to search inventory");
+      }
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header / Search Console */}
+      <Card className="border-border bg-card shadow-sm rounded-2xl relative z-40 overflow-visible">
+        <CardHeader className="bg-muted/40 pb-4 border-b border-border rounded-t-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Link href="/assistant/desk">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-full w-9 h-9 border border-border hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer shadow-2xs"
+                  title="Back to Circulation Desk"
+                  aria-label="Back to Circulation Desk"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
+              <div>
+                <CardTitle className="text-xl font-bold font-display flex items-center gap-2">
+                  Physical Copy Traceability Inspector
+                </CardTitle>
+                <CardDescription className="text-sm text-muted-foreground mt-1">
+                  Search by book name, title, author, or physical copy barcode to inspect full audit history and status.
+                </CardDescription>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search by book name (e.g. 1984, Gatsby), author, or barcode..."
+                value={barcodeInput}
+                onChange={(e) => {
+                  setBarcodeInput(e.target.value);
+                  setError(null);
+                }}
+                className="pl-10 text-sm font-medium rounded-xl min-h-[44px]"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isPending || !barcodeInput.trim()}
+              className="bg-brand-blue text-white hover:bg-brand-blue/90 font-medium px-6 rounded-full min-h-[44px]"
+            >
+              {isPending ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Searching...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  <span>Inspect Traceability</span>
+                </div>
+              )}
+            </Button>
+          </form>
+
+          {error && (
+            <div className="mt-4 p-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300 text-sm font-medium flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />
+              <span>{error}</span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Distinct Live Search Results Section (Inline below Search Console, non-scrollable grid layout) */}
+      {displayedResults.length > 0 && (
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden animate-in fade-in-50 duration-200">
+          <CardHeader className="bg-muted/30 pb-3 border-b border-border flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold font-display flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-brand-yellow" />
+                Matching Book Copies Found ({displayedResults.length})
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                Select any physical copy below to inspect its complete chain of custody and audit trail.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {displayedResults.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => {
+                    setBarcodeInput(c.barcode);
+                    executeLookup(c.barcode);
+                  }}
+                  className={cn(
+                    "p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between gap-3 group cursor-pointer",
+                    barcodeInput === c.barcode
+                      ? "border-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10 shadow-sm"
+                      : "border-border bg-card hover:bg-accent/60 hover:border-brand-blue/40"
+                  )}
+                >
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="relative h-14 w-10 rounded-lg bg-muted overflow-hidden shrink-0 border border-border shadow-2xs">
+                      {c.coverImageUrl ? (
+                        <Image
+                          src={c.coverImageUrl}
+                          alt={`Book cover image for ${c.bookTitle}`}
+                          fill
+                          sizes="40px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center bg-brand-yellow/20 text-brand-yellow">
+                          <BookOpen className="h-5 w-5" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono text-[11px] font-bold px-2 py-0.5 bg-muted text-foreground rounded-md border border-border">
+                          {c.barcode}
+                        </span>
+                        {c.status === "BORROWED" && c.currentHolderName ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
+                            <User className="w-3 h-3 text-brand-blue shrink-0" />
+                            In Hand: {c.currentHolderName}
+                          </span>
+                        ) : c.status === "RESERVED" && c.currentHolderName ? (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border shadow-2xs">
+                            <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
+                            Reserved: {c.currentHolderName}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue dark:text-blue-400 border border-brand-blue/20 shadow-2xs">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
+                            Available on Shelf
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-brand-blue transition-colors">
+                        {c.bookTitle}
+                      </h4>
+                      <p className="text-xs text-muted-foreground truncate">by {c.bookAuthor}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-muted-foreground">
+                      Category: <strong className="text-foreground">{c.category}</strong>
+                    </span>
+                    <span className="text-xs text-brand-blue font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      Inspect Traceability →
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Copy Traceability Result Details */}
+      {detail ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+          {/* Left Column: Physical Copy & Book Metadata */}
+          <div className="space-y-6">
+            <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-3 border-b border-border">
+                <CardTitle className="text-base font-bold font-display flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-brand-yellow" />
+                  Copy & Catalog Metadata
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-border/50">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                    Barcode ID
+                  </span>
+                  <span className="font-mono text-sm font-bold bg-accent px-2.5 py-1 rounded-full border border-border">
+                    {detail.barcode}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pb-3 border-b border-border/50">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                    Copy Status
+                  </span>
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase border shadow-2xs",
+                      detail.status === "AVAILABLE" && "bg-brand-blue/10 text-brand-blue border-brand-blue/20 dark:text-blue-300",
+                      detail.status === "BORROWED" && "bg-muted text-foreground border-border",
+                      detail.status === "RESERVED" && "bg-muted text-muted-foreground border-border",
+                      (detail.status === "MAINTENANCE" || detail.status === "LOST") && "bg-destructive/10 text-destructive border-destructive/20"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full shrink-0",
+                        detail.status === "AVAILABLE" ? "bg-brand-blue" : "bg-muted-foreground/60"
+                      )}
+                    />
+                    {detail.status}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pb-3 border-b border-border/50">
+                  <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
+                    Physical Condition
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium font-mono border border-border bg-muted text-foreground">
+                    {detail.condition}
+                  </span>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="font-display font-bold text-base text-foreground">
+                    {detail.book.title}
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    by {detail.book.author}
+                  </p>
+                  <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground font-mono">
+                    <span className="px-2 py-0.5 rounded bg-muted">
+                      {detail.book.category}
+                    </span>
+                    {detail.book.isbn && <span>ISBN: {detail.book.isbn}</span>}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Current Holder / Active Loan Info */}
+            <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-3 border-b border-border">
+                <CardTitle className="text-base font-bold font-display flex items-center gap-2">
+                  <User className="h-4 w-4 text-brand-blue" />
+                  Current Holder & Active Loan
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5">
+                {detail.currentHolder ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-accent/40 border border-border">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue/20 text-brand-blue font-bold text-xs">
+                        {detail.currentHolder.name[0]}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">
+                          {detail.currentHolder.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">
+                          {detail.currentHolder.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {detail.activeLoan && (
+                      <div className="space-y-2 text-xs pt-2 border-t border-border/50">
+                        <div className="flex justify-between text-muted-foreground">
+                          <span>Borrowed On:</span>
+                          <span className="font-mono text-foreground font-medium">
+                            {format(new Date(detail.activeLoan.borrowedAt), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span>Due Date:</span>
+                          <span className="font-mono text-foreground font-semibold">
+                            {format(new Date(detail.activeLoan.dueDate), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-muted-foreground">
+                          <span>Checked Out By:</span>
+                          <span className="font-medium text-foreground">
+                            {detail.activeLoan.assistantName}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground italic py-2 text-center">
+                    Copy is currently not assigned to any user (In Library Stack).
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column: Immutable Audit History Timeline */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-3 border-b border-border flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-bold font-display flex items-center gap-2">
+                    <History className="h-4 w-4 text-brand-blue" />
+                    Immutable BookHistory Audit Log ({detail.history.length})
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                    Complete time-sequenced append-only lifecycle records for barcode {detail.barcode}.
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <CopyHistoryTimeline history={detail.history} />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      ) : (
+        !error && (
+          <div className="text-center py-16 px-4 border border-dashed rounded-2xl bg-card">
+            <QrCode className="h-12 w-12 mx-auto text-muted-foreground mb-3 opacity-60" />
+            <h3 className="text-base font-bold text-foreground font-display">
+              Scan or Enter a Physical Copy Barcode
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto mt-1">
+              Use the input box above to look up any book copy (e.g. BC-1001-01) to trace its full chain of custody, checkout cycles, condition changes, and audit events.
+            </p>
+          </div>
+        )
+      )}
+    </div>
+  );
+}
