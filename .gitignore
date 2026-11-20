@@ -1,8 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# NOTE: keep this file UTF-8 encoded. PowerShell 5 `>` / Out-File writes UTF-16,
+# which git cannot parse (every rule silently stops working).
 
-# dependencies
-/node_modules
-/.pnp
+# dependencies (any package: frontend/, backend/)
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -11,14 +13,14 @@
 !.yarn/versions
 
 # testing & coverage
-/coverage
-/.nyc_output
+coverage/
+.nyc_output/
 
 # next.js & build output
-/.next/
-/out/
-/build
-/dist
+.next/
+out/
+build/
+dist/
 .turbo
 
 # misc & OS files
@@ -34,7 +36,7 @@ yarn-error.log*
 .pnpm-debug.log*
 *.log
 
-# env files (can opt-in for committing if needed)
+# env files (only templates are committed)
 .env*
 !.env.example
 
@@ -45,8 +47,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# clerk configuration (can include secrets)
-/.clerk/
+# clerk configuration (keyless dev keys / secrets)
+.clerk/
+
+# frontend mirror of the backend-owned Prisma schema (see frontend/scripts/generate-prisma-client.mjs)
+frontend/prisma/
 
 # agent skills collection & local agent caches
 .agents/skills/
@@ -60,6 +65,11 @@ scratch/
 tmp/
 temp/
 
+# office documents & Word backups (personal reports are kept outside the repo)
+*.wbk
+~$*
+/*.docx
+
 # IDE & editors
 .idea/
 .vscode/
@@ -67,4 +77,3 @@ temp/
 *.swo
 *.sublime-workspace
 *.sublime-project
-
