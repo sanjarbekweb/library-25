@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { BookService } from '../services/BookService';
-import { createBookSchema, getBooksQuerySchema } from '../schemas/book.schema';
+import { addCopySchema, createBookSchema, getBooksQuerySchema } from '../schemas/book.schema';
 
 const bookService = new BookService();
 
@@ -36,7 +36,7 @@ export class BookController {
 
   async addCopy(req: Request, res: Response, next: NextFunction) {
     try {
-      const copy = await bookService.addCopy(req.params.id as string, req.body);
+      const copy = await bookService.addCopy(req.params.id as string, addCopySchema.parse(req.body));
       res.status(201).json({ data: copy, message: "Copy added successfully" });
     } catch (error) {
       next(error);

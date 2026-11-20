@@ -1,22 +1,24 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import { getEnv } from "../config/env";
 
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+const env = getEnv();
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error('DATABASE_URL is not set. Copy backend/.env.example to backend/.env and configure it.');
-}
-
-const poolMax = Number.parseInt(process.env.DB_POOL_MAX ?? '10', 10);
-
-const pool = new Pool({
-  connectionString,
-  max: Number.isInteger(poolMax) && poolMax > 0 ? poolMax : 10,
+export const pool = new Pool({
+  connectionString: env.DATABASE_URL,
+  max: env.DB_POOL_MAX,
+  connectionTimeoutMillis: env.DB_POOL_CONNECTION_TIMEOUT_MS,
+  idleTimeoutMillis: env.DB_POOL_IDLE_TIMEOUT_MS,
 });
-const adapter = new PrismaPg(pool);
 
-export const prisma = new PrismaClient({ adapter });
+export const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 export default prisma;
+
+let disconnecting: Promise<void> | undefined;
+
+/** Idempotent teardown for graceful shutdown and tests. */
+export function disconnectDatabase(): Promise<void> {
+  disconnecting ??= prisma.$disconnect().then(() => pool.end());
+  return disconnecting;
+}

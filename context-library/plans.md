@@ -58,7 +58,7 @@ A slice may start only when M1 is complete. M4 units may interleave with late sl
 - [x] Phase 3 plan, decisions D1–D9, mapping of every open Phase 2 item; architecture.md target structure updated to D1–D3.
 - Gate: links resolve; no Phase 2 item lost (see mapping table at the end of Phase 3).
 
-**U-31 — Backend baseline hardening**
+**U-31 — Backend baseline hardening** — [x] complete 2026-11-20 (evidence in progress-tracker.md)
 - Export the Express `app` from `backend/src/app.ts`; `index.ts` only listens. Enables in-process tests.
 - Typed `req.user` (already augmented) used everywhere; remove all `any` in backend (`catch (err: unknown)` + typed narrowing; Prisma types for repository inputs).
 - Validate env at startup with Zod (`backend/src/config/env.ts`): DATABASE_URL, CLERK keys, CORS_ORIGIN, PORT, DB_POOL_*; fail fast with field names only.

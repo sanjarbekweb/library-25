@@ -1,5 +1,5 @@
 import { prisma } from "../utils/prisma";
-import { HistoryAction, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { AuditLogFilterInput } from "../schemas/history.schema";
 
 function differenceInCalendarDays(d1: Date, d2: Date): number {

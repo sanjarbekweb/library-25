@@ -1,6 +1,7 @@
 import { FeedbackRepository } from "../repositories/FeedbackRepository";
 import { SubmitFeedbackInput, ModerateFeedbackInput, AdminFeedbackQuery } from "../schemas/feedback.schema";
 import { ApiError } from "../utils/ApiError";
+import { errorMessage } from "../utils/errors";
 import { User, UserRole } from "@prisma/client";
 
 export class FeedbackService {
@@ -18,11 +19,11 @@ export class FeedbackService {
     try {
       const result = await this.repository.createFeedback(input, actor.id);
       return result;
-    } catch (err: any) {
-      if (err.message === "INVALID_LOAN") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "INVALID_LOAN") {
         throw new ApiError(400, "The specified borrowing loan does not qualify for feedback", "INVALID_LOAN");
       }
-      if (err.message === "FEEDBACK_ALREADY_EXISTS") {
+      if (errorMessage(err) === "FEEDBACK_ALREADY_EXISTS") {
         throw new ApiError(409, "Feedback has already been submitted for this loan", "FEEDBACK_EXISTS");
       }
       throw err;
@@ -44,8 +45,8 @@ export class FeedbackService {
 
     try {
       return await this.repository.toggleModeration(input.feedbackId, input.isModerated, actor);
-    } catch (err: any) {
-      if (err.message === "FEEDBACK_NOT_FOUND") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "FEEDBACK_NOT_FOUND") {
         throw new ApiError(404, "Feedback record not found", "FEEDBACK_NOT_FOUND");
       }
       throw err;
@@ -59,8 +60,8 @@ export class FeedbackService {
 
     try {
       return await this.repository.deleteFeedback(feedbackId, actor);
-    } catch (err: any) {
-      if (err.message === "FEEDBACK_NOT_FOUND") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "FEEDBACK_NOT_FOUND") {
         throw new ApiError(404, "Feedback record not found", "FEEDBACK_NOT_FOUND");
       }
       throw err;

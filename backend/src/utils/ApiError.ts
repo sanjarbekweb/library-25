@@ -3,7 +3,7 @@ export class ApiError extends Error {
     public statusCode: number,
     public message: string,
     public code?: string,
-    public details?: any,
+    public details?: unknown,
     public isOperational = true
   ) {
     super(message);

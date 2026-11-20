@@ -7,7 +7,15 @@ change.
 
 - Active: **Phase 3 — Finish the Split, Make It Beautiful, Make It Trustworthy** (see [plans.md](plans.md)). Phase 2 is superseded; its open items are mapped to Phase 3 units.
 - [x] U-30 — Plan re-baseline and docs relocation (2026-11-20): context-library moved to repository root; Phase 3 plan with decisions D1–D9 and Phase 2 mapping; architecture.md structure updated (Express retained, frontend/backend retained, npm workspaces + packages/contracts planned).
-- Next unit: **U-31 — Backend baseline hardening**.
+- [x] U-31 — Backend baseline hardening (2026-11-20):
+  - `src/app.ts` (createApp) / `src/index.ts` (listen + graceful SIGTERM/SIGINT shutdown draining HTTP and the pg pool, 10s deadline).
+  - `src/config/env.ts`: Zod-validated environment (DATABASE_URL, Clerk keys, CORS_ORIGIN list, PORT, pool bounds, DB_READY_TIMEOUT_MS); errors name fields only.
+  - Request IDs (reuses well-formed inbound X-Request-Id) and one structured JSON log line per request; `/api/health/live` and `/api/health/ready` (DB SELECT 1 under a deadline). Readiness deadline measured: cold connect to the Tokyo pooler ~813ms + first query ~201ms, so default 3s (1s flapped after the pool idled).
+  - Central error mapping: Prisma P2002/P2034 → 409, P2025 → 404, P1001/P2024/init → 503, malformed JSON → 400, unknown routes → JSON 404; 500s log the stack with requestId and return a generic message. Stable auth codes (UNAUTHENTICATED, ACCOUNT_NOT_FOUND, ACCOUNT_INACTIVE, FORBIDDEN). `x-powered-by` disabled.
+  - Zero `any` in backend (was 27). Bugs fixed on the way: `POST /books/:id/copies` passed unvalidated `req.body` (now `addCopySchema`); `createBookSchema` silently dropped `initialCopyCount`/`initialCopyCondition` sent by the Manage Books console, so every new title got exactly one MINT copy (now bounded 1–50); analytics 500s leaked internal error text to clients.
+  - ESLint (typescript-eslint, no-explicit-any as error) clean; `npm run check` = lint + typecheck (src+tests) + 14 tests + build, all passing. Tests run in-process against createApp with a closed-port DATABASE_URL (no shared data reachable).
+  - Live check against the development database: live 200, ready 200 (~0.2s warm, ~1.05s after idle), books 200, protected route 401, unknown route 404; frontend / and /catalog 200.
+- Next unit: **U-32 — Workspaces, contracts package and CI**.
 - Owner decisions pending: D9 disposable test database (blocks U-48 and Phase 2 live-DB gates); hosting provider/budget for the API (blocks U-50).
 
 ### Phase 2 status at re-baseline (historical)

@@ -1,5 +1,5 @@
 import { prisma } from "../utils/prisma";
-import { Prisma, UserRole, DomainEntityType } from "@prisma/client";
+import { Prisma, UserRole, DomainEntityType, User } from "@prisma/client";
 import { AdminUserQuery, SyncUserInput } from "../schemas/user.schema";
 
 export class UserRepository {
@@ -129,7 +129,7 @@ export class UserRepository {
     });
   }
 
-  async updateRole(targetUserId: string, newRole: UserRole, actor: any) {
+  async updateRole(targetUserId: string, newRole: UserRole, actor: User) {
     return prisma.$transaction(async (tx) => {
       try {
         await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('admin_role_mutation_lock'))`;
@@ -179,7 +179,7 @@ export class UserRepository {
     });
   }
 
-  async toggleStatus(targetUserId: string, isActive: boolean, actor: any) {
+  async toggleStatus(targetUserId: string, isActive: boolean, actor: User) {
     return prisma.$transaction(async (tx) => {
       try {
         await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('admin_role_mutation_lock'))`;

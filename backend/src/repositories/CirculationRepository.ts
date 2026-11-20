@@ -1,7 +1,6 @@
 import prisma from "../utils/prisma";
 import { CheckoutInput, CheckinInput } from "../schemas/circulation.schema";
-import { Prisma, CopyStatus, CopyCondition, HistoryAction } from "@prisma/client";
-import { addDays } from "date-fns";
+import { User, Prisma, CopyStatus, CopyCondition, HistoryAction } from "@prisma/client";
 
 export class CirculationRepository {
   async findStudentById(studentId: string) {
@@ -41,9 +40,9 @@ export class CirculationRepository {
   }
 
   async executeCheckout(
-    copy: any,
-    student: any,
-    assistant: any,
+    copy: CopyForCirculation,
+    student: User,
+    assistant: User,
     input: CheckoutInput,
     dueDate: Date
   ) {
@@ -106,9 +105,9 @@ export class CirculationRepository {
   }
 
   async executeCheckin(
-    copy: any,
-    activeLoan: any,
-    assistant: any,
+    copy: CopyForCirculation,
+    activeLoan: CopyForCirculation["loans"][number],
+    assistant: User,
     input: CheckinInput,
     targetStatus: CopyStatus,
     targetCondition: CopyCondition
@@ -268,3 +267,5 @@ export class CirculationRepository {
     return copies;
   }
 }
+
+export type CopyForCirculation = NonNullable<Awaited<ReturnType<CirculationRepository["findCopyByBarcodeOrId"]>>>;

@@ -8,7 +8,7 @@ export async function authenticateUser(req: Request, res: Response, next: NextFu
   try {
     const auth = getAuth(req);
     if (!auth || !auth.userId) {
-      throw new ApiError(401, 'Unauthorized: Missing or invalid authentication token');
+      throw new ApiError(401, 'Sign in to continue.', 'UNAUTHENTICATED');
     }
 
     const user = await prisma.user.findUnique({
@@ -16,11 +16,11 @@ export async function authenticateUser(req: Request, res: Response, next: NextFu
     });
 
     if (!user) {
-      throw new ApiError(401, 'Unauthorized: User account not found in database');
+      throw new ApiError(401, 'Your library account is not set up yet. Sign out and sign in again, or contact the library.', 'ACCOUNT_NOT_FOUND');
     }
 
     if (!user.isActive) {
-      throw new ApiError(403, 'Forbidden: User account is inactive');
+      throw new ApiError(403, 'Your library account is inactive. Contact the library to restore access.', 'ACCOUNT_INACTIVE');
     }
 
     req.user = user;
@@ -42,7 +42,8 @@ export async function optionalUser(req: Request, res: Response, next: NextFuncti
       }
     }
     next();
-  } catch (error) {
+  } catch {
+    // Optional authentication: an invalid or expired token is treated as anonymous.
     next();
   }
 }
@@ -50,11 +51,11 @@ export async function optionalUser(req: Request, res: Response, next: NextFuncti
 export function requireRole(allowedRoles: UserRole[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return next(new ApiError(401, 'Unauthorized: User not authenticated'));
+      return next(new ApiError(401, 'Sign in to continue.', 'UNAUTHENTICATED'));
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return next(new ApiError(403, `Forbidden: Requires one of roles: [${allowedRoles.join(', ')}]`));
+      return next(new ApiError(403, 'You do not have access to this area.', 'FORBIDDEN', { requiredRoles: allowedRoles }));
     }
 
     next();

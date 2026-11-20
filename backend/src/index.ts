@@ -1,50 +1,36 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { clerkMiddleware } from '@clerk/express';
-import bookRoutes from './routes/book.routes';
-import circulationRoutes from './routes/circulation.routes';
-import reservationRoutes from './routes/reservation.routes';
-import userRoutes from './routes/user.routes';
-import feedbackRoutes from './routes/feedback.routes';
-import historyRoutes from './routes/history.routes';
-import analyticsRoutes from './routes/analytics.routes';
-import contactRoutes from './routes/contact.routes';
-import { errorHandler } from './middlewares/errorHandler';
+import { getEnv } from "./config/env";
+import { createApp } from "./app";
+import { disconnectDatabase } from "./utils/prisma";
 
-dotenv.config();
+const SHUTDOWN_DEADLINE_MS = 10_000;
 
-const app = express();
-const port = process.env.PORT || 4000;
-
-const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(express.json({ limit: '1mb' }));
-
-// Public health route (before auth middleware)
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Library Backend is running' });
+const env = getEnv();
+const server = createApp().listen(env.PORT, () => {
+  console.log(JSON.stringify({ level: "info", msg: "backend listening", port: env.PORT }));
 });
 
-app.use(clerkMiddleware());
+let shuttingDown = false;
 
-// v1 API routes
-app.use('/api/v1/books', bookRoutes);
-app.use('/api/v1/circulation', circulationRoutes);
-app.use('/api/v1/reservations', reservationRoutes);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/feedback', feedbackRoutes);
-app.use('/api/v1/history', historyRoutes);
-app.use('/api/v1/analytics', analyticsRoutes);
-app.use('/api/v1/contact', contactRoutes);
+function shutdown(signal: NodeJS.Signals) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(JSON.stringify({ level: "info", msg: "shutting down", signal }));
 
-// Global Error Handler
-app.use(errorHandler);
+  const force = setTimeout(() => {
+    console.error(JSON.stringify({ level: "error", msg: "shutdown deadline exceeded; exiting" }));
+    process.exit(1);
+  }, SHUTDOWN_DEADLINE_MS);
+  force.unref();
 
-app.listen(port, () => {
-  console.log(`Backend server listening on port ${port}`);
-});
+  server.close(() => {
+    disconnectDatabase()
+      .catch((error: unknown) => {
+        console.error(JSON.stringify({ level: "error", msg: "database disconnect failed", error: String(error) }));
+      })
+      .finally(() => process.exit(0));
+  });
+  server.closeIdleConnections();
+}
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

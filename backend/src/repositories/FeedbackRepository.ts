@@ -1,5 +1,5 @@
 import { prisma } from "../utils/prisma";
-import { Prisma, DomainEntityType } from "@prisma/client";
+import { Prisma, DomainEntityType, User } from "@prisma/client";
 import { SubmitFeedbackInput, AdminFeedbackQuery } from "../schemas/feedback.schema";
 
 export class FeedbackRepository {
@@ -190,7 +190,7 @@ export class FeedbackRepository {
     };
   }
 
-  async toggleModeration(feedbackId: string, isModerated: boolean, actor: any) {
+  async toggleModeration(feedbackId: string, isModerated: boolean, actor: User) {
     return prisma.$transaction(async (tx) => {
       const feedback = await tx.feedback.findUnique({
         where: { id: feedbackId },
@@ -221,7 +221,7 @@ export class FeedbackRepository {
     });
   }
 
-  async deleteFeedback(feedbackId: string, actor: any) {
+  async deleteFeedback(feedbackId: string, actor: User) {
     return prisma.$transaction(async (tx) => {
       const feedback = await tx.feedback.findUnique({
         where: { id: feedbackId },

@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../utils/prisma';
-import { CreateBookDto, GetBooksQuery } from '../schemas/book.schema';
+import { AddCopyDto, CreateBookDto, GetBooksQuery } from '../schemas/book.schema';
 
 export class BookRepository {
   async findAll(query: GetBooksQuery) {
@@ -48,14 +48,14 @@ export class BookRepository {
   }
 
   async create(data: CreateBookDto) {
-    const { initialCopyCount, initialCopyCondition, ...bookData } = data as any;
+    const { initialCopyCount, initialCopyCondition, ...bookData } = data;
     return prisma.book.create({
       data: {
         ...bookData,
         copies: {
-          create: Array.from({ length: initialCopyCount || 1 }).map(() => ({
+          create: Array.from({ length: initialCopyCount }).map(() => ({
             barcode: `BC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-            condition: initialCopyCondition || 'MINT',
+            condition: initialCopyCondition,
             status: 'AVAILABLE'
           }))
         }
@@ -64,12 +64,12 @@ export class BookRepository {
     });
   }
 
-  async addCopy(bookId: string, data: any) {
+  async addCopy(bookId: string, data: AddCopyDto) {
     return prisma.bookCopy.create({
       data: {
         bookId,
         barcode: data.barcode || `BC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-        condition: data.condition || 'MINT',
+        condition: data.condition,
         status: 'AVAILABLE'
       }
     });

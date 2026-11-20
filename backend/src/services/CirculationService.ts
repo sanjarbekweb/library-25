@@ -3,6 +3,7 @@ import { CheckoutInput, CheckinInput } from "../schemas/circulation.schema";
 import { CopyCondition, CopyStatus } from "@prisma/client";
 import { addDays } from "date-fns";
 import { ApiError } from "../utils/ApiError";
+import { errorMessage } from "../utils/errors";
 
 export class CirculationService {
   private repository: CirculationRepository;
@@ -50,8 +51,8 @@ export class CirculationService {
     try {
       const result = await this.repository.executeCheckout(copy, student, assistant, input, dueDate);
       return result;
-    } catch (err: any) {
-      if (err.message === "COPY_CONCURRENTLY_ACQUIRED") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "COPY_CONCURRENTLY_ACQUIRED") {
         throw new ApiError(409, "Copy was concurrently borrowed or state changed. Please refresh and try again.", "COPY_CLAIM_CONFLICT");
       }
       throw err;
@@ -88,11 +89,11 @@ export class CirculationService {
     try {
       const result = await this.repository.executeCheckin(copy, activeLoan, assistant, input, targetStatus, targetCondition);
       return result;
-    } catch (err: any) {
-      if (err.message === "COPY_CONCURRENTLY_MODIFIED") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "COPY_CONCURRENTLY_MODIFIED") {
         throw new ApiError(409, "Copy was modified concurrently. Please refresh the circulation desk.", "COPY_CONCURRENT_CONFLICT");
       }
-      if (err.message === "LOAN_ALREADY_CLOSED") {
+      if (errorMessage(err) === "LOAN_ALREADY_CLOSED") {
         throw new ApiError(409, "This loan was already marked as returned or closed.", "LOAN_RETURN_CONFLICT");
       }
       throw err;

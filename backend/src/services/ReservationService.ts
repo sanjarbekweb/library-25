@@ -1,6 +1,7 @@
 import { ReservationRepository } from "../repositories/ReservationRepository";
 import { CreateReservationInput, CancelReservationInput } from "../schemas/reservation.schema";
 import { ApiError } from "../utils/ApiError";
+import { errorMessage } from "../utils/errors";
 import { User, UserRole } from "@prisma/client";
 
 export class ReservationService {
@@ -52,16 +53,12 @@ export class ReservationService {
     try {
       const reservation = await this.repository.executeCreateReservation(targetCopy, actor, input, expiresAt);
       return reservation;
-    } catch (err: any) {
-      if (err.message === "RESERVATION_EXISTS") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "RESERVATION_EXISTS") {
         throw new ApiError(409, "You already have an active pending reservation for this book", "RESERVATION_EXISTS");
       }
-      if (err.message === "COPY_CONCURRENTLY_RESERVED") {
+      if (errorMessage(err) === "COPY_CONCURRENTLY_RESERVED") {
         throw new ApiError(409, "This book copy was concurrently claimed. Please refresh and select another copy.", "COPY_CONCURRENTLY_RESERVED");
-      }
-      // Partial unique indexes (pending hold per copy / per student+title) report races as P2002.
-      if (err?.code === "P2002") {
-        throw new ApiError(409, "This hold conflicts with an existing pending reservation. Refresh the page and try again.", "RESERVATION_CONFLICT");
       }
       throw err;
     }
@@ -85,8 +82,8 @@ export class ReservationService {
     try {
       const result = await this.repository.executeCancelReservation(reservation, actor, input);
       return result;
-    } catch (err: any) {
-      if (err.message === "CONCURRENCY_CONFLICT") {
+    } catch (err: unknown) {
+      if (errorMessage(err) === "CONCURRENCY_CONFLICT") {
         throw new ApiError(409, "Reservation was concurrently updated, fulfilled, or cancelled", "CONCURRENCY_CONFLICT");
       }
       throw err;

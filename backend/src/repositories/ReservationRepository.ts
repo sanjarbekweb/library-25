@@ -1,5 +1,5 @@
 import { prisma } from "../utils/prisma";
-import { CopyStatus, HistoryAction, ReservationStatus } from "@prisma/client";
+import { CopyStatus, HistoryAction, ReservationStatus, User } from "@prisma/client";
 import { CreateReservationInput, CancelReservationInput } from "../schemas/reservation.schema";
 
 export class ReservationRepository {
@@ -44,7 +44,7 @@ export class ReservationRepository {
 
   async executeCreateReservation(
     targetCopy: { id: string; barcode: string; version: number },
-    student: any,
+    student: User,
     input: CreateReservationInput,
     expiresAt: Date
   ) {
@@ -171,8 +171,8 @@ export class ReservationRepository {
   }
 
   async executeCancelReservation(
-    reservation: any,
-    actor: any,
+    reservation: ReservationWithCopy,
+    actor: User,
     input: CancelReservationInput
   ) {
     return prisma.$transaction(async (tx) => {
@@ -279,3 +279,5 @@ export class ReservationRepository {
     });
   }
 }
+
+export type ReservationWithCopy = NonNullable<Awaited<ReturnType<ReservationRepository["findReservationWithCopy"]>>>;

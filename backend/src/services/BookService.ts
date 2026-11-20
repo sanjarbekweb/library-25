@@ -1,5 +1,5 @@
 import { BookRepository } from '../repositories/BookRepository';
-import { CreateBookDto, GetBooksQuery } from '../schemas/book.schema';
+import { AddCopyDto, CreateBookDto, GetBooksQuery } from '../schemas/book.schema';
 import { ApiError } from '../utils/ApiError';
 
 export class BookService {
@@ -31,8 +31,7 @@ export class BookService {
     return this.bookRepo.create(data);
   }
 
-  async addCopy(bookId: string, data: any) {
-    // We should parse data with schema here usually, or rely on controller
+  async addCopy(bookId: string, data: AddCopyDto) {
     const book = await this.bookRepo.findById(bookId);
     if (!book) throw new ApiError(404, 'Book not found');
     return this.bookRepo.addCopy(bookId, data);

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HistoryService } from "../services/HistoryService";
 import { ApiError } from "../utils/ApiError";
+import { auditLogFilterSchema } from "../schemas/history.schema";
 
 export class HistoryController {
   constructor(private historyService: HistoryService) {}
@@ -39,7 +40,7 @@ export class HistoryController {
 
   getAllAuditLogs = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.historyService.getAllAuditLogs(req.query as any);
+      const data = await this.historyService.getAllAuditLogs(auditLogFilterSchema.parse(req.query));
       res.json({ ok: true, data });
     } catch (error) {
       next(error);
