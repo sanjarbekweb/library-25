@@ -59,6 +59,10 @@ export class ReservationService {
       if (err.message === "COPY_CONCURRENTLY_RESERVED") {
         throw new ApiError(409, "This book copy was concurrently claimed. Please refresh and select another copy.", "COPY_CONCURRENTLY_RESERVED");
       }
+      // Partial unique indexes (pending hold per copy / per student+title) report races as P2002.
+      if (err?.code === "P2002") {
+        throw new ApiError(409, "This hold conflicts with an existing pending reservation. Refresh the page and try again.", "RESERVATION_CONFLICT");
+      }
       throw err;
     }
   }

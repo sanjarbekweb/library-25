@@ -50,6 +50,56 @@ export class ReservationRepository {
   ) {
     const now = new Date();
     return prisma.$transaction(async (tx) => {
+      // Bounded expiry cleanup (plan U-16C): close this student's lapsed holds for this
+      // title before allocating. Without a background expiry worker such holds stay
+      // PENDING, keep their copy RESERVED, and collide with the partial unique index
+      // idx_unique_pending_student_title_reservation on the new insert.
+      const lapsedHolds = await tx.reservation.findMany({
+        where: {
+          bookId: input.bookId,
+          studentId: student.id,
+          status: ReservationStatus.PENDING,
+          expiresAt: { lte: now },
+        },
+        select: { id: true, bookCopyId: true, expiresAt: true },
+        take: 20,
+      });
+
+      for (const hold of lapsedHolds) {
+        const expired = await tx.reservation.updateMany({
+          where: { id: hold.id, status: ReservationStatus.PENDING },
+          data: { status: ReservationStatus.EXPIRED },
+        });
+        if (expired.count === 0 || !hold.bookCopyId) continue;
+
+        const released = await tx.bookCopy.updateMany({
+          where: {
+            id: hold.bookCopyId,
+            status: CopyStatus.RESERVED,
+            currentHolderId: student.id,
+          },
+          data: {
+            status: CopyStatus.AVAILABLE,
+            currentHolderId: null,
+            version: { increment: 1 },
+          },
+        });
+
+        if (released.count > 0) {
+          await tx.bookHistory.create({
+            data: {
+              bookCopyId: hold.bookCopyId,
+              action: HistoryAction.RESERVATION_EXPIRED,
+              actorId: student.id,
+              actorRole: student.role,
+              previousState: CopyStatus.RESERVED,
+              newState: CopyStatus.AVAILABLE,
+              notes: `Hold lapsed on ${hold.expiresAt.toISOString()}; expired and copy returned to AVAILABLE during a new reservation request by the same student.`,
+            },
+          });
+        }
+      }
+
       // In-transaction verification of existing active hold
       const inTxExisting = await tx.reservation.findFirst({
         where: {
