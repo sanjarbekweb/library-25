@@ -1,10 +1,10 @@
 # Architecture Context
 
-Updated: 2026-09-12. This document defines the approved target and migration constraints. Implementation status belongs in [progress-tracker.md](progress-tracker.md); planned controls are not claims about deployed behavior.
+Updated: 2026-11-20 (structure re-decided by Phase 3). This document defines the approved target and migration constraints. Implementation status belongs in [progress-tracker.md](progress-tracker.md); planned controls are not claims about deployed behavior.
 
 ## Current Implementation and Audit
 
-The repository currently runs Next.js 16.3.1, React 19, Prisma 7 with PrismaPg, PostgreSQL, Clerk, Meilisearch, and Tailwind v4. Pages/actions call services directly. Services import Next cache helpers; search helpers also query Prisma, contrary to the old isolation rule.
+As of 2026-11-20 the repository runs Next.js 16.3.1 / React 19 / Tailwind v4 in `frontend/` and an Express 5 API with Prisma 7 (PrismaPg) in `backend/`, on PostgreSQL, Clerk and Meilisearch. Client components call the API; several server components, layouts and route handlers in `frontend/` still call legacy services/Prisma directly (removed in Phase 3 U-44). The audit below was written against the pre-split monolith and remains relevant to the legacy code paths. Services import Next cache helpers; search helpers also query Prisma, contrary to the old isolation rule.
 
 Confirmed gaps:
 - Database pooling & lifecycle: `lib/prisma.ts` now manages an explicit `pg.Pool` passed directly to `PrismaPg`, exposing truthful pool metrics (`totalConnections`, `idleConnections`, `waitingRequests`, error counters) queried directly from the active driver pool. Process shutdown listeners (`SIGTERM`, `beforeExit`) belong strictly to the application bootstrap/container lifecycle (e.g. Next.js server runtime or NestJS bootstrap), not shared client data modules. An idempotent `disconnectPrisma()` helper is provided for teardown. Test harnesses strictly require `TEST_DATABASE_URL` and reject live `DATABASE_URL`. Live deployment topology qualification remains pending real provider metrics.
@@ -15,35 +15,32 @@ Confirmed gaps:
 - Role/status changes cross PostgreSQL and Clerk without atomic delivery; last-admin checks race. Proxy protects /catalog and /api/search despite documents calling catalog public.
 - Completed feature milestones and build checks do not establish capacity.
 
-## Decision: Harden, Then Extract a Modular Backend
+## Decision: Harden, Then Extract a Modular Backend (re-decided 2026-11-20)
 
-Option A, scaling Next.js in place, can meet the same workload if queries, transactions, pooling, and deployment are corrected. It minimizes migration cost but retains runtime and framework coupling.
+The frontend/backend separation is implemented: an Express 5 REST API in `backend/` and the Next.js application in `frontend/`. Phase 3 of [plans.md](plans.md) (decisions D1–D3) keeps Express instead of the originally selected NestJS/Fastify, keeps the `frontend/`/`backend/` directories instead of `apps/*`, and adds npm workspaces with a single shared `packages/contracts` package. Rationale: the API already covers every domain, and capacity depends on queries, pooling and transactions rather than the HTTP framework. Express is re-evaluated only if capacity qualification (U-51) shows it is the bottleneck. Bun/Hono, microservices, Kubernetes, Kafka and Redis remain out of scope.
 
-Selected Option B follows the user's frontend/backend separation requirement: one npm-workspace monorepo, independently deployable Next.js web and NestJS/Fastify API. Use supported Node.js LTS after compatibility verification. Nest provides module structure and a supported Fastify adapter, not a capacity guarantee. Bun/Hono is deferred because a second runtime migration offers no measured benefit here. Avoid microservices, Kubernetes, Kafka, and Redis by default.
-
-Harden the existing writer first. Move one vertical slice at a time; each operation has exactly one active writer. Next remains responsible for SSR, metadata, layouts and presentation; it is not converted to a static SPA.
+Next remains responsible for SSR, metadata, layouts and presentation; it is not converted to a static SPA. Each operation has exactly one active writer during migration.
 
 ## Target Structure and Ownership
 
 ```text
-apps/web/                     Next.js pages, components, typed API client
-apps/api/src/
-  auth/                       verified request principals and policy guards
-  catalog/                    catalog reads and title/copy management
-  circulation/                reservation, checkout, return and expiration use cases
-  feedback/                   reviews and moderation
-  users/                      lifecycle, roles and active status
-  history/                    authorized audit queries
-  analytics/                  bounded SQL aggregates
-  integrations/               Clerk, Meilisearch, R2 and Telegram adapters
-  jobs/                       worker bootstrap, dispatch and leases
-  infrastructure/             database lifecycle, logging and transport
-packages/contracts/           Zod request/response schemas; no runtime DB imports
-packages/database/            Prisma schema, migrations and client factory
-tests/integration/            real PostgreSQL correctness tests
-tests/load/                   k6 workloads and fixture manifests
-infra/                        provider-neutral proxy, process and deployment guidance
+frontend/                     Next.js pages, components, typed API client (no Prisma after U-44)
+backend/src/
+  app.ts, index.ts            Express app construction / HTTP listener (U-31)
+  worker.ts                   worker entry point: leases, expiry, outbox dispatch (U-46)
+  config/                     Zod-validated environment
+  middlewares/                verified principals (Clerk), role policy, errors, request logging
+  routes/ controllers/        transport: parse, authorize, dispatch
+  services/                   use cases and transaction composition
+  repositories/               persistence (the only Prisma callers)
+  schemas/                    request validation (moving to packages/contracts per slice)
+  integrations/               Clerk webhook, Meilisearch, R2, Telegram adapters
+backend/prisma/               schema, forward migrations, seed (backend-owned)
+packages/contracts/           Zod request/response schemas; no Prisma, Node-only or Next imports
+.github/workflows/            CI: typecheck, lint, test, build (U-32)
 ```
+
+The superseded Phase 2 layout (`apps/web`, `apps/api` with NestJS modules, `packages/database`) is retained in git history; module responsibilities below still apply, mapped onto routes/controllers/services/repositories.
 
 API domain modules own their repositories. Controllers parse/authorize/dispatch; application services orchestrate use cases and transactions; repositories issue persistence operations; integration adapters perform external IO. Do not create interfaces or packages without a concrete consumer. Cross-module mutations use explicit application services and one transaction context, never HTTP calls within a transaction.
 
@@ -76,7 +73,7 @@ Register static catalog paths before ambiguous ID matching or constrain ID route
 | Component | Target and limits |
 | --- | --- |
 | Web | Existing Next.js/React/Tailwind stack; SSR preserved; same build across replicas |
-| API | NestJS + Fastify on supported Node LTS, version-pinned during implementation |
+| API | Express 5 on supported Node LTS (Phase 3 D1), version-pinned; separate worker entry point |
 | Database | PostgreSQL + Prisma 7; explicit driver pool and query/transaction deadlines |
 | Pooler | One verified transaction-mode PgBouncer or provider-managed equivalent such as Supavisor; do not stack poolers without a reason |
 | Search | Meilisearch required for normal typo-tolerant search; indexed PostgreSQL FTS plus pg_trgm fallback if supported and qualified |

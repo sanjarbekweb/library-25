@@ -5,11 +5,14 @@ change.
 
 ### Current Phase
 
-- Active: Phase 2 — High-Concurrency Hardening and Backend Separation.
-- Unit 15A is in progress (Partial): U-15A.1 and U-15A.3 complete; U-15A.2 code implemented and pending dedicated test database qualification.
-- Unit 15B is complete locally (Partial gate pending external DB migration).
-- Unit 15C is complete locally (Partial gate pending external DB migration for partial indexes).
-- Current Unit: **Unit 15D — All remaining writers and role synchronization**.
+- Active: **Phase 3 — Finish the Split, Make It Beautiful, Make It Trustworthy** (see [plans.md](plans.md)). Phase 2 is superseded; its open items are mapped to Phase 3 units.
+- [x] U-30 — Plan re-baseline and docs relocation (2026-11-20): context-library moved to repository root; Phase 3 plan with decisions D1–D9 and Phase 2 mapping; architecture.md structure updated (Express retained, frontend/backend retained, npm workspaces + packages/contracts planned).
+- Next unit: **U-31 — Backend baseline hardening**.
+- Owner decisions pending: D9 disposable test database (blocks U-48 and Phase 2 live-DB gates); hosting provider/budget for the API (blocks U-50).
+
+### Phase 2 status at re-baseline (historical)
+
+- U-15A partial (A.1, A.3 complete; A.2 pending test DB). U-15B and U-15C complete locally, live-DB gates pending. U-15D not started → U-45/U-43.
 
 ## Repository Hygiene & Clean-Clone Build Review (2026-11-20)
 

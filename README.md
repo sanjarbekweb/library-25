@@ -9,7 +9,7 @@ The repository is split into two independently installed packages:
 | [`frontend/`](frontend) | Next.js 16 (App Router), React 19, Tailwind CSS, Clerk, TanStack Query | `3000` |
 | [`backend/`](backend) | Express 5 REST API (`/api/v1/*`), Prisma 7 + PostgreSQL, Clerk bearer-token auth | `4000` |
 
-The backend owns the Prisma schema and migrations (`backend/prisma/`). During the ongoing migration (see [plans](frontend/context-library/plans.md), Units 17–21) some frontend server components still read the database directly; the frontend therefore generates its Prisma client from `../backend/prisma/schema.prisma`.
+The backend owns the Prisma schema and migrations (`backend/prisma/`). During the ongoing migration (see [plans](context-library/plans.md), Phase 3) some frontend server components still read the database directly; the frontend therefore generates its Prisma client from `../backend/prisma/schema.prisma`.
 
 ## Application areas
 
@@ -77,6 +77,6 @@ Review schema changes before running any database command against existing data.
 - `frontend/components/modules/` — library feature interfaces.
 - `frontend/hooks/api/` — typed backend clients and React Query hooks.
 - `frontend/lib/` — legacy services/schemas still used by server components during migration.
-- `frontend/context-library/` — project context, architecture, plans and progress tracker.
+- `context-library/` — project context, architecture, plans and progress tracker.
 
 See [LICENSE](LICENSE).

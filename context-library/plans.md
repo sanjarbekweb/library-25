@@ -1,14 +1,215 @@
 # ShelfSync Engineering Plan
 
-Updated: 2026-09-12. U-15A.1 database configuration is complete and verified; remaining U-15A and later implementation work stays pending.
+Updated: 2026-11-20. **Phase 3 is the plan of record.** It re-baselines Phase 2 against the code that actually exists (an Express 5 API in `backend/` and Next.js in `frontend/`), absorbs every unfinished Phase 2 item, and adds a first-class design track. Phase 2 and the historical U-00–U-14 bodies are preserved below for traceability.
 
 ## Authority and Execution
 
-[architecture.md](architecture.md) defines the target and invariants; [code-standards.md](code-standards.md) defines implementation rules; [phase-2-execution-directive.md](phase-2-execution-directive.md) controls the inspect/implement/review/repair/resume cycle; [progress-tracker.md](progress-tracker.md) records evidence. Root AGENTS.md remains applicable. Each subunit below is one independently verifiable change; do not implement the entire phase in one feature patch.
+[architecture.md](architecture.md) defines the target and invariants; [code-standards.md](code-standards.md) defines implementation rules; [ui-context.md](ui-context.md) defines visual and interaction rules; [phase-2-execution-directive.md](phase-2-execution-directive.md) still controls the inspect → implement → verify → review → repair → resume cycle (it applies to Phase 3 units unchanged, except where this plan explicitly re-decides NestJS/`apps/*`); [progress-tracker.md](progress-tracker.md) records evidence. Root AGENTS.md remains applicable. Each unit below is one independently verifiable change.
 
-Historical U-00–U-14 bodies below are preserved verbatim. Their Next.js 15, free-tier, synchronous search, direct-service and verified-review-only instructions describe the earlier baseline, not the new target. Existing cite markers and numbered references in that historical section are archival artifacts. No historical build result proves load capacity.
+## Phase 3: Finish the Split, Make It Beautiful, Make It Trustworthy
 
-## Phase 2: High-Concurrency Hardening and Backend Separation
+### Why Phase 3 exists
+
+Phase 2 planned a NestJS/Fastify API in `apps/api`, an `apps/web` move and `packages/*`. What was built instead (2026-11-05, chapters 1–8) is an Express 5 REST API in `backend/` with eight domains (books, circulation, reservations, users, feedback, history, analytics, contact) and a Next.js app in `frontend/` whose client components already call it through typed React Query hooks. The split is real, compiles, runs, and is committed. Re-platforming it onto NestJS would cost weeks and change nothing a reader, assistant or administrator can see.
+
+Meanwhile the product has visible problems that no Phase 2 unit addressed:
+
+- **Brand drift:** violet logo and violet glow hero conflict with the brand-blue/brand-yellow palette in AGENTS.md and ui-context.md.
+- **Dishonest or developer-facing copy:** a hardcoded "50K+ campus readers" stat and stock avatars on the landing page; internal jargon on staff screens ("Sub-10s Checkout Console", "BookHistory", "The database verifies…").
+- **Catalog presentation:** stock photographs instead of book covers; titles truncated to one line; no pagination.
+- **Oversized components:** `circulation-desk.tsx` (1,253 lines), `book-management-console.tsx` (914), `user-management.tsx` (747), `navbar.tsx` (585) mix data, state and presentation.
+- **Half-finished boundary:** catalog, book detail, admin/assistant layouts, `/api/search`, `/api/webhooks/clerk` and `/api/upload` still read Prisma or legacy services inside Next; eight deprecated `app/actions/*` files remain.
+- **No safety net:** no backend tests, no CI, 37 lint errors and 49 warnings in frontend application code, ~27 `any` uses in backend.
+- **Operational gaps:** lapsed holds were never expired (found 2026-11-20: four stale PENDING holds; bounded cleanup added in `54d42a0`), no worker, no search sync, no deployment target for the API.
+
+### Decisions (supersede the corresponding Phase 2 / architecture.md statements)
+
+| # | Decision | Rationale |
+| --- | --- | --- |
+| D1 | **Keep Express 5** for the API; do not migrate to NestJS/Fastify. | Already built and working across all eight domains. The capacity target is decided by query shape, pooling and transactions, not by the HTTP framework (Phase 2 itself said "a framework swap cannot fix query cost or races"). Revisit only if U-62 load evidence shows Express is the bottleneck. |
+| D2 | **Keep `frontend/` and `backend/`** as the package directories; do not rename to `apps/web` / `apps/api`. | Renaming churns every path and the deploy configuration for no user value. |
+| D3 | **Add npm workspaces at the root** with one shared package, `packages/contracts` (Zod request/response schemas only). No `packages/database`: the backend owns Prisma. | Gives a single source of truth for DTOs without moving the schema again. |
+| D4 | **Migrate and redesign per page area in the same slice** (API cutover + visual redesign + tests). | Each screen is touched once; every slice ships something visibly better and structurally correct. |
+| D5 | **Design foundation precedes slices.** Tokens, brand, app shell and shared state components land first so every slice inherits them. | Prevents eight slightly different re-designs. |
+| D6 | **Honest content only.** Landing-page numbers come from the API (titles, copies, active readers) or are removed; no stock "user" avatars presented as real users. | AGENTS.md "Zero Developer Placeholder Slop" and trustworthiness of a school system. |
+| D7 | **Real covers with a designed fallback.** Use stored cover URLs, then Open Library by ISBN, then a generated typographic cover in brand tokens; never a random stock photograph. | Recognisable books; stable layout; no third-party dependency for the fallback. |
+| D8 | **Worker is a second entry point of the backend** (`backend/src/worker.ts`), sharing services and the Prisma client module, using the existing outbox/inbox/lease tables. | Matches the Phase 2 single-worker invariant without new infrastructure. |
+| D9 | **Disposable test database is required before correctness gates can pass.** Options (owner decision, U-60): a Neon/Supabase branch, or local PostgreSQL. Never the shared development database. | Phase 2 gates U-15A.2/B/C have been blocked on this since 2026-09-12. |
+
+All Phase 2 invariants in architecture.md (verified actors, atomic audit, guarded transitions, bounded queries, one writer, private cache isolation) remain in force unchanged.
+
+### Order and dependencies
+
+```
+M0 Guardrails ─┬─> M1 Design foundation ──> M2 Vertical slices S1…S8 ──> M3 Legacy removal
+               │                                  │
+               └─> (CI runs on every later unit)  └─> M4 Reliability (can interleave after S5)
+M5 Quality gates (needs M3 + test DB) ──> M6 Deployment (owner decisions) ──> M7 Capacity qualification
+```
+
+A slice may start only when M1 is complete. M4 units may interleave with late slices but must not change a contract a slice is mid-way through migrating. Each unit ends with: typecheck + lint (changed files clean) + build for both packages, its own tests, screenshots at 375px and 1280px in light and dark for any UI change, and a progress-tracker entry with evidence.
+
+---
+
+### M0 — Guardrails (make change safe)
+
+**U-30 — Plan re-baseline and docs relocation** *(this change)*
+- [x] Move `frontend/context-library/` to repository-root `context-library/` (governs both packages).
+- [x] Phase 3 plan, decisions D1–D9, mapping of every open Phase 2 item; architecture.md target structure updated to D1–D3.
+- Gate: links resolve; no Phase 2 item lost (see mapping table at the end of Phase 3).
+
+**U-31 — Backend baseline hardening**
+- Export the Express `app` from `backend/src/app.ts`; `index.ts` only listens. Enables in-process tests.
+- Typed `req.user` (already augmented) used everywhere; remove all `any` in backend (`catch (err: unknown)` + typed narrowing; Prisma types for repository inputs).
+- Validate env at startup with Zod (`backend/src/config/env.ts`): DATABASE_URL, CLERK keys, CORS_ORIGIN, PORT, DB_POOL_*; fail fast with field names only.
+- Request ID + structured request logging (method, route, status, duration; no bodies/tokens); `/api/health/live` and `/api/health/ready` (ready checks DB with a 1s deadline); graceful shutdown on SIGTERM/SIGINT draining the server and the pg pool.
+- Map Prisma P2002/P2025/P2034 centrally in `errorHandler` to 409/404/409 with stable codes instead of 500.
+- ESLint config for backend (typescript-eslint strict, no-explicit-any as error).
+- Tests (`node --test` via tsx): env validation, error mapping, auth middleware (401/403 paths with stubbed Clerk), health endpoints.
+- Gate: `npm run lint && npm run typecheck && npm test && npm run build` in `backend/` all pass; zero `any`.
+
+**U-32 — Workspaces, contracts package and CI**
+- Root `package.json` with npm workspaces `frontend`, `backend`, `packages/contracts`; one root lockfile; root scripts `typecheck`, `lint`, `test`, `build` that fan out.
+- `packages/contracts`: start with the DTOs already duplicated between `backend/src/schemas/*` and `frontend/hooks/api/*` (book list/detail, reservation, loan); add more per slice. Zod only — no Prisma, Node or Next imports (lint rule).
+- GitHub Actions `.github/workflows/ci.yml`: install, Prisma generate, typecheck, lint, unit tests, both builds on push/PR. No secrets required (builds must not need a live DB).
+- Fix the 37 frontend lint errors (unused vars, `any`, hook rule violations) so CI can enforce `--max-warnings` on changed files.
+- Gate: CI green on `main`; a deliberately broken type fails CI.
+
+### M1 — Design foundation (make it look like one product)
+
+**U-33 — Brand and design tokens**
+- Audit `app/globals.css` tokens; define the complete semantic set in both themes: canvas, card, muted, border, foreground scale, brand-blue (primary action), brand-yellow (highlight/accent), success/emerald, warning/amber, destructive/rose, focus ring. Remove violet/purple and unused legacy tokens (9 component files contain violet/purple or hex values).
+- Type scale (display/h1–h4/body/small/mono) using Plus Jakarta Sans / Inter / JetBrains Mono; spacing rhythm; radius (2xl cards, full pills); elevation (hairline border + one soft shadow level); motion tokens honouring `prefers-reduced-motion`.
+- New logo mark in brand-blue/brand-yellow (SVG component), favicon and OG image to match.
+- Dev-only `/styleguide` route (guarded to non-production) rendering every token, type style, button/input/badge/card state, light and dark, for visual review.
+- Gate: no hex/violet/purple in `components/` or `app/` outside globals.css (lint/grep check in CI); WCAG AA contrast verified for text tokens in both themes; styleguide screenshots recorded.
+
+**U-34 — App shell and navigation**
+- Split `components/shared/navbar.tsx` (585 lines) into: `AppSidebar` (desktop), `MobileNav` (bottom bar for the 4 primary destinations + sheet for the rest), `UserMenu`, `ThemeToggle`, `LanguageSwitcher`, role-aware nav config in one typed array.
+- Consistent lucide icon set and sizes; clear active state; collapsible sidebar remembered per user (local storage, try/catch).
+- `PageHeader` (title, description, actions, breadcrumbs) used by every authenticated page.
+- Gate: no horizontal overflow at 320/375/768/1280; keyboard navigation and focus visible; ≤1 component >250 lines in `components/shared`.
+
+**U-35 — Shared UI states kit**
+- `EmptyState`, `ErrorState` (maps API error codes to the ui-context.md copy table, incl. conflict/refresh, rate-limit, forbidden/inactive, unknown-outcome), `InlineAlert`, `ConfirmDialog`, `StatCard`, `DataTable` with mobile card fallback, `Pagination` (URL-driven), skeleton variants with exact final dimensions.
+- One toast policy (react-toastify themed with tokens; aria-live); remove ad-hoc banners.
+- `BookCover` component implementing D7 (stored URL → Open Library ISBN → generated typographic cover), fixed aspect ratio, `next/image` sizes; covers never cause layout shift.
+- Gate: styleguide shows every state; unit tests for error-code → copy mapping; CLS 0 on a page using `BookCover` with slow network.
+
+### M2 — Vertical slices (migrate + redesign + test, one area at a time)
+
+Each slice: (1) backend endpoint(s) complete with contracts, auth, bounded queries and tests; (2) frontend reads/writes only through the API (SSR via server-side fetch with forwarded Clerk token, client via hooks); (3) page rebuilt with M1 components and copy reviewed against AGENTS.md copy laws; (4) loading/empty/error/conflict states; (5) screenshots and progress entry. Delete the legacy service/action code the slice replaced in the same unit.
+
+**U-36 — S1 Landing page**
+- Backend `GET /api/v1/stats/public` (title count, copy count, active readers in last 30 days; cached ≤60s; no personal data).
+- Rebuild hero in brand palette (no violet), real numbers from S1 endpoint or omitted, remove fabricated avatars/testimonials or label them clearly as illustrative; trim sections to: hero, how it works (search → reserve → pick up), for staff, FAQ, contact. Contact form keeps honeypot + rate limit.
+- SEO metadata + OG image; Lighthouse Performance ≥90, SEO ≥95, Accessibility ≥95 on mobile.
+- Gate: Lighthouse report saved; no hardcoded social-proof numbers.
+
+**U-37 — S2 Catalog and search**
+- Backend: `GET /books` with offset/limit **and** cursor, filters (category, availability), sorts (title, newest, rating, demand) executed in SQL with deterministic tie-breakers; `GET /categories`; `GET /books/top-demand`; `GET /search` (Meilisearch with least-privilege key; on outage, indexed PostgreSQL `pg_trgm` fallback flagged `degraded`; empty is empty). Absorbs U-16B.
+- Frontend: `app/catalog` SSR from API; URL-state filters/sort/page; search with 300ms debounce + abort; `BookCard` with two-line titles, author, availability badge (text + icon, not colour only), cover via `BookCover`; responsive grid 2/3/4/6 columns.
+- Remove `lib/services/book-service.ts`, `lib/search/*` (Fuse), `app/api/search` from frontend.
+- Gate: >100 results reachable; misspelled "hary poter"-style query returns intended title when Meilisearch is up; fallback tested; screenshots.
+
+**U-38 — S3 Book detail, reviews and reservation**
+- Backend: `GET /books/:id` (copies summary, next expected return as "Expected return", rating aggregate), paginated `GET /feedback/book/:bookId`; reservation endpoints already exist (keep the lapsed-hold cleanup; idempotency key honoured — see U-47).
+- Frontend: detail layout (cover, metadata, availability per copy condition, hold duration picker, reviews with verified-loan label, write-review dialog), JSON-LD `Book` + metadata generated from the API.
+- Gate: reserve → conflict → refresh path works; duplicate click does not create two holds; JSON-LD validates.
+
+**U-39 — S4 Student "My Library" and "Holds"**
+- Backend: `GET /me/loans` and `GET /me/reservations` (alias the existing routes; ownership enforced); cancel hold.
+- Frontend: loans with due-state (on time / due soon / overdue) using text+icon, history list paginated; holds with countdown to pickup deadline and cancel with confirm.
+- Gate: two-account isolation test (A cannot see B); no private data in any shared cache (`no-store`).
+
+**U-40 — S5 Circulation desk**
+- Split `circulation-desk.tsx` (1,253 lines) into `StudentPicker`, `CopyPicker`, `LoanPeriodPicker`, `CheckoutPanel`, `CheckinPanel`, `HoldsQueue`, `ActiveLoansTable`, `DeskStats`; data via `useCirculation`.
+- Backend: `GET /circulation/desk` summary; exact-copy checkout/check-in already guarded — add idempotency keys end-to-end.
+- Copy rewrite: "Check out a book", "Return a book", "Confirm Checkout", "Confirm Return"; no "Sub-10s", "BookHistory" or database wording on screen.
+- Keyboard-first: focus starts in student search; Enter selects; ≤3 clicks; measured median checkout time recorded.
+- Gate: ≤3 clicks and <10s measured on desktop; mobile layout usable; conflict copy from ui-context table.
+
+**U-41 — S6 Catalog management and uploads**
+- Backend: `PATCH /books/:id`, `POST /books/:id/copies`, `PATCH /copies/:id` (condition/maintenance/retire — no hard delete), `POST /uploads/cover` (R2, size/type limits, staff only). DomainAudit/BookHistory per invariant.
+- Frontend: split `book-management-console.tsx` (914 lines); add/edit title dialog with ISBN lookup prefill (Open Library) and cover preview; copy list with barcode generation.
+- Remove `app/api/upload`, `lib/storage`, `book-management-actions`, `book-management-service` from frontend.
+- Gate: every mutation produces an audit row (integration test); upload rejects >5MB and non-images.
+
+**U-42 — S7 Administration: users, feedback, analytics**
+- Split `user-management.tsx` (747) and `analytics-dashboard.tsx` (610); charts follow one data-viz style (token colours, accessible labels, light/dark).
+- Backend analytics computed with SQL date buckets/top-N (absorbs U-16A analytics item); users list paginated + search; last-admin protection test.
+- Gate: analytics response bounded and <500ms on seed data; demoting the last admin is refused even concurrently.
+
+**U-43 — S8 Identity sync**
+- Move `app/api/webhooks/clerk` to `POST /api/v1/webhooks/clerk` (raw body, svix verification, InboxMessage dedupe, per-user ordering) — absorbs the U-15D webhook item.
+- Admin/assistant layouts resolve role via `GET /users/me` (UX only; API enforces).
+- Gate: duplicate and out-of-order webhook deliveries converge; revoked role cannot be restored by a stale event.
+
+### M3 — Boundary enforcement
+
+**U-44 — Remove frontend database access**
+- Delete `frontend/app/actions/*`, `frontend/lib/services/*`, `lib/prisma.ts`, `lib/config/database-config.ts`, `lib/auth/verified-actor.ts` (moved/duplicated in backend), `scripts/generate-prisma-client.mjs`; remove `@prisma/*`, `pg`, `meilisearch`, `@aws-sdk/*`, `svix`, `fuse.js` from frontend dependencies; move DB tests to backend.
+- ESLint `no-restricted-imports` in frontend for `@prisma/*`, `pg`, server secrets; CI enforces.
+- `proxy.ts`: public catalog/search/detail per product rule; private routes protected (closes the documented U-21 mismatch).
+- Gate: frontend builds with no DATABASE_URL present; grep/lint proves zero Prisma imports.
+
+### M4 — Reliability (absorbs U-15D, U-16A, U-16C)
+
+**U-45 — Remaining writers, audit and idempotency**
+- Backend idempotency middleware using `IdempotencyRecord` (stable key per mutation, replay returns stored response, key reuse with different payload → 409).
+- Users/feedback/book-management writers: verified actor, DomainAudit/BookHistory atomically, expected-version guards on feedback moderation/edit/delete, direct-review vs loan-review identity, hidden status preserved on student edit.
+- Apply the reviewed partial-index migration as a forward migration in `backend/prisma/migrations` (after a read-only duplicate report and owner-approved repair).
+
+**U-46 — Worker, expiry, outbox and search sync**
+- `backend/src/worker.ts`: WorkerLease single-owner loop; reservation expiry job with authenticated system actor (replaces reliance on request-time cleanup); outbox dispatcher → Meilisearch with task-completion confirmation, retries with backoff, per-book ordering; periodic reconciliation.
+- Gate: kill/restart worker mid-dispatch converges; no duplicate expiries; search lag p95 ≤5s locally.
+
+**U-47 — Ratings projection and bounded reads**
+- Rating sum/count/average columns + backfill script + reconciliation; feedback writers update them transactionally.
+- Cursor pagination for history, loans, feedback, users; no unbounded `findMany` in any repository (lint rule or review checklist).
+
+### M5 — Quality gates
+
+**U-48 — Disposable test database and integration tests** *(owner decision D9 needed)*
+- Provision isolated `_test` database; run the existing fail-closed suites (database-pool, circulation-concurrency) and new backend integration suites for every slice; record results. Closes U-15A.2/B/C gates.
+
+**U-49 — End-to-end, visual and accessibility checks**
+- Playwright: student (search → reserve → see hold), assistant (checkout → return), admin (role change) using seeded test users; screenshots at 375/768/1280 light/dark committed as review artefacts; axe accessibility scan with zero serious violations; Lighthouse on landing/catalog/detail.
+
+### M6 — Deployment *(owner decisions: hosting provider and budget)*
+
+**U-50 — Deploy both packages**
+- Frontend: Vercel project root `frontend`, env contract documented. Backend: a Node host with health checks (provider chosen by owner), `CORS_ORIGIN` set to the production origin, same region as the database. Worker as a second process.
+- Migrations run once per release from CI, never on replica start. Backup/restore drill documented.
+- Gate: production smoke test of the U-49 flows; rollback procedure written and tried once on staging.
+
+### M7 — Capacity qualification
+
+**U-51 — Capacity and release evidence** — Phase 2 U-22 unchanged in substance (workloads, k6 profiles, release gates), executed against the U-50 staging topology. Express (D1) is re-evaluated only with this evidence.
+
+### Phase 2 → Phase 3 mapping
+
+| Phase 2 item | Status / Phase 3 home |
+| --- | --- |
+| U-15A.1, U-15A.3, U-15B code, U-15C code | Done (historical evidence below); live-DB gates → U-48 |
+| U-15A.2 live pool test, baseline latency | U-48 (test DB), U-51 (baseline) |
+| U-15D users/feedback/book writers, webhook inbox | U-45, U-43 |
+| U-16A ratings, SQL analytics, bounded lists | U-47, U-42 |
+| U-16B search + fallback | U-37 |
+| U-16C worker, outbox, expiry, role sync | U-46, U-43 |
+| U-17A repository relocation | Re-decided by D2/D3 → U-32 (workspaces + contracts) |
+| U-17B API foundation (auth guard, Zod pipe, error filter, health, logging) | Largely done in Express; remainder → U-31 |
+| U-18 catalog read slice | U-37, U-38 |
+| U-19 authenticated reads | U-39, U-40, U-42 |
+| U-20 mutation and integration cutover | U-38–U-43 |
+| U-21 boundary enforcement and deployment | U-44, U-50 |
+| U-22 capacity qualification | U-51 |
+
+---
+
+## Phase 2: High-Concurrency Hardening and Backend Separation (superseded by Phase 3 — retained for traceability)
+
+> Status markers below reflect evidence as of 2026-11-05. Open items are owned by the Phase 3 units listed in the mapping table above. NestJS/`apps/*`/`packages/database` instructions are re-decided by Phase 3 D1–D3.
 
 ### Objectives and Required Decisions
 
