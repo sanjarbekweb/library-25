@@ -16,7 +16,13 @@ change.
   - ESLint (typescript-eslint, no-explicit-any as error) clean; `npm run check` = lint + typecheck (src+tests) + 14 tests + build, all passing. Tests run in-process against createApp with a closed-port DATABASE_URL (no shared data reachable).
   - Live check against the development database: live 200, ready 200 (~0.2s warm, ~1.05s after idle), books 200, protected route 401, unknown route 404; frontend / and /catalog 200.
 - Next unit: **U-32 — Workspaces, contracts package and CI**.
-- Owner decisions pending: D9 disposable test database (blocks U-48 and Phase 2 live-DB gates); hosting provider/budget for the API (blocks U-50).
+- Owner decisions made 2026-11-20 (delegated "choose the best option"): D9 test database = Neon project `shelfsync-test` / `library_test` (Frankfurt); D10 hosting = Vercel for frontend and Express API (Tokyo region), Vercel Cron for scheduled jobs. Nothing deployed yet.
+- [/] U-48 started (2026-11-20):
+  - Test schema created with `prisma db push` against `library_test` only (verified target in CLI output); partial unique indexes applied.
+  - Defect fixed: `backend/prisma/migrations/02_circulation_partial_indexes.sql` used snake_case columns (`book_copy_id`) that do not exist; it could never have run. Corrected to quoted camelCase, matching the definitions read (read-only) from the live database.
+  - Frontend `test:database-pool`: 4/4 pass when warm (first run hit Neon cold start). **Closes the Phase 2 U-15A.2 live-pool gate.**
+  - Frontend legacy `test:concurrency`: 0/4 — fixture defects (assistant user never created → loans_assistantId_fkey; cleanup deletes audited copies → RESTRICT; fixed student id reused across tests). Not fixed: it exercises legacy services deleted in U-44.
+  - New backend suite `npm run test:integration` (fail-closed guard ported): reserve race (8 students/1 copy), same-student triple submit, checkout race, return race, reserved-copy ownership, cancel→checkout, lapsed-hold expiry. **7/7 pass, 3 consecutive runs (21/21)**; refuses to run without opt-in. **Closes the Phase 2 U-15C live concurrency gate for the backend writers** (same-key replay waits for backend idempotency, U-45).
 
 ### Phase 2 status at re-baseline (historical)
 

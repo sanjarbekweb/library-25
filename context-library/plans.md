@@ -34,7 +34,8 @@ Meanwhile the product has visible problems that no Phase 2 unit addressed:
 | D6 | **Honest content only.** Landing-page numbers come from the API (titles, copies, active readers) or are removed; no stock "user" avatars presented as real users. | AGENTS.md "Zero Developer Placeholder Slop" and trustworthiness of a school system. |
 | D7 | **Real covers with a designed fallback.** Use stored cover URLs, then Open Library by ISBN, then a generated typographic cover in brand tokens; never a random stock photograph. | Recognisable books; stable layout; no third-party dependency for the fallback. |
 | D8 | **Worker is a second entry point of the backend** (`backend/src/worker.ts`), sharing services and the Prisma client module, using the existing outbox/inbox/lease tables. | Matches the Phase 2 single-worker invariant without new infrastructure. |
-| D9 | **Disposable test database is required before correctness gates can pass.** Options (owner decision, U-60): a Neon/Supabase branch, or local PostgreSQL. Never the shared development database. | Phase 2 gates U-15A.2/B/C have been blocked on this since 2026-09-12. |
+| D9 | **Test database: dedicated Neon project `shelfsync-test` (aws-eu-central-1), database `library_test`.** Decided 2026-11-20. Never the shared development database; integration suites run only with `ALLOW_DATABASE_INTEGRATION_TESTS=true`, a `_test` database name and an allowlisted host. Frankfurt because Tokyo is not offered to this Neon org and tests run from Tashkent. | Free, isolated, branchable for resets; Supabase branching needs a paid plan; no local PostgreSQL installed. |
+| D10 | **Hosting: Vercel for both packages.** Frontend as a Next.js project (root `frontend`); Express API as a second Vercel project (root `backend`) using zero-config Express on Vercel Functions with Fluid compute (default-export the app), region `hnd1` (Tokyo) next to the Supabase database. Scheduled work (hold expiry, outbox/search dispatch) runs as Vercel Cron calls to internal endpoints authenticated with `INTERNAL_SERVICE_SECRET` instead of an always-on worker; D8 adapts accordingly (the job code stays shared, only the trigger differs). Decided 2026-11-20; nothing provisioned until U-50. | One platform already connected, $0 hobby tier to start, same region as the database; re-evaluate with U-51 evidence (cron granularity, function duration limits). |
 
 All Phase 2 invariants in architecture.md (verified actors, atomic audit, guarded transitions, bounded queries, one writer, private cache isolation) remain in force unchanged.
 
@@ -170,7 +171,7 @@ Each slice: (1) backend endpoint(s) complete with contracts, auth, bounded queri
 
 ### M5 — Quality gates
 
-**U-48 — Disposable test database and integration tests** *(owner decision D9 needed)*
+**U-48 — Disposable test database and integration tests** — [/] database provisioned and first suites passing 2026-11-20 (D9); per-slice suites continue
 - Provision isolated `_test` database; run the existing fail-closed suites (database-pool, circulation-concurrency) and new backend integration suites for every slice; record results. Closes U-15A.2/B/C gates.
 
 **U-49 — End-to-end, visual and accessibility checks**

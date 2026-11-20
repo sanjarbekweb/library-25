@@ -15,7 +15,8 @@
     "db:studio": "prisma studio",
     "test": "tsx --test tests/*.test.ts",
     "lint": "eslint .",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "test:integration": "tsx --test --test-concurrency=1 tests/integration/*.test.ts"
   },
   "dependencies": {
     "@clerk/express": "^2.1.76",
